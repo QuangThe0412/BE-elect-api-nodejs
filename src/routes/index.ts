@@ -1,4 +1,6 @@
-import router from "./mon";
+import routerMon from "./mon.route";
+import routerNhomMon from "./nhomMon.route";
 export { 
-    router as monRouter,
+    routerMon as monRouter,
+    routerNhomMon as nhomMonRouter,
 }

@@ -1,6 +1,4 @@
-import connectToDb from '../db';
-
-export interface Mon {
+export default interface Mon {
   IDMon: number;
   IDLoaiMon: number;
   TenMon: string;
@@ -19,14 +17,3 @@ export interface Mon {
   NgaySua: Date;
   Deleted: number;
 }
-
-export const getMons = async (): Promise<Mon[]> => {
-  try {
-    const pool = await connectToDb();
-    const result = await pool.request().query('SELECT * FROM Mon');
-    return result.recordset as Mon[];
-  } catch (err) {
-    console.error(err);
-    return [];
-  }
-};

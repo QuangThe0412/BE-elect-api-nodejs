@@ -13,9 +13,7 @@ const dbConfig = {
 
 const connectToDb = async () => {
   try {
-    const pool = await sql.connect(dbConfig);
-    if (pool.connected) console.log('Database connected successfully!');
-    return pool;
+    return await sql.connect(dbConfig);
   } catch (err) {
     console.error('Database connection failed: ', err);
   }
