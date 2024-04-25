@@ -1,38 +1,76 @@
-import express from 'express';
-import connectToDb from '../db';
-import { HandleApiResponse } from '../utils/api';
+import express, { Request, Response } from 'express';
+import { NhomMon } from '../models/init-models';
 
 const routerNhomMon = express.Router();
 
+//get all
 routerNhomMon.get(
     '/',
-    async (req, res) => {
+    async (req: Request, res: Response) => {
         try {
-            const pool = await connectToDb();
-            const result = await pool.request().query('SELECT * FROM NhomMon');
-            await HandleApiResponse(res, result);
+            let result: NhomMon[] = await NhomMon.findAll();
+            res.send(result);
         } catch (err) {
             console.error(err);
             res.status(500).send('Server error');
         }
     });
 
+//create
 routerNhomMon.post(
     '/',
-    async (req, res) => {
+    async (req: Request, res: Response) => {
         try {
-            const pool = await connectToDb();
-            console.log(req)
             console.log(req.body)
-            const { TenNhomMon } = req.body;
-            const result = await pool.request()
-                .input('TenNhomMon', TenNhomMon)
-                .query('INSERT INTO NhomMon (TenNhomMon) VALUES (@TenNhomMon)');
-            await HandleApiResponse(res, result);
+            const { TenNhom } = req.body;
+            res.send(await NhomMon.create({ TenNhom }));
         } catch (err) {
             console.error(err);
             res.status(500).send('Server error');
         }
     });
 
+//get details
+routerNhomMon.get(
+    '/:id',
+    async (req: Request, res: Response) => {
+        try {
+            const { id } = req.params;
+            res.send(await NhomMon.findOne({
+                where: {
+                    IDNhomMon: id,
+                },
+            }));
+        } catch (err) {
+            console.error(err);
+            res.status(500).send('Server error');
+        }
+    });
+
+//update
+routerNhomMon.put(
+    '/:id',
+    async (req: Request, res: Response) => {
+        try {
+            const { id } = req.params;
+            const { TenNhom } = req.body;
+            console.log({TenNhom})
+            const nhomMon: NhomMon = await NhomMon.findOne({
+                where: {
+                    IDNhomMon: id,
+                },
+            });
+            
+            if (!nhomMon) {
+                return res.status(404).send('NhomMon not found');
+            }
+            nhomMon.TenNhom = TenNhom;
+            
+            const response = await NhomMon.update({ ...nhomMon }, { where: { IDNhomMon: id } });
+            res.send(response);
+        } catch (err) {
+            console.error(err);
+            res.status(500).send('Server error');
+        }
+    });
 export default routerNhomMon;

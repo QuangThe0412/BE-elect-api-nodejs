@@ -1,22 +1,40 @@
-import sql from 'mssql';
+import { Sequelize } from 'sequelize';
+import dotenv from 'dotenv';
+import path from 'path';
 
-const dbConfig = {
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  server: process.env.DB_HOST,
-  port: parseInt(process.env.DB_PORT || '1433'),
-  database: process.env.DB_NAME,
-  options: {
-    encrypt: false, // Use this if you're on Windows Azure
+dotenv.config({ path: path.resolve(`.env`) });
+
+const config = process.env;
+
+const sequelize = new Sequelize(
+  config.DB_NAME,
+  config.DB_USER,
+  config.DB_PASSWORD,
+  {
+    host: config.DB_HOST,
+    port: parseInt(process.env.DB_PORT || '1433'),
+    dialect: 'mssql',
+    dialectOptions: {
+      multipleStatements: true,
+    },
+    query: {
+      raw: true,
+    },
+    define: {
+      timestamps: false,
+    },
+    database: config.DB_NAME,
   }
-};
+);
 
-const connectToDb = async () => {
-  try {
-    return await sql.connect(dbConfig);
-  } catch (err) {
-    console.error('Database connection failed: ', err);
-  }
-};
+sequelize
+  .authenticate()
+  .then(() => {
+    console.log('Connection Started');
+  })
+  .catch((err: any) => {
+    console.log(err);
+    throw err;
+  });
 
-export default connectToDb;
+export const sequelizeInstance = sequelize;

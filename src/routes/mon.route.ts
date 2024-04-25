@@ -1,16 +1,14 @@
 import express from 'express';
-import connectToDb from '../db';
-import { HandleApiResponse } from '../utils/api';
+import { Mon } from '../models/init-models';
+
 const routerMon = express.Router();
 
 routerMon.get(
     '/',
     async (req, res) => {
         try {
-            const pool = await connectToDb();
-            // const result = await pool.request().query('SELECT * FROM Mon');
-            const result = await pool.request().query('SELECT top 2 *  FROM Mon');
-            await HandleApiResponse(res, result);
+            const result = await Mon.findAll();
+            res.send(result);
         } catch (err) {
             console.error(err);
             res.status(500).send('Server error');
