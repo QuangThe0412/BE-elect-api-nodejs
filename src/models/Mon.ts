@@ -1,45 +1,43 @@
-import { DataTypes, Model, Sequelize } from 'sequelize';
+import { DataTypes, Model, Sequelize, DATE } from 'sequelize';
 
+DATE.prototype._stringify = function _stringify(date: any, options: any) {
+  date = this._applyTimezone(date, options);
+  return date.format('YYYY-MM-DD HH:mm:ss.SSS');
+};
 export interface MonAttributes {
   IDMon?: number;
   IDLoaiMon?: number;
   TenMon?: string;
-  TenKhongDau?: string;
-  MaTat?: string;
   Image?: string;
   DVTMon?: string;
   DonGiaBanSi?: number;
   DonGiaBanLe?: number;
   DonGiaVon?: number;
   SoLuongTonKho?: number;
-  VAT?: number;
   ThoiGianBH?: number;
   GhiChu?: string;
   NgayTao?: Date;
   NgaySua?: Date;
-  Deleted?: number;
+  Deleted?: boolean;
 }
 
 export class Mon
   extends Model<MonAttributes, MonAttributes>
   implements MonAttributes {
-  IDMon?: number;
+  IDMon?: number ;
   IDLoaiMon?: number;
   TenMon?: string;
-  TenKhongDau?: string;
-  MaTat?: string;
   Image?: string;
   DVTMon?: string;
   DonGiaBanSi?: number;
   DonGiaBanLe?: number;
   DonGiaVon?: number;
   SoLuongTonKho?: number;
-  VAT?: number;
   ThoiGianBH?: number;
   GhiChu?: string;
   NgayTao?: Date;
   NgaySua?: Date;
-  Deleted?: number;
+  Deleted?: boolean;
 
   static initModel(sequelize: Sequelize) {
     Mon.init(
@@ -59,14 +57,6 @@ export class Mon
           type: DataTypes.STRING,
           allowNull: false,
         },
-        TenKhongDau: {
-          type: DataTypes.STRING,
-          allowNull: true,
-        },
-        MaTat: {
-          type: DataTypes.STRING,
-          allowNull: true,
-        },
         Image: {
           type: DataTypes.STRING,
           allowNull: true,
@@ -78,6 +68,7 @@ export class Mon
         DonGiaBanSi: {
           type: DataTypes.FLOAT,
           allowNull: true,
+          defaultValue: 0,
         },
         DonGiaBanLe: {
           type: DataTypes.FLOAT,
@@ -86,18 +77,17 @@ export class Mon
         DonGiaVon: {
           type: DataTypes.FLOAT,
           allowNull: true,
+          defaultValue: 0,
         },
         SoLuongTonKho: {
           type: DataTypes.INTEGER,
           allowNull: true,
-        },
-        VAT: {
-          type: DataTypes.FLOAT,
-          allowNull: true,
+          defaultValue: 0,
         },
         ThoiGianBH: {
           type: DataTypes.INTEGER,
           allowNull: true,
+          defaultValue: 0,
         },
         GhiChu: {
           type: DataTypes.STRING,
@@ -114,8 +104,9 @@ export class Mon
           field: 'NgaySua',
         },
         Deleted: {
-          type: DataTypes.INTEGER,
+          type: DataTypes.BOOLEAN,
           allowNull: true,
+          defaultValue: false,
         },
       },
       {
