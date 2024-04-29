@@ -39,7 +39,7 @@ export class KhachHang extends Model<KhachHangAttributes> implements KhachHangAt
                 },
                 MaKhachHang: {
                     type: DataTypes.STRING,
-                    allowNull: false,
+                    allowNull: true,
                 },
                 TenKhachHang: {
                     type: DataTypes.STRING,
@@ -63,7 +63,7 @@ export class KhachHang extends Model<KhachHangAttributes> implements KhachHangAt
                 },
                 IDLoaiKH: {
                     type: DataTypes.INTEGER,
-                    allowNull: false,
+                    allowNull: true,
                 },
                 ThongTinKhac: {
                     type: DataTypes.STRING,

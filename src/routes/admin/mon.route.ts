@@ -1,5 +1,6 @@
 import express from 'express';
-import { LoaiMon, Mon } from '../models/init-models';
+import { LoaiMon, Mon } from '../../models/init-models';
+import { MergeWithOldData } from '../../utils';
 
 const routerMon = express.Router();
 
@@ -62,15 +63,11 @@ routerMon.put(
         try {
             const id = req.params.id;
 
-            const monData = await Mon.findByPk(id);
-            if (!monData) return res.status(404).send('Not found');
+            const oldMonData = await Mon.findByPk(id);
+            if (!oldMonData) return res.status(404).send('Not found');
 
-            const mon = req.body as Mon;
-            mon.DonGiaBanSi = mon.DonGiaBanSi || monData.DonGiaBanSi;
-            mon.DonGiaBanLe = mon.DonGiaBanLe || monData.DonGiaBanLe;
-            mon.DonGiaVon = mon.DonGiaVon || monData.DonGiaVon;
-            mon.SoLuongTonKho = mon.SoLuongTonKho || monData.SoLuongTonKho;
-            mon.ThoiGianBH = mon.ThoiGianBH || monData.ThoiGianBH;
+            let mon = req.body as Mon;
+            mon = MergeWithOldData(oldMonData, mon);
 
             mon.NgaySua = new Date();
             await Mon.update(mon, {
@@ -97,7 +94,7 @@ routerMon.delete(
             }
 
             mon.Deleted = true;
-
+            mon.NgaySua = new Date();
             await Mon.update(mon, {
                 where: {
                     IDMon: id,

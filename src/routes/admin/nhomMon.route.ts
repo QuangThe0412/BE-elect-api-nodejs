@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { NhomMon } from '../models/init-models';
+import { NhomMon } from '../../models/init-models';
 
 const routerNhomMon = express.Router();
 
