@@ -12,7 +12,7 @@ routerMon.get(
             res.send(result);
         } catch (err) {
             console.error(err);
-            res.status(500).send('Server error');
+            res.status(500).send(err);
         }
     });
 
@@ -22,14 +22,14 @@ routerMon.get(
     async (req, res) => {
         try {
             const id = req.params.id;
-            const result = await Mon.findByPk(id);
-            if (result == null) {
-                return res.status(404).send('Not found');
-            }
-            res.send(result);
+            res.send(await Mon.findOne({
+                where: {
+                    IDMon: id,
+                },
+            }));
         } catch (err) {
             console.error(err);
-            res.status(500).send('Server error');
+            res.status(500).send(err);
         }
     });
 
@@ -51,7 +51,7 @@ routerMon.post(
             res.send(await Mon.create(mon));
         } catch (err) {
             console.error(err);
-            res.status(500).send('Server error');
+            res.status(500).send(err);
         }
     });
 
@@ -81,7 +81,7 @@ routerMon.put(
             res.send('Update mon success');
         } catch (err) {
             console.error(err);
-            res.status(500).send('Server error');
+            res.status(500).send(err);
         }
     });
 
@@ -106,7 +106,7 @@ routerMon.delete(
             res.send('Delete mon success');
         } catch (err) {
             console.error(err);
-            res.status(500).send('Server error');
+            res.status(500).send(err);
         }
     });
 

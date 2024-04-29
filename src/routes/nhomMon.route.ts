@@ -12,7 +12,7 @@ routerNhomMon.get(
             res.send(result);
         } catch (err) {
             console.error(err);
-            res.status(500).send('Server error');
+            res.status(500).send(err);
         }
     });
 
@@ -26,7 +26,7 @@ routerNhomMon.post(
             res.send(await NhomMon.create({ TenNhom }));
         } catch (err) {
             console.error(err);
-            res.status(500).send('Server error');
+            res.status(500).send(err);
         }
     });
 
@@ -43,7 +43,7 @@ routerNhomMon.get(
             }));
         } catch (err) {
             console.error(err);
-            res.status(500).send('Server error');
+            res.status(500).send(err);
         }
     });
 
@@ -70,7 +70,7 @@ routerNhomMon.put(
             res.send(response);
         } catch (err) {
             console.error(err);
-            res.status(500).send('Server error');
+            res.status(500).send(err);
         }
     });
 export default routerNhomMon;

@@ -12,7 +12,7 @@ routerLoaiMon.get(
             res.send(result);
         } catch (err) {
             console.error(err);
-            res.status(500).send('Server error');
+            res.status(500).send(err);
         }
     });
 
@@ -48,7 +48,7 @@ routerLoaiMon.post(
             res.send(await LoaiMon.create(loaiMon));
         } catch (err) {
             console.error(err);
-            res.status(500).send('Server error');
+            res.status(500).send(err);
         }
     });
 
@@ -65,7 +65,7 @@ routerLoaiMon.get(
             }));
         } catch (err) {
             console.error(err);
-            res.status(500).send('Server error');
+            res.status(500).send(err);
         }
     });
 
@@ -87,6 +87,7 @@ routerLoaiMon.put(
 
             if (!loaiMon) return res.status(404).send('LoaiMon not found');
 
+            //if TenLoai is changed
             if (loaiMon.TenLoai !== TenLoai) {
                 const loaiMonExist = await LoaiMon.findOne({
                     where: {
@@ -109,11 +110,11 @@ routerLoaiMon.put(
             res.send(response);
         } catch (err) {
             console.error(err);
-            res.status(500).send('Server error');
+            res.status(500).send(err);
         }
     });
 
-    //delete
+//delete
 routerLoaiMon.delete(
     '/:id',
     async (req: Request, res: Response) => {
@@ -136,7 +137,7 @@ routerLoaiMon.delete(
                 },
             });
 
-            if(mon) return res.status(400).send('LoaiMon is in use');
+            if (mon) return res.status(400).send('LoaiMon is in use');
 
             // const response = await LoaiMon.destroy({
             //     where: {
@@ -148,7 +149,34 @@ routerLoaiMon.delete(
             res.send(response);
         } catch (err) {
             console.error(err);
-            res.status(500).send('Server error');
+            res.status(500).send(err);
+        }
+    });
+
+//search mon by loaiMon
+routerLoaiMon.get(
+    '/searchMon/:loaiMonId',
+    async (req, res) => {
+        try {
+            const { loaiMonId } = req.params;
+            const loaiMon = await LoaiMon.findOne({
+                where: {
+                    IDLoaiMon: loaiMonId,
+                },
+            });
+
+            if (!loaiMon) return res.status(404).send('LoaiMon not found');
+
+            const mons = await Mon.findAll({
+                where: {
+                    IDLoaiMon: loaiMonId,
+                },
+            });
+
+            res.send(mons);
+        } catch (err) {
+            console.error(err);
+            res.status(500).send(err);
         }
     });
 export default routerLoaiMon;
