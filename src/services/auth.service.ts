@@ -33,10 +33,14 @@ const authService = {
     refreshToken(refreshToken: string, secret: string) {
         try {
             const decoded = jwt.verify(refreshToken, secret) as JwtPayload;
+            console.log({decoded});
+
             const tokens = authService.generateTokens(
                 decoded,
                 config.ACCESS_TOKEN_SECRET as string
             );
+
+            console.log({tokens});
             return {
                 accessToken: tokens.accessToken,
             };

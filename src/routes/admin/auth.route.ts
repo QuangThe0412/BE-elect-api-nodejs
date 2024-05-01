@@ -8,7 +8,7 @@ import { ComparePassword, HashPassword, GetRoles } from '../../utils';
 import authService from '../../services/auth.service';
 import config from '../../config/config';
 import { AuthUser } from '../../index';
-
+console.log({config})
 const routerAuth = express.Router();
 
 routerAuth.post(
@@ -86,7 +86,20 @@ routerAuth.post('/login', async (req: Request, res: Response) => {
         );
         return res.send(generatedTokens);
     } catch (err) {
-        res.status(500).send();
+        res.status(500).send(err);
+    }
+});
+
+routerAuth.post('/refreshToken', async (req: Request, res: Response) => {
+    try {
+        const { token } = req.body;
+        const response = authService.refreshToken(
+            token,
+            config.ADMIN_REFRESH_TOKEN_SECRET as string
+        );
+        res.send(response);
+    } catch (err) {
+        res.status(500).send(err);
     }
 });
 
