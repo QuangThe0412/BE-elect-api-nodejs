@@ -1,49 +1,53 @@
 import express, { NextFunction, Response } from 'express';
-import crypto from 'crypto';
 import { Op } from 'sequelize';
 import schemaValidation from '../../middlewares/schema-validation.middleware';
-import router from ".";
 import { Request } from '../../index';
 import userSchema from '../../schemas/user.schema';
+import { Admin } from '../../models/init-models';
+import { ComparePassword, HashPassword, GetRoles } from '../../utils';
+import authService from '../../services/auth.service';
+import config from '../../config/config';
+import { AuthUser } from '../../index';
 
-router.post(
+const routerAuth = express.Router();
+
+routerAuth.post(
     '/register',
     schemaValidation(userSchema.register),
     async (req: Request, res: Response, next: NextFunction) => {
         try {
             let payload = { ...req.body };
-            let pwdToStore = payload.userName + payload.password;
+            let { username, password, phone } = payload;
 
-            // Hashing pwd string to sha256
-            pwdToStore = crypto
-                .createHash('md5')
-                .update(pwdToStore)
-                .digest('hex');
-            pwdToStore = '0x' + pwdToStore;
             let duplicatedUser = await Admin.findOne({
                 where: {
                     [Op.or]: [
-                        { email: payload.email },
-                        { name: payload.userName },
+                        { phone },
+                        { username },
                     ],
                 },
             });
             if (duplicatedUser) {
                 return res.status(400).json({
-                    code: 'email_or_username_exist',
-                    message: 'Email or username was existed',
+                    code: 'phone_or_username_exist',
+                    message: 'Phone or username was existed',
                 });
             }
-            // console.log('Password to store', pwdToStore);
+
+            let pwdToStore = await HashPassword(username, password);
+            // console.log('Password to store :===>', pwdToStore);
             const admin = await Admin.create({
-                name: payload.userName,
+                username,
                 password: pwdToStore,
+                saler: true,
+                Deleted: false,
             });
+
             const tokens = authService.generateTokens({
                 user: {
-                    userName: payload.userName,
+                    username,
                     userId: admin.id,
-                    role: USER_ROLES.ADMIN_USER,
+                    role: GetRoles(admin),
                 },
             });
             return res.status(200).send(tokens);
@@ -52,3 +56,38 @@ router.post(
         }
     }
 );
+
+routerAuth.post('/login', async (req: Request, res: Response) => {
+    const { username, password } = req.body;
+    try {
+        const admin = await Admin.findOne({
+            where: {
+                username,
+            },
+        });
+        if (!admin || !(await ComparePassword(username, password, admin.password))) {
+            return res.status(400).json({
+                code: 'incorrect_password_or_user_name',
+                message: 'Incorrect password or user name',
+            });
+        }
+
+        const authPayload: AuthUser = {
+            username: admin.username,
+            role: GetRoles(admin),
+            userId: admin.id,
+        };
+
+        const generatedTokens = authService.generateTokens(
+            {
+                user: authPayload,
+            },
+            config.ADMIN_ACCESS_TOKEN_SECRET
+        );
+        return res.send(generatedTokens);
+    } catch (err) {
+        res.status(500).send();
+    }
+});
+
+export default routerAuth;

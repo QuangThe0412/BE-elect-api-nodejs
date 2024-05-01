@@ -7,14 +7,13 @@ import express, {
 import { sequelizeInstance } from './db/index';
 import { initModels } from './models/init-models';
 import adminRouter from './routes/admin';
-import { USER_ROLES } from './constant';
 
 const app = express();
 
 export type AuthUser = {
-  userName: string;
+  username: string;
   userId: number;
-  role: USER_ROLES;
+  role: [] | string[] | string;
 };
 
 export type Request = ExpressRequest & {

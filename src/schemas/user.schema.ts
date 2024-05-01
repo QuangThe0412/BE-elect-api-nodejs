@@ -3,7 +3,7 @@ const yup = require('yup');
 const userSchema = {
     register: yup.object({
         body: yup.object({
-            userName: yup.string().required(),
+            username: yup.string().required(),
             password: yup
                 .string()
                 .required()
@@ -12,7 +12,7 @@ const userSchema = {
     }),
     login: yup.object({
         body: yup.object({
-            userName: yup.string().required(),
+            username: yup.string().required(),
             password: yup.string().required(),
         }),
     }),

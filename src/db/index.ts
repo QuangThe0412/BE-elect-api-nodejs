@@ -24,6 +24,7 @@ const sequelize = new Sequelize(
       timestamps: false,
     },
     database: config.DB_NAME,
+    logging: console.log
   }
 );
 
