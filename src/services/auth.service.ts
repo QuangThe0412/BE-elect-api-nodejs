@@ -6,14 +6,21 @@ type JwtPayload = {
 };
 const authService = {
     generateTokens(
-        payload: JwtPayload,
+        payload,
         secret: string = config.ACCESS_TOKEN_SECRET ?? ''
     ) {
-        const accessToken = jwt.sign(payload, secret, {
-            expiresIn: config.TOKEN_EXPIRE_IN,
-        });
+        const {exp,...payloadWithoutExp} = payload;
+
+        const accessToken = jwt.sign(
+            payloadWithoutExp,
+            secret,
+            {
+                expiresIn: config.TOKEN_EXPIRE_IN,
+            }
+        );
+
         const refreshToken = jwt.sign(
-            payload,
+            payloadWithoutExp,
             config.REFRESH_TOKEN_SECRET ?? '',
             { expiresIn: '7d' }
         );
@@ -33,14 +40,11 @@ const authService = {
     refreshToken(refreshToken: string, secret: string) {
         try {
             const decoded = jwt.verify(refreshToken, secret) as JwtPayload;
-            console.log({decoded});
-
             const tokens = authService.generateTokens(
                 decoded,
-                config.ACCESS_TOKEN_SECRET as string
+                secret
             );
 
-            console.log({tokens});
             return {
                 accessToken: tokens.accessToken,
             };
