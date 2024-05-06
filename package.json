@@ -6,9 +6,10 @@
   "type": "commonjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "ts-node src/index.ts",
-    "build": "tsc",
-    "dev": "nodemon src/index.ts"
+    "start": "node -r dotenv/config dist/index.ts dotenv_config_path=.env.production",
+    "build:dev": "tsc && node -r dotenv/config dist/index.ts dotenv_config_path=.env.dev",
+    "build:production": "tsc && node -r dotenv/config dist/index.ts dotenv_config_path=.env.production",
+    "dev": "nodemon -r dotenv/config src/index.ts dotenv_config_path=.env.dev"
   },
   "keywords": [],
   "author": "",

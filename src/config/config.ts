@@ -1,7 +1,8 @@
 import dotenv from 'dotenv';
 import path from 'path';
 
-dotenv.config({ path: path.resolve(`.env`) });
+const envFile = process.env.NODE_ENV === 'production' ? '.env.production' : '.env.dev';
+dotenv.config({ path: path.resolve(envFile) });
 
 const config = {
     DB_NAME: process.env.DB_NAME,
