@@ -7,6 +7,7 @@ import express, {
 import { sequelizeInstance } from './db/index';
 import { initModels } from './models/init-models';
 import adminRouter from './routes/admin';
+import errorHandlerMiddleware from './middlewares/error-handler.middleware';
 
 const app = express();
 
@@ -28,6 +29,8 @@ app.use(express.urlencoded({ extended: false }));
 initModels(sequelizeInstance);
 
 app.use('/admin', adminRouter);
+
+app.use(errorHandlerMiddleware);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);

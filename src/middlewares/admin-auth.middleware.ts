@@ -8,13 +8,13 @@ function adminAuthMiddleware(req: Request, res: Response, next: NextFunction) {
             req.headers.authorization,
             config.ADMIN_ACCESS_TOKEN_SECRET
         );
+        next();
     } catch (error: any) {
-        if (error.name === 'TokenExpiredError') {
-            return res.status(401).send();
+        if (error.name === 'JsonWebTokenError' || error.name === 'TokenExpiredError') {
+            error.status = 401; // Set the status code to 401
         }
-        return res.status(500).send();
+        next(error);
     }
-    next();
 }
 
 export default adminAuthMiddleware;
