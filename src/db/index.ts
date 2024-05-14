@@ -1,6 +1,7 @@
 import { Sequelize } from 'sequelize';
 import dotenv from 'dotenv';
 import path from 'path';
+import { Connection } from 'tedious';
 
 dotenv.config({ path: path.resolve(`.env`) });
 
@@ -27,6 +28,30 @@ const sequelize = new Sequelize(
     logging: console.log
   }
 );
+
+// const sequelize = new Sequelize('SmartShop_dev', {
+//   dialect: 'mssql',
+//   dialectModule: Connection,
+//   dialectOptions: {
+//     authentication: {
+//       type: 'ntlm',
+//       options: {
+//         domain: 'DESKTOP-VHA3BPP',
+//         userName: 'quang',
+//       },
+//     },
+//     options: {
+//       instanceName: 'SQLEXPRESS',
+//       trustedConnection: true,
+//       enableArithAbort: true,
+//       encrypt: false,
+//     },
+//   },
+//   define: {
+//     timestamps: false,
+//   },
+//   logging: console.log,
+// });
 
 sequelize
   .authenticate()
