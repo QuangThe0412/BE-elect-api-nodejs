@@ -7,7 +7,9 @@ const routerKhachHang = express.Router();
 //get all
 routerKhachHang.get('/', async (req: Request, res: Response) => {
     try {
-        let result: KhachHang[] = await KhachHang.findAll();
+        let result: KhachHang[] = await KhachHang.findAll({
+            order: [['IDKhachHang', 'DESC']],
+        });
         res.send(result);
     } catch (err) {
         console.error(err);

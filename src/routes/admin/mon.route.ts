@@ -9,7 +9,9 @@ routerMon.get(
     '/',
     async (req, res) => {
         try {
-            const result = await Mon.findAll();
+            const result = await Mon.findAll({
+                order: [['IDMon', 'DESC']],
+            });
             res.send(result);
         } catch (err) {
             console.error(err);

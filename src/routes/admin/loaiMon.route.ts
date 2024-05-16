@@ -8,7 +8,9 @@ routerLoaiMon.get(
     '/',
     async (req: Request, res: Response) => {
         try {
-            let result: LoaiMon[] = await LoaiMon.findAll();
+            let result: LoaiMon[] = await LoaiMon.findAll({
+                order: [['IDLoaiMon', 'DESC']],
+            });
             res.send(result);
         } catch (err) {
             console.error(err);

@@ -8,7 +8,9 @@ routerNhomMon.get(
     '/',
     async (req: Request, res: Response) => {
         try {
-            let result: NhomMon[] = await NhomMon.findAll();
+            let result: NhomMon[] = await NhomMon.findAll({
+                order: [['IDNhomMon', 'DESC']],
+            });
             res.send(result);
         } catch (err) {
             console.error(err);
