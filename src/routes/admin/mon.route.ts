@@ -42,6 +42,7 @@ routerMon.post(
     async (req, res) => {
         try {
             const mon = req.body as Mon;
+            mon.IDMon = null;
             mon.DonGiaBanSi = mon.DonGiaBanSi || 0;
             mon.DonGiaBanLe = mon.DonGiaBanLe || 0;
             mon.DonGiaVon = mon.DonGiaVon || 0;
@@ -77,7 +78,7 @@ routerMon.put(
                     IDMon: id,
                 },
             });
-            res.send('Update mon success');
+            res.send({mess : 'Update mon success'});
         } catch (err) {
             console.error(err);
             res.status(500).send(err);
