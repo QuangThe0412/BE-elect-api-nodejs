@@ -3,21 +3,27 @@ const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const { google } = require('googleapis');
 const fs = require('fs');
+import { FileUpload } from '../utils/index';
+const querystring = require('querystring');
 
+const config = process.env;
 export const serviceGoogleApi = express();
 
 passport.use(new GoogleStrategy({
-    clientID: '213642646095-37hq5onmrjudjkfvuavnfdi7s53gfjnt.apps.googleusercontent.com',
-    clientSecret: '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',
-    callbackURL: 'http://localhost:3002'
+    clientID: config.CLIENT_ID_GOOGLE_DRIVE,
+    clientSecret: config.CLIENT_SECRET_GOOGLE_DRIVE,
+    callbackURL: config.CALLBACK_URL_GOOGLE_DRIVE
 },
     function (accessToken, refreshToken, profile, cb) {
-        uploadFile(accessToken);
+        // Lưu accessToken vào session
+        profile.config.NAME_ACCESS_TOKEN_GOOGLE_DRIVE = accessToken;
+        profile.config.NAME_REFRESH_TOKEN_GOOGLE_DRIVE = refreshToken;
         cb(null, profile);
     }
 ));
 
 passport.initialize();
+
 
 serviceGoogleApi.get('/auth/google', passport.authenticate('google', { scope: ['https://www.googleapis.com/auth/drive.file'] }));
 
@@ -26,24 +32,48 @@ serviceGoogleApi.get('/auth/google/callback', passport.authenticate('google', { 
         res.redirect('/');
     });
 
-export const uploadFile = (accessToken: any) => {
-    const drive = google.drive({ version: 'v3', auth: accessToken });
-    const fileMetadata = {
-        'name': 'photo.jpg'
-    };
-    const media = {
-        mimeType: 'image/jpeg',
-        body: fs.createReadStream('path/to/photo.jpg')
-    };
-    drive.files.create({
-        resource: fileMetadata,
-        media: media,
-        fields: 'id'
-    }, function (err, file) {
-        if (err) {
-            console.error(err);
-        } else {
-            console.log('File Id: ', file.id);
-        }
+export const uploadFile = (accessToken: any, fileUpload: FileUpload): Promise<any> => {
+    return new Promise((resolve, reject) => {
+        const drive = google.drive({ version: 'v3', auth: accessToken });
+        const fileMetadata = {
+            'name': fileUpload.name
+        };
+        const media = {
+            mimeType: fileUpload.mimetype,
+            body: fs.createReadStream(fileUpload.path)
+        };
+        drive.files.create({
+            resource: fileMetadata,
+            media: media,
+            fields: 'id'
+        }, function (err: any, file: { id: any; }) {
+            if (err) {
+                console.error(err);
+                reject(err);
+            } else {
+                resolve(file.id);
+            }
+        });
     });
+}
+
+export const GetLinkReturnCode = () => {
+    const client_id = config.CLIENT_ID_GOOGLE_DRIVE;
+    const redirect_uri = config.CALLBACK_URL_GOOGLE_DRIVE;
+    const scope = 'https://www.googleapis.com/auth/drive.file';
+
+    const authUrl = 'https://accounts.google.com/o/oauth2/v2/auth?' + querystring.stringify({
+        client_id,
+        redirect_uri,
+        response_type: 'code',
+        scope,
+        access_type: 'offline',
+        // prompt: 'consent' //yêu cầu cấp quyền mỗi lần gọi
+    });
+
+    return authUrl;
+};
+
+export const TryGetAccessToken = () => {
+   
 }
