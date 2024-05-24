@@ -9,6 +9,7 @@ import { sequelizeInstance } from './db/index';
 import { initModels } from './models/init-models';
 import adminRouter from './routes/admin';
 import errorHandlerMiddleware from './middlewares/error-handler.middleware';
+import { serviceGoogleApi } from './services/uploadFile.service';
 
 const corsOptions = {
   allowedHeaders: ['authorization', 'Content-Type'], // you can change the headers
@@ -44,6 +45,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 initModels(sequelizeInstance);
 
+app.use(serviceGoogleApi);
 app.use('/admin', adminRouter);
 
 app.use(errorHandlerMiddleware);

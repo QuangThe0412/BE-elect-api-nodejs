@@ -1,8 +1,11 @@
 import express from 'express';
 import { LoaiMon, Mon } from '../../models/init-models';
 import { MergeWithOldData } from '../../utils';
+import multer from 'multer';
+import { serviceGoogleApi,uploadFile } from '../../services/uploadFile.service';
 
 const routerMon = express.Router();
+const upload = multer({ storage: multer.memoryStorage() });
 
 // Get all mon
 routerMon.get(
@@ -48,10 +51,18 @@ routerMon.get(
 //create mon
 routerMon.post(
     '/',
+    upload.single('image'),
     async (req, res) => {
         try {
+            let ggNameImage: any = '';
+            // uploadFile(req.file).then((result) => {
+            //     console.log(result);
+            //     ggNameImage = result.data.id;
+            // });
+
             const mon = req.body as Mon;
             mon.IDMon = null;
+            mon.Image = ggNameImage;
             mon.DonGiaBanSi = mon.DonGiaBanSi || 0;
             mon.DonGiaBanLe = mon.DonGiaBanLe || 0;
             mon.DonGiaVon = mon.DonGiaVon || 0;
