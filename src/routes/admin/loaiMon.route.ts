@@ -11,7 +11,11 @@ routerLoaiMon.get(
             let result: LoaiMon[] = await LoaiMon.findAll({
                 order: [['IDLoaiMon', 'DESC']],
             });
-            res.send(result);
+            res.send({
+                data: result,
+                code: 'GET_ALL_LOAIMON_SUCCESS',
+                mess: 'Get all loai mon success',
+            });
         } catch (err) {
             console.error(err);
             res.status(500).send(err);
@@ -47,7 +51,12 @@ routerLoaiMon.post(
                 return res.status(400).send('TenLoai already exist');
             }
 
-            res.send(await LoaiMon.create(loaiMon));
+            const result = await LoaiMon.create(loaiMon);
+            res.send({
+                data: result,
+                code: 'CREATE_LOAIMON_SUCCESS',
+                mess: 'Create loai mon success',
+            });
         } catch (err) {
             console.error(err);
             res.status(500).send(err);
@@ -60,11 +69,16 @@ routerLoaiMon.get(
     async (req: Request, res: Response) => {
         try {
             const { id } = req.params;
-            res.send(await LoaiMon.findOne({
+            const result = await LoaiMon.findOne({
                 where: {
                     IDLoaiMon: id,
                 },
-            }));
+            });
+            res.send({
+                data: result,
+                code: 'GET_LOAIMON_SUCCESS',
+                mess: 'Get loai mon success',
+            });
         } catch (err) {
             console.error(err);
             res.status(500).send(err);
@@ -109,7 +123,11 @@ routerLoaiMon.put(
             if (!nhomMon) return res.status(404).send('NhomMon not found');
 
             const response = await LoaiMon.update({ TenLoai, IDNhomMon }, { where: { IDLoaiMon: id } });
-            res.send(response);
+            res.send({
+                data: response,
+                code: 'UPDATE_LOAIMON_SUCCESS',
+                mess: 'Update loai mon success',
+            });
         } catch (err) {
             console.error(err);
             res.status(500).send(err);
@@ -148,7 +166,11 @@ routerLoaiMon.delete(
             // });
 
             const response = await LoaiMon.update({ Deleted: true }, { where: { IDLoaiMon: id } });
-            res.send(response);
+            res.send({
+                data: response,
+                code: 'DELETE_LOAIMON_SUCCESS',
+                mess: 'Delete loai mon success',
+            });
         } catch (err) {
             console.error(err);
             res.status(500).send(err);
@@ -175,7 +197,11 @@ routerLoaiMon.get(
                 },
             });
 
-            res.send(mons);
+            res.send({
+                data: mons,
+                code: 'SEARCH_MON_BY_LOAIMON_SUCCESS',
+                mess: 'Search mon by loai mon success',
+            });
         } catch (err) {
             console.error(err);
             res.status(500).send(err);

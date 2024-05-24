@@ -12,7 +12,11 @@ routerMon.get(
             const result = await Mon.findAll({
                 order: [['IDMon', 'DESC']],
             });
-            res.send(result);
+            res.send({
+                data: result,
+                code: 'GET_ALL_MON_SUCCESS',
+                mess: 'Get all mon success',
+            });
         } catch (err) {
             console.error(err);
             res.status(500).send(err);
@@ -25,11 +29,16 @@ routerMon.get(
     async (req, res) => {
         try {
             const id = req.params.id;
-            res.send(await Mon.findOne({
+            const result = await Mon.findOne({
                 where: {
                     IDMon: id,
                 },
-            }));
+            })
+            res.send({
+                data: result,
+                code: 'GET_MON_SUCCESS',
+                mess: 'Get mon success',
+            });
         } catch (err) {
             console.error(err);
             res.status(500).send(err);
@@ -52,7 +61,12 @@ routerMon.post(
             const loaiMon = await LoaiMon.findByPk(mon.IDLoaiMon);
             if (!loaiMon) return res.status(400).send('Loai mon not found');
             mon.NgayTao = new Date();
-            res.send(await Mon.create(mon));
+            const result = await Mon.create(mon);
+            res.send({
+                data: result,
+                code: 'CREATE_MON_SUCCESS',
+                mess: 'Create mon success',
+            });
         } catch (err) {
             console.error(err);
             res.status(500).send(err);
@@ -78,7 +92,11 @@ routerMon.put(
                     IDMon: id,
                 },
             });
-            res.send({mess : 'Update mon success'});
+            res.send({
+                data: mon,
+                code: 'UPDATE_MON_SUCCESS',
+                mess: 'Update mon success',
+            });
         } catch (err) {
             console.error(err);
             res.status(500).send(err);
@@ -96,14 +114,18 @@ routerMon.delete(
                 return res.status(404).send('Not found');
             }
 
-            mon.Deleted = true;
+            mon.Deleted = !mon.Deleted;
             mon.NgaySua = new Date();
             await Mon.update(mon, {
                 where: {
                     IDMon: id,
                 },
             })
-            res.send('Delete mon success');
+            res.send({
+                data: mon,
+                code: 'TOGGLE_ACTIVE_MON_SUCCESS',
+                mess: 'Toggle active mon success',
+            });
         } catch (err) {
             console.error(err);
             res.status(500).send(err);
