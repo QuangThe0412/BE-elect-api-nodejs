@@ -113,8 +113,6 @@ routerMon.put(
             if (file) {
                 await uploadFile(file).then((result) => {
                     mon.Image = result.id;
-                    console.log('=========================================');
-                    console.log(result);
                 });
             }
             console.log(mon);
