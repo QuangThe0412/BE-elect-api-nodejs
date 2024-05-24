@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "smart-shop-dev-424304",
+  "private_key_id": "dfe0485623370fec11b4b99352a3844abf11393e",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCSGg6wInwImyzn\nLUsc3WH0Z9wSrNpWB1smVSOkZ6P/iCB96Cgz8Ez5ZEhVsxbW7YaWcu2GmiidEr7I\nloHWpCigZkPn+GEu/SdA09StxbkQPFZIO//Gnpi/P07Dv7GTvsyVv/8xADl0KWt4\nIB2q9tUwZ/f02ao6HbT1P58L+tYcZWfe8iDUgjOuX9+PcyywMN++9IG1B4otMQTq\nweX03cy35ljuYkZb4izM2ApgrSNtU9dxM3dRgK4L/c8e/rOu95FyLJq6lX7JD2ya\n7kKQGM0fmvC9Vl5sqmemzZ1p7N79Sx0PT3XUr2hZlZw0Bix0SN3xP5k31YCK50OT\nzLZuwZLLAgMBAAECggEANxCcHZV5sxKtO1ouV6w2uZOVdfJw/gCawZlQLCwluu8W\n8+1WjbDRiiNaQfaUMqBmW/jn/hXHHeBNSLO1Lu1DJKU2jczm7/tY2o2cOHxvkidz\ni5kVf0oSHu6g5JUwvBMq73vkFhdUECx2RVmxZNjQJATjhwSsrGe65r46Vx0MqrmZ\nmP/akh27kl5e+LLtUKcquUJyV1ooJkb5PfwmXOYvv9Rza6THcrb4n/8nt7fazkTp\nvvxumLrvuj446yfaUXIJXA4VduXXQ8qvrm1HwX5Zt3K61uCZOa1uwBOC+QdP/TXo\ngbZsVskfd1fsOJe6mXzMkO77gAFrBPfMKbK/ni9xsQKBgQDKxnxMZiwyZIo6nL3e\nb+FEAT3ANIy8jlhJNe1du9exruz7WzYwo0j9AA1pEJDSJ9plufxDSylabhH70TBf\n9FkcTOlvCfu/VDCHePt0Ed9N1QZHycRatO9TaehxuADT7M8V2vycCOg58tZBzN6e\nhzDI/UTg1GUE/MbDlbdrBg7y8QKBgQC4c2K1Cx8yiF4IfsFJV8vdly2cbRlGwz/c\nk6UwsROdHuRoFp5qiUltACyUYTiZ3FaK8Buc6zUYH+4FW+IDmb18GAHYW2NxcwQY\n9RpmqCgqilzAsH/UXGkWwu6knP/AIEZ9ZA/LSgjgh9Nq4GptWsIhnEb++pdXwjAj\nXOPpRs5pewKBgAfHSWlc2gEs3iiVbqsju45yRb4jxepNw5E7YlmgJQwJ28lgnFmN\nSfV6lQkcu5F0OeqBEe466eEwK7xvL93eb7SoNqQty9xxDFOGDo9LSDeiHlWOpduc\n6TlX7LTADDgU83SxK9OIe/ANIq7vfvKx2Os82/GL9DwWvkEucxTF7LjhAoGAEelC\ngIof8WxElVaZtmGMLmxrxXDir3huTyEXPW80lGFXlLP9liLWunr12ULHmElJLhy6\n0bYVZc5T8rlFbUwUlmROaZAWTAH7N+E1OxrBK8Bb2WpKP3jpy4gKXHnSa/m2Xp7E\n2dzKl+MYqJw6OXxCtbjTPBdhcugsfIKcrx5tFNkCgYBWEGhTTVKP8lvKvRRufBRR\nI8SdLwhEzPWJ3yS8XubQiMZttJxd1Jl7nK2wmtgDy8O8EPB3XWxCZjzBXBVDDrhq\nDefHqdOGWHECRLSK/cjx1Yxg4L30qdykBRVy9Zs+BJzqNFTgftvGvsw64xE0ETSI\nO6zMXyw1NGvlBg5pmcQifg==\n-----END PRIVATE KEY-----\n",
+  "client_email": "smart-shop-dev@smart-shop-dev-424304.iam.gserviceaccount.com",
+  "client_id": "111792121404418448670",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/smart-shop-dev%40smart-shop-dev-424304.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

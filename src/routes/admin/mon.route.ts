@@ -2,8 +2,7 @@ import express from 'express';
 import { LoaiMon, Mon } from '../../models/init-models';
 import { MergeWithOldData } from '../../utils';
 import multer from 'multer';
-import { requestAuthGoogle, uploadFile } from '../../services/uploadFile.service';
-import { FileUpload } from '../../utils/index';
+import {uploadFile } from '../../services/serviceGoogleApi';
 
 const routerMon = express.Router();
 const upload = multer({ storage: multer.memoryStorage() });
@@ -56,7 +55,7 @@ routerMon.post(
     async (req, res) => {
         try {
             let ggNameImage: any = '';
-            const file = req.file;
+            const file = req.file as Express.Multer.File;
             console.log('-------------------------------------------')
             console.log(file);
             if (file) {
@@ -66,15 +65,9 @@ routerMon.post(
                     res.redirect('/auth/google');
                 }
 
-                let fileUpload: FileUpload = {
-                    name: (file as Express.Multer.File).originalname,
-                    mimetype: file.mimetype,
-                    path: file.path
-                };
-
-                uploadFile(accessTokenGoogleDrive, fileUpload).then((result) => {
+                uploadFile(file).then((result) => {
                     console.log(result);
-                    ggNameImage = result.data.id;
+                    // ggNameImage = result.data.id;
                 });
             }
 
@@ -108,40 +101,23 @@ routerMon.put(
     upload.single('file'),
     async (req, res) => {
         try {
-            let ggNameImage: any = '';
-            const file = req.file;
-            if (file) {
-                let accessTokenGoogleDrive = req.body.accessTokenGoogleDrive;
-
-                if (!accessTokenGoogleDrive) {
-                    const authUrl = requestAuthGoogle();
-                    res.status(401).json({
-                        code : 'UNAUTHORIZED_ACCESS_TO_GOOGLE_DRIVE',
-                        mess : 'Unauthorized access to google drive',
-                        data : authUrl
-                     });
-                }
-
-                let fileUpload: FileUpload = {
-                    name: (file as Express.Multer.File).originalname,
-                    mimetype: file.mimetype,
-                    path: file.path
-                };
-
-                uploadFile(accessTokenGoogleDrive, fileUpload).then((result) => {
-                    console.log(result);
-                    ggNameImage = result.data.id;
-                });
-            }
-
             const id = req.params.id;
-
             const oldMonData = await Mon.findByPk(id);
             if (!oldMonData) return res.status(404).send('Not found');
 
             let mon = req.body as Mon;
             mon = MergeWithOldData(oldMonData, mon);
 
+            //update file
+            const file = req.file as Express.Multer.File;
+            if (file) {
+                await uploadFile(file).then((result) => {
+                    mon.Image = result.id;
+                    console.log('=========================================');
+                    console.log(result);
+                });
+            }
+            console.log(mon);
             mon.NgaySua = new Date();
             await Mon.update(mon, {
                 where: {

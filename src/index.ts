@@ -9,7 +9,7 @@ import { sequelizeInstance } from './db/index';
 import { initModels } from './models/init-models';
 import adminRouter from './routes/admin';
 import errorHandlerMiddleware from './middlewares/error-handler.middleware';
-import { serviceGoogleApi } from './services/uploadFile.service';
+import { serviceGoogleApi } from './services/serviceGoogleApi';
 
 const corsOptions = {
   allowedHeaders: ['authorization', 'Content-Type'], // you can change the headers

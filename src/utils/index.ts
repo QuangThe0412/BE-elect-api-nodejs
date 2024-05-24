@@ -52,9 +52,3 @@ export const GetRoles = (admin: Admin) => {
     }
     return roles;
 }
-
-export interface FileUpload {
-    name: string;
-    mimetype: string;
-    path: string;
-}
