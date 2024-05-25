@@ -27,8 +27,24 @@ routerNhomMon.post(
     '/',
     async (req: Request, res: Response) => {
         try {
-            const { TenNhom } = req.body;
-            const result = await NhomMon.create({ TenNhom });
+            const nhomMon = req.body as NhomMon;
+            nhomMon.IDNhomMon = null;
+
+            //check exist TenNhom
+            const getNhomByName = await NhomMon.findOne({
+                where: {
+                    TenNhom: nhomMon.TenNhom,
+                },
+            });
+
+            if(getNhomByName){
+                return res.status(400).send({
+                    code: 'NAME_NHOMMON_EXISTED',
+                    mess: 'Name NhomMon already existed',
+                });
+            }
+
+            const result = await NhomMon.create(nhomMon);
             res.send({
                 data: result,
                 code: 'CREATE_NHOMMON_SUCCESS',
@@ -68,18 +84,34 @@ routerNhomMon.put(
     async (req: Request, res: Response) => {
         try {
             const { id } = req.params;
-            const { TenNhom } = req.body;
             const nhomMon: NhomMon = await NhomMon.findOne({
                 where: {
                     IDNhomMon: id,
                 },
             });
-            
+
             if (!nhomMon) {
-                return res.status(404).send('NhomMon not found');
+                return res.status(404).send({
+                    code: 'NHOMMON_NOT_FOUND',
+                    mess: 'NhomMon not found',
+                });
             }
-            nhomMon.TenNhom = TenNhom;
-            
+
+            //check case update TenNhom
+            const { TenNhom } = req.body;
+            if (TenNhom !== nhomMon.TenNhom) {
+                const nhomMonByName = await NhomMon.findOne({
+                    where: {
+                        TenNhom,
+                    },
+                });
+                if (nhomMonByName) {
+                    return res.status(400).send({
+                        code: 'NAME_NHOMMON_EXISTED',
+                        mess: 'Name NhomMon already existed',
+                    });
+                }
+            }
             const response = await NhomMon.update({ ...nhomMon }, { where: { IDNhomMon: id } });
             res.send({
                 data: response,

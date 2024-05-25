@@ -72,7 +72,10 @@ routerMon.post(
             mon.ThoiGianBH = mon.ThoiGianBH || 0;
 
             const loaiMon = await LoaiMon.findByPk(mon.IDLoaiMon);
-            if (!loaiMon) return res.status(400).send('Loai mon not found');
+            if (!loaiMon) return res.status(400).send({
+                code: 'LOAIMON_NOT_FOUND',
+                mess: 'Không tìm thấy loại món',
+            });
             mon.NgayTao = new Date();
             mon.NgaySua = null;
             const result = await Mon.create(mon);
@@ -95,7 +98,10 @@ routerMon.put(
         try {
             const id = req.params.id;
             const oldMonData = await Mon.findByPk(id);
-            if (!oldMonData) return res.status(404).send('Not found');
+            if (!oldMonData) return res.status(404).send({
+                code: 'MON_NOT_FOUND',
+                mess: 'Không tìm thấy món',
+            });
 
             let mon = req.body as Mon;
             mon = MergeWithOldData(oldMonData, mon);
@@ -137,7 +143,10 @@ routerMon.delete(
             const id = req.params.id;
             const mon = await Mon.findByPk(id);
             if (mon == null) {
-                return res.status(404).send('Not found');
+                return res.status(404).send({
+                    code: 'MON_NOT_FOUND',
+                    mess: 'Không tìm thấy món',
+                });
             }
 
             mon.Deleted = !mon.Deleted;
@@ -150,7 +159,7 @@ routerMon.delete(
             res.send({
                 data: mon,
                 code: 'TOGGLE_ACTIVE_MON_SUCCESS',
-                mess: 'Toggle active mon success',
+                mess: 'Bật/Tắt món thành công',
             });
         } catch (err) {
             console.error(err);

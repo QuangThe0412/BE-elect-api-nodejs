@@ -28,6 +28,7 @@ routerLoaiMon.post(
     async (req: Request, res: Response) => {
         try {
             const loaiMon = req.body as LoaiMon;
+            loaiMon.IDLoaiMon = null;
 
             const nhomMon = await NhomMon.findOne({
                 where: {
@@ -37,18 +38,24 @@ routerLoaiMon.post(
 
             //check nhomMon
             if (!nhomMon) {
-                return res.status(404).send('NhomMon not found');
+                return res.status(404).send({
+                    code: 'NHOMMON_NOT_FOUND',
+                    mess: 'Không tim thấy nhóm món',
+                });
             }
 
             //check exist TenLoai
-            const loaiMonExist = await LoaiMon.findOne({
+            const getLoaiMonByName = await LoaiMon.findOne({
                 where: {
                     TenLoai: loaiMon.TenLoai,
                 },
             });
 
-            if (loaiMonExist) {
-                return res.status(400).send('TenLoai already exist');
+            if (getLoaiMonByName) {
+                return res.status(400).send({
+                    code: 'NAME_LOAIMON_EXISTED',
+                    mess: 'Tên loại món đã tồn tại',
+                });
             }
 
             const result = await LoaiMon.create(loaiMon);
@@ -93,7 +100,10 @@ routerLoaiMon.put(
             const { id } = req.params;
             const { TenLoai, IDNhomMon } = req.body as LoaiMon;
 
-            if (!id) return res.status(400).send('id is required');
+            if (!id) return res.status(400).send({
+                code: 'ID_REQUIRED',
+                mess: 'Không tìm thấy ID',
+            });
 
             const loaiMon = await LoaiMon.findOne({
                 where: {
@@ -101,7 +111,10 @@ routerLoaiMon.put(
                 },
             });
 
-            if (!loaiMon) return res.status(404).send('LoaiMon not found');
+            if (!loaiMon) return res.status(404).send({
+                code: 'LOAIMON_NOT_FOUND',
+                mess: 'Không tìm thấy loại món',
+            });
 
             //if TenLoai is changed
             if (loaiMon.TenLoai !== TenLoai) {
@@ -111,7 +124,10 @@ routerLoaiMon.put(
                     },
                 });
 
-                if (loaiMonExist) return res.status(400).send('TenLoai already exist');
+                if (loaiMonExist) return res.status(400).send({
+                    code: 'NAME_LOAIMON_EXISTED',
+                    mess: 'Tên loại món đã tồn tại',
+                });
             }
 
             const nhomMon = await NhomMon.findOne({
@@ -120,7 +136,10 @@ routerLoaiMon.put(
                 },
             });
 
-            if (!nhomMon) return res.status(404).send('NhomMon not found');
+            if (!nhomMon) return res.status(404).send({
+                code: 'NHOMMON_NOT_FOUND',
+                mess: 'Không tìm thấy nhóm món',
+            });
 
             const response = await LoaiMon.update({ TenLoai, IDNhomMon }, { where: { IDLoaiMon: id } });
             res.send({
@@ -141,7 +160,10 @@ routerLoaiMon.delete(
         try {
             const { id } = req.params;
 
-            if (!id) return res.status(400).send('id is required');
+            if (!id) return res.status(400).send({
+                code: 'ID_REQUIRED',
+                mess: 'Không tìm thấy ID',
+            });
 
             const loaiMon = await LoaiMon.findOne({
                 where: {
@@ -149,27 +171,34 @@ routerLoaiMon.delete(
                 },
             });
 
-            if (!loaiMon) return res.status(404).send('LoaiMon not found');
+            if (!loaiMon) return res.status(404).send({
+                code: 'LOAIMON_NOT_FOUND',
+                mess: 'Không tìm thấy loại món',
+            });
 
-            const mon = await Mon.findOne({
+            const getMonByIdLoaiMon = await Mon.findOne({
                 where: {
                     IDLoaiMon: id,
                 },
             });
 
-            if (mon) return res.status(400).send('LoaiMon is in use');
+            if (!loaiMon.Deleted && getMonByIdLoaiMon) return res.status(400).send({
+                code: 'HAD_MON_IN_LOAIMON',
+                mess: 'Có món thuộc loại món này',
+            });
 
             // const response = await LoaiMon.destroy({
             //     where: {
             //         IDLoaiMon: id,
             //     },
             // });
+            loaiMon.Deleted = !loaiMon.Deleted;
 
-            const response = await LoaiMon.update({ Deleted: true }, { where: { IDLoaiMon: id } });
+            const response = await LoaiMon.update(loaiMon, { where: { IDLoaiMon: id } });
             res.send({
                 data: response,
-                code: 'DELETE_LOAIMON_SUCCESS',
-                mess: 'Delete loai mon success',
+                code: 'TOGGLE_LOAIMON_SUCCESS',
+                mess: 'Bật/Tắt loại món thành công',
             });
         } catch (err) {
             console.error(err);
@@ -189,7 +218,10 @@ routerLoaiMon.get(
                 },
             });
 
-            if (!loaiMon) return res.status(404).send('LoaiMon not found');
+            if (!loaiMon) return res.status(404).send({
+                code: 'LOAIMON_NOT_FOUND',
+                mess: 'Không tìm thấy loại món',
+            });
 
             const mons = await Mon.findAll({
                 where: {
@@ -200,7 +232,7 @@ routerLoaiMon.get(
             res.send({
                 data: mons,
                 code: 'SEARCH_MON_BY_LOAIMON_SUCCESS',
-                mess: 'Search mon by loai mon success',
+                mess: 'Tìm kiếm món theo loại món thành công',
             });
         } catch (err) {
             console.error(err);
