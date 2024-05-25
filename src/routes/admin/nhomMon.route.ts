@@ -27,7 +27,6 @@ routerNhomMon.post(
     '/',
     async (req: Request, res: Response) => {
         try {
-            console.log(req.body)
             const { TenNhom } = req.body;
             const result = await NhomMon.create({ TenNhom });
             res.send({
@@ -70,7 +69,6 @@ routerNhomMon.put(
         try {
             const { id } = req.params;
             const { TenNhom } = req.body;
-            console.log({TenNhom})
             const nhomMon: NhomMon = await NhomMon.findOne({
                 where: {
                     IDNhomMon: id,

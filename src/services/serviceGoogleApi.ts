@@ -33,19 +33,35 @@ const auth = new google.auth.GoogleAuth({
 //     }
 // });
 
-export const uploadFile = async (fileObject : Express.Multer.File) => {
-    const bufferStream = new stream.PassThrough();
-    bufferStream.end(fileObject.buffer);
-    const { data } = await google.drive({ version: "v3", auth }).files.create({
-        media: {
-            mimeType: fileObject.mimetype,
-            body: bufferStream,
-        },
-        requestBody: {
-            name: fileObject.originalname,
-            parents: [ID_FOLDER_GG_DRIVE],
-        },
-        fields: "id,name",
-    });
-    return data;
+export const uploadFile = async (fileObject: Express.Multer.File) => {
+    try {
+        const bufferStream = new stream.PassThrough();
+        bufferStream.end(fileObject.buffer);
+        const { data } = await google.drive({ version: "v3", auth }).files.create({
+            media: {
+                mimeType: fileObject.mimetype,
+                body: bufferStream,
+            },
+            requestBody: {
+                name: fileObject.originalname,
+                parents: [ID_FOLDER_GG_DRIVE],
+            },
+            fields: "id,name",
+        });
+        return data;
+    } catch (err) {
+        console.error(err);
+        return err
+    }
+};
+
+export const tryDeleteFile = async (fileId: string) => {
+    try {
+        return await google.drive({ version: "v3", auth }).files.delete({
+            fileId,
+        });
+    } catch (err) {
+        console.error(err);
+        return err;
+    }
 };

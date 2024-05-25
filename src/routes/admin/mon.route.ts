@@ -2,7 +2,7 @@ import express from 'express';
 import { LoaiMon, Mon } from '../../models/init-models';
 import { MergeWithOldData } from '../../utils';
 import multer from 'multer';
-import {uploadFile } from '../../services/serviceGoogleApi';
+import { uploadFile,tryDeleteFile } from '../../services/serviceGoogleApi';
 
 const routerMon = express.Router();
 const upload = multer({ storage: multer.memoryStorage() });
@@ -51,29 +51,20 @@ routerMon.get(
 //create mon
 routerMon.post(
     '/',
-    upload.single('image'),
+    upload.single('file'),
     async (req, res) => {
         try {
-            let ggNameImage: any = '';
-            const file = req.file as Express.Multer.File;
-            console.log('-------------------------------------------')
-            console.log(file);
-            if (file) {
-                let accessTokenGoogleDrive = req.body.accessTokenGoogleDrive;
-                console.log({ accessTokenGoogleDrive })
-                if (!accessTokenGoogleDrive) {
-                    res.redirect('/auth/google');
-                }
+            const mon = req.body as Mon;
+            mon.IDMon = null;
 
-                uploadFile(file).then((result) => {
-                    console.log(result);
-                    // ggNameImage = result.data.id;
+            // update file
+            const file = req.file as Express.Multer.File;
+            if (file) {
+                await uploadFile(file).then((result) => {
+                    mon.Image = result.id;
                 });
             }
 
-            const mon = req.body as Mon;
-            mon.IDMon = null;
-            mon.Image = ggNameImage;
             mon.DonGiaBanSi = mon.DonGiaBanSi || 0;
             mon.DonGiaBanLe = mon.DonGiaBanLe || 0;
             mon.DonGiaVon = mon.DonGiaVon || 0;
@@ -83,6 +74,7 @@ routerMon.post(
             const loaiMon = await LoaiMon.findByPk(mon.IDLoaiMon);
             if (!loaiMon) return res.status(400).send('Loai mon not found');
             mon.NgayTao = new Date();
+            mon.NgaySua = null;
             const result = await Mon.create(mon);
             res.send({
                 data: result,
@@ -107,15 +99,19 @@ routerMon.put(
 
             let mon = req.body as Mon;
             mon = MergeWithOldData(oldMonData, mon);
-
-            //update file
             const file = req.file as Express.Multer.File;
             if (file) {
+                //remove old file
+                if (oldMonData.Image) {
+                    await tryDeleteFile(oldMonData.Image);
+                }
+
+                //update file
                 await uploadFile(file).then((result) => {
                     mon.Image = result.id;
                 });
             }
-            console.log(mon);
+
             mon.NgaySua = new Date();
             await Mon.update(mon, {
                 where: {
