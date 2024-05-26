@@ -3,7 +3,7 @@ import { Mon, MonAttributes } from './Mon';
 import { NhomMon, NhomMonAttributes } from './NhomMon';
 import { LoaiMon, LoaiMonAttributes } from './LoaiMon';
 import { Banner,BannerAttributes } from './Banner';
-import { ChiTietHoaDon,ChiTietHoaDonAttributes } from './ChiTietHoaDon';
+import { ChiTietHD,ChiTietHDAttributes } from './ChiTietHD';
 import { HoaDon,HoaDonAttributes } from './HoaDon';
 import { KhachHang,KhachHangAttributes } from './KhachHang';
 import { BaoGia,BaoGiaAttributes } from './BaoGia';
@@ -24,8 +24,8 @@ export {
     LoaiMonAttributes as LoaiMonAttributes,
     Banner as Banner,
     BannerAttributes as BannerAttributes,
-    ChiTietHoaDon as ChiTietHoaDon,
-    ChiTietHoaDonAttributes as ChiTietHoaDonAttributes,
+    ChiTietHD as ChiTietHD,
+    ChiTietHDAttributes as ChiTietHDAttributes,
     HoaDon as HoaDon,
     HoaDonAttributes as HoaDonAttributes,
     KhachHang as KhachHang,
@@ -54,7 +54,7 @@ export function initModels(sequelize: Sequelize) {
     NhomMon.initModel(sequelize);
     LoaiMon.initModel(sequelize);
     Banner.initModel(sequelize);
-    ChiTietHoaDon.initModel(sequelize);
+    ChiTietHD.initModel(sequelize);
     HoaDon.initModel(sequelize);
     KhachHang.initModel(sequelize);
     BaoGia.initModel(sequelize);
@@ -70,7 +70,7 @@ export function initModels(sequelize: Sequelize) {
         NhomMon,
         LoaiMon,
         Banner,
-        ChiTietHoaDon,
+        ChiTietHD,
         HoaDon,
         KhachHang,
         BaoGia,

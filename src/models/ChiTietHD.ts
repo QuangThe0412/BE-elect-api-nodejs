@@ -1,6 +1,6 @@
 import { DataTypes, Model, Sequelize } from 'sequelize';
 
-export interface ChiTietHoaDonAttributes {
+export interface ChiTietHDAttributes {
     IDChiTietHD?: number;
     IDHoaDon?: number;
     IDMon?: number;
@@ -13,7 +13,7 @@ export interface ChiTietHoaDonAttributes {
     Deleted?: boolean;
 }
 
-export class ChiTietHoaDon extends Model<ChiTietHoaDonAttributes> implements ChiTietHoaDonAttributes {
+export class ChiTietHD extends Model<ChiTietHDAttributes> implements ChiTietHDAttributes {
     IDChiTietHD?: number;
     IDHoaDon?: number;
     IDMon?: number;
@@ -26,7 +26,7 @@ export class ChiTietHoaDon extends Model<ChiTietHoaDonAttributes> implements Chi
     Deleted?: boolean;
 
     static initModel(sequelize: Sequelize) {
-        ChiTietHoaDon.init(
+        ChiTietHD.init(
             {
                 IDChiTietHD: {
                     type: DataTypes.INTEGER,
@@ -73,11 +73,11 @@ export class ChiTietHoaDon extends Model<ChiTietHoaDonAttributes> implements Chi
             },
             {
                 sequelize,
-                modelName: 'ChiTietHoaDon',
-                tableName: 'ChiTietHoaDon',
+                modelName: 'ChiTietHD',
+                tableName: 'ChiTietHD',
                 timestamps: false,
             }
         );
-        return ChiTietHoaDon;
+        return ChiTietHD;
     }
 }
