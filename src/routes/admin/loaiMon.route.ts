@@ -11,7 +11,7 @@ routerLoaiMon.get(
             let result: LoaiMon[] = await LoaiMon.findAll({
                 order: [['IDLoaiMon', 'DESC']],
             });
-            res.send({
+            res.status(200).send({
                 data: result,
                 code: 'GET_ALL_LOAIMON_SUCCESS',
                 mess: 'Get all loai mon success',
@@ -59,7 +59,7 @@ routerLoaiMon.post(
             }
 
             const result = await LoaiMon.create(loaiMon);
-            res.send({
+            res.status(200).send({
                 data: result,
                 code: 'CREATE_LOAIMON_SUCCESS',
                 mess: 'Create loai mon success',
@@ -81,7 +81,7 @@ routerLoaiMon.get(
                     IDLoaiMon: id,
                 },
             });
-            res.send({
+            res.status(200).send({
                 data: result,
                 code: 'GET_LOAIMON_SUCCESS',
                 mess: 'Get loai mon success',
@@ -142,7 +142,7 @@ routerLoaiMon.put(
             });
 
             const response = await LoaiMon.update({ TenLoai, IDNhomMon }, { where: { IDLoaiMon: id } });
-            res.send({
+            res.status(200).send({
                 data: response,
                 code: 'UPDATE_LOAIMON_SUCCESS',
                 mess: 'Update loai mon success',
@@ -195,7 +195,7 @@ routerLoaiMon.delete(
             loaiMon.Deleted = !loaiMon.Deleted;
 
             const response = await LoaiMon.update(loaiMon, { where: { IDLoaiMon: id } });
-            res.send({
+            res.status(200).send({
                 data: response,
                 code: 'TOGGLE_LOAIMON_SUCCESS',
                 mess: 'Bật/Tắt loại món thành công',
@@ -229,7 +229,7 @@ routerLoaiMon.get(
                 },
             });
 
-            res.send({
+            res.status(200).send({
                 data: mons,
                 code: 'SEARCH_MON_BY_LOAIMON_SUCCESS',
                 mess: 'Tìm kiếm món theo loại món thành công',

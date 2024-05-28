@@ -70,7 +70,7 @@ routerThongKe.get(
                 TenMon: monMap.get(chiTiet.IDMon)
             }));
 
-            res.send({
+            res.status(200).send({
                 data: result,
                 code: 'GET_THONG_KE_SUCCESS',
                 mess: 'Get thong ke success!',

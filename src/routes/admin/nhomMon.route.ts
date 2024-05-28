@@ -11,7 +11,7 @@ routerNhomMon.get(
             let result: NhomMon[] = await NhomMon.findAll({
                 order: [['IDNhomMon', 'DESC']],
             });
-            res.send({
+            res.status(200).send({
                 data: result,
                 code: 'GET_ALL_NHOMMON_SUCCESS',
                 mess: 'Get all nhom mon success',
@@ -45,7 +45,7 @@ routerNhomMon.post(
             }
 
             const result = await NhomMon.create(nhomMon);
-            res.send({
+            res.status(200).send({
                 data: result,
                 code: 'CREATE_NHOMMON_SUCCESS',
                 mess: 'Create nhom mon success',
@@ -67,7 +67,7 @@ routerNhomMon.get(
                     IDNhomMon: id,
                 },
             })
-            res.send({
+            res.status(200).send({
                 data: result,
                 code: 'GET_NHOMMON_SUCCESS',
                 mess: 'Get nhom mon success',
@@ -113,7 +113,7 @@ routerNhomMon.put(
                 }
             }
             const response = await NhomMon.update({ ...nhomMon }, { where: { IDNhomMon: id } });
-            res.send({
+            res.status(200).send({
                 data: response,
                 code: 'UPDATE_NHOMMON_SUCCESS',
                 mess: 'Update nhom mon success',

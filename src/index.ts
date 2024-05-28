@@ -30,7 +30,7 @@ const app = express();
 export type AuthUser = {
   username: string;
   userId: number;
-  role: [] | string[] | string;
+  roles: [] | string[] | string;
 };
 
 export type Request = ExpressRequest & {

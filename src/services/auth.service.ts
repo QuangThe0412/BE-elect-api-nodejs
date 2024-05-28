@@ -22,7 +22,7 @@ const authService = {
         const refreshToken = jwt.sign(
             payloadWithoutExp,
             config.REFRESH_TOKEN_SECRET ?? '',
-            { expiresIn: '7d' }
+            { expiresIn: config.REFRESH_TOKEN_EXPIRE_IN }
         );
         return { accessToken, refreshToken };
     },

@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 import config from '../config/config';
-import { Admin } from '../models/init-models';
+import { NguoiDung } from '@models/NguoiDung';
 
 export const MergeWithOldData = (oldData: any, newData: any) => {
     for (let key in newData) {
@@ -36,19 +36,22 @@ export const ComparePassword = async (userName: string, password: string, hash: 
     }
 };
 
-export const GetRoles = (admin: Admin) => {
+export const GetRoles = (nguoiDung: NguoiDung) => {
     const roles = [];
-    if (admin.admin) {
+    if (nguoiDung.admin) {
         roles.push('ADMIN');
     }
-    if (admin.cashier) {
+    if (nguoiDung.cashier) {
         roles.push('CASHIER');
     }
-    if (admin.saler) {
+    if (nguoiDung.saler) {
         roles.push('SALER');
     }
-    if (admin.inventory) {
+    if (nguoiDung.inventory) {
         roles.push('INVENTORY');
+    }
+    if (nguoiDung.guest) {
+        roles.push('GUEST');
     }
     return roles;
 }

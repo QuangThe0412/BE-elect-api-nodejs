@@ -7,6 +7,7 @@ import routerAuth from "./auth.route";
 import routerThongKe from "./thongke.route";
 import adminAuthMiddleware from '../../middlewares/admin-auth.middleware';
 
+
 const router = express.Router();
 
 router.use('/auth', routerAuth);

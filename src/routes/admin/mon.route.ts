@@ -15,7 +15,7 @@ routerMon.get(
             const result = await Mon.findAll({
                 order: [['IDMon', 'DESC']],
             });
-            res.send({
+            res.status(200).send({
                 data: result,
                 code: 'GET_ALL_MON_SUCCESS',
                 mess: 'Get all mon success',
@@ -37,7 +37,7 @@ routerMon.get(
                     IDMon: id,
                 },
             })
-            res.send({
+            res.status(200).send({
                 data: result,
                 code: 'GET_MON_SUCCESS',
                 mess: 'Get mon success',
@@ -79,7 +79,7 @@ routerMon.post(
             mon.NgayTao = new Date();
             mon.NgaySua = null;
             const result = await Mon.create(mon);
-            res.send({
+            res.status(200).send({
                 data: result,
                 code: 'CREATE_MON_SUCCESS',
                 mess: 'Create mon success',
@@ -124,7 +124,7 @@ routerMon.put(
                     IDMon: id,
                 },
             });
-            res.send({
+            res.status(200).send({
                 data: mon,
                 code: 'UPDATE_MON_SUCCESS',
                 mess: 'Update mon success',
@@ -156,7 +156,7 @@ routerMon.delete(
                     IDMon: id,
                 },
             })
-            res.send({
+            res.status(200).send({
                 data: mon,
                 code: 'TOGGLE_ACTIVE_MON_SUCCESS',
                 mess: 'Bật/Tắt món thành công',

@@ -10,7 +10,12 @@ export interface NguoiDungAttributes {
   username?: string;
   password?: string;
   phone?: string;
-  email?: string;
+  ngaySinh?: Date;
+  admin?: boolean;
+  cashier?: boolean;
+  saler?: boolean;
+  inventory?: boolean;
+  guest?: boolean;
   createDate?: Date;
   modifyDate?: Date;
   Deleted?: boolean;
@@ -21,7 +26,12 @@ export class NguoiDung extends Model<NguoiDungAttributes> implements NguoiDungAt
   username?: string;
   password?: string;
   phone?: string;
-  email?: string;
+  admin?: boolean;
+  cashier?: boolean;
+  saler?: boolean;
+  inventory?: boolean;
+  guest?: boolean;
+  ngaySinh?: Date;
   createDate?: Date;
   modifyDate?: Date;
   Deleted?: boolean;
@@ -47,9 +57,34 @@ export class NguoiDung extends Model<NguoiDungAttributes> implements NguoiDungAt
           type: DataTypes.STRING,
           allowNull: true,
         },
-        email: {
-          type: DataTypes.STRING,
+        ngaySinh: {
+          type: DataTypes.DATE,
           allowNull: true,
+        },
+        admin: {
+          type: DataTypes.BOOLEAN,
+          allowNull: true,
+          defaultValue: false,
+        },
+        cashier: {
+          type: DataTypes.BOOLEAN,
+          allowNull: true,
+          defaultValue: false,
+        },
+        saler: {
+          type: DataTypes.BOOLEAN,
+          allowNull: true,
+          defaultValue: false,
+        },
+        inventory: {
+          type: DataTypes.BOOLEAN,
+          allowNull: true,
+          defaultValue: false,
+        },
+        guest: {
+          type: DataTypes.BOOLEAN,
+          allowNull: true,
+          defaultValue: false,
         },
         createDate: {
           type: DataTypes.DATE,

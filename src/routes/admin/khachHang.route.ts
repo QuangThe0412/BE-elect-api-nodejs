@@ -10,7 +10,7 @@ routerKhachHang.get('/', async (req: Request, res: Response) => {
         let result: KhachHang[] = await KhachHang.findAll({
             order: [['IDKhachHang', 'DESC']],
         });
-        res.send({
+        res.status(200).send({
             data: result,
             code: 'GET_ALL_KHACHHANG_SUCCESS',
             mess: 'Get all khach hang success',
@@ -27,7 +27,7 @@ routerKhachHang.post('/', async (req: Request, res: Response) => {
         const khachHang = req.body as KhachHang;
         khachHang.NgayTao = new Date();
         const result = await KhachHang.create(khachHang);
-        res.send({
+        res.status(200).send({
             data: result,
             code: 'CREATE_KHACHHANG_SUCCESS',
             mess: 'Create khach hang success',
@@ -47,7 +47,7 @@ routerKhachHang.get('/:id', async (req: Request, res: Response) => {
                 IDKhachHang: id,
             },
         })
-        res.send({
+        res.status(200).send({
             data: result,
             code: 'GET_KHACHHANG_SUCCESS',
             mess: 'Get khach hang success',
@@ -73,7 +73,7 @@ routerKhachHang.put('/:id', async (req: Request, res: Response) => {
         khachHang.NgaySua = new Date();
 
         const response = await KhachHang.update(khachHang, { where: { IDKhachHang: id } });
-        res.send({
+        res.status(200).send({
             data: response,
             code: 'UPDATE_KHACHHANG_SUCCESS',
             mess: 'Update khach hang success',
@@ -92,7 +92,7 @@ routerKhachHang.delete('/:id', async (req: Request, res: Response) => {
         if (!id) return res.status(400).send('id is required');
 
         const response = await KhachHang.update({ Deleted: true, NgaySua: new Date() }, { where: { IDKhachHang: id } });
-        res.send({
+        res.status(200).send({
             data: response,
             code: 'DELETE_KHACHHANG_SUCCESS',
             mess: 'Delete khach hang success',

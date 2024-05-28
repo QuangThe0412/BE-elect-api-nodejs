@@ -13,7 +13,6 @@ import { ChiTietPhieuNhap,ChiTietPhieuNhapAttributes } from './ChiTietPhieuNhap'
 import { PhieuXuat,PhieuXuatAttributes } from './PhieuXuat';
 import { ChiTietPhieuXuat,ChiTietPhieuXuatAttributes } from './ChiTietPhieuXuat';
 import { NguoiDung,NguoiDungAttributes } from './NguoiDung';
-import { Admin, AdminAttributes } from './Admin';
 
 export {
     Mon as Mon,
@@ -44,8 +43,6 @@ export {
     ChiTietPhieuXuatAttributes as ChiTietPhieuXuatAttributes,
     NguoiDung as NguoiDung,
     NguoiDungAttributes as NguoiDungAttributes,
-    Admin as Admin,
-    AdminAttributes as AdminAttributes,
 
 };
 
@@ -64,7 +61,6 @@ export function initModels(sequelize: Sequelize) {
     PhieuXuat.initModel(sequelize);
     ChiTietPhieuXuat.initModel(sequelize);
     NguoiDung.initModel(sequelize);
-    Admin.initModel(sequelize);
     return {
         Mon,
         NhomMon,
@@ -80,6 +76,5 @@ export function initModels(sequelize: Sequelize) {
         PhieuXuat,
         ChiTietPhieuXuat,
         NguoiDung,
-        Admin,
     };
 }
