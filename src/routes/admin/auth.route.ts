@@ -17,7 +17,7 @@ routerAuth.post(
     async (req: Request, res: Response, next: NextFunction) => {
         try {
             let payload = { ...req.body };
-            let { username, password, phone,ngaySinh } = payload;
+            let { username, password, phone, ngaySinh } = payload;
 
             let duplicatedUser = await NguoiDung.findOne({
                 where: {
@@ -44,7 +44,7 @@ routerAuth.post(
                 saler: false,
                 cashier: false,
                 inventory: false,
-                guest : true,
+                guest: true,
                 ngaySinh,
                 createDate: new Date(),
                 modifyDate: null,
@@ -59,7 +59,7 @@ routerAuth.post(
                 },
             });
             return res.status(201).send({
-                data : tokens,
+                data: tokens,
                 code: 'REGISTER_SUCCESS',
                 mess: 'Đăng ký tài khoản thành công',
             });
@@ -113,7 +113,7 @@ routerAuth.post('/refreshToken', async (req: Request, res: Response) => {
             refreshToken,
             config.ADMIN_ACCESS_SECRET as string
         );
-        
+
         res.status(200).send({
             data: response,
             code: 'REFRESH_TOKEN_SUCCESS',
@@ -124,4 +124,100 @@ routerAuth.post('/refreshToken', async (req: Request, res: Response) => {
     }
 });
 
+routerAuth.get('/me', async (req: Request, res: Response) => {
+    try {
+        const { idUser } = req.query;
+        console.log('idUser', idUser);
+        if (!idUser) {
+            return res.status(400).json({
+                code: 'missing_user_id',
+                mess: 'Missing user id',
+            });
+        }
+
+        const user = await NguoiDung.findOne({
+            where: {
+                id: Number(idUser),
+            },
+        });
+
+        const userResponse = {
+            id: user.id,
+            username: user.username,
+            phone: user.phone,
+            admin: user.admin,
+            saler: user.saler,
+            cashier: user.cashier,
+            inventory: user.inventory,
+            guest: user.guest,
+            ngaySinh: user.ngaySinh,
+            createDate: user.createDate,
+            modifyDate: user.modifyDate,
+            Deleted: user.Deleted,
+        };
+
+        res.status(200).send({
+            data: userResponse,
+            code: 'GET_PROFILE_SUCCESS',
+            mess: 'Get profile success',
+        });
+    } catch (err) {
+        res.status(500).send(err);
+    }
+});
+
+
+routerAuth.put('/updateProfile', async (req: Request, res: Response) => {
+    try {
+        const { id, phone, ngaySinh } = req.body;
+        if (!id || !phone) {
+            return res.status(400).json({
+                code: 'missing_user_id_or_phone',
+                mess: 'Không tìm thấy id hoặc số điện thoại',
+            });
+        }
+
+        const user = await NguoiDung.findOne({
+            where: {
+                id: Number(id),
+            },
+        });
+
+        if (!user) {
+            return res.status(400).json({
+                code: 'user_not_found',
+                mess: 'Không tìm thấy người dùng',
+            });
+        }
+
+        // kiem tra so dien thoai da ton tai chua
+        if (phone && phone !== user.phone) {
+            const userByPhone = await NguoiDung.findOne({
+                where: {
+                    phone,
+                },
+            });
+
+            if (userByPhone) {
+                return res.status(400).json({
+                    code: 'phone_exist',
+                    mess: 'Số điện thoại đã đuợc sử dụng',
+                });
+            }
+        }
+        user.phone = phone;
+        user.ngaySinh = ngaySinh;
+        user.modifyDate = new Date();
+
+        await NguoiDung.update(user, { where: { id: user.id } });
+
+        res.status(200).send({
+            data: user,
+            code: 'UPDATE_PROFILE_SUCCESS',
+            mess: 'Update profile success',
+        });
+    } catch (err) {
+        res.status(500).send(err);
+    }
+});
 export default routerAuth;

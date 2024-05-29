@@ -40,7 +40,6 @@ const authService = {
     refreshToken(refreshToken: string, secret: string) {
         try {
             const decoded = jwt.verify(refreshToken, secret) as JwtPayload;
-            console.log({ decoded });
             const tokens = authService.generateTokens(
                 decoded,
                 secret

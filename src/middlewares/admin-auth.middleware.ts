@@ -6,7 +6,6 @@ import { roleAccess } from '../routes/admin';
 
 function adminAuthMiddleware(req: Request, res: Response, next: NextFunction) {
     try {
-        console.log({req})
         req.user = authService.validateAccessToken(
             req.headers.authorization,
             config.ADMIN_ACCESS_SECRET
@@ -28,7 +27,6 @@ const checkRoleAccess = (path: string, user: AuthUser) => {
         const role = roleAccess.find((role) => {
             return path.toLowerCase().includes(role.path.toLowerCase());
         });
-        console.log({ role });
 
         if (!role) {
             throw {
@@ -36,11 +34,10 @@ const checkRoleAccess = (path: string, user: AuthUser) => {
                 message: 'Not found'
             };
         }
-        console.log({ user });
         if (!role.role.includes(user.roles.toString())) {
             throw {
                 status: 403,
-                message: 'Forbidden'
+                message: 'Bạn không đủ quyền truy cập vào ' + path
             };
         }
     } catch (error: any) {
