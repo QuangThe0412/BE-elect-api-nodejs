@@ -9,7 +9,7 @@ const authService = {
         payload,
         secret: string = config.ACCESS_TOKEN_SECRET ?? ''
     ) {
-        const {exp,...payloadWithoutExp} = payload;
+        const { exp, iat, ...payloadWithoutExp } = payload;
 
         const accessToken = jwt.sign(
             payloadWithoutExp,
@@ -40,14 +40,14 @@ const authService = {
     refreshToken(refreshToken: string, secret: string) {
         try {
             const decoded = jwt.verify(refreshToken, secret) as JwtPayload;
+            console.log({ decoded });
             const tokens = authService.generateTokens(
                 decoded,
                 secret
             );
 
-            return {
-                accessToken: tokens.accessToken,
-            };
+            const accessToken = tokens.accessToken;
+            return accessToken;
         } catch (err) {
             console.error(err);
             throw err;

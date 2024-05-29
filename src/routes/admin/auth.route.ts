@@ -113,6 +113,7 @@ routerAuth.post('/refreshToken', async (req: Request, res: Response) => {
             refreshToken,
             config.ADMIN_ACCESS_SECRET as string
         );
+        
         res.status(200).send({
             data: response,
             code: 'REFRESH_TOKEN_SUCCESS',

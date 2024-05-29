@@ -7,7 +7,7 @@ import express, {
 import cors from 'cors';
 import { sequelizeInstance } from './db/index';
 import { initModels } from './models/init-models';
-import adminRouter from './routes/admin';
+import { router as adminRouter } from './routes/admin';
 import errorHandlerMiddleware from './middlewares/error-handler.middleware';
 import { serviceGoogleApi } from './services/serviceGoogleApi';
 
