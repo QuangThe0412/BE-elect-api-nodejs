@@ -94,7 +94,7 @@ routerAuth.post('/login', async (req: Request, res: Response) => {
             {
                 user: authPayload,
             },
-            config.ADMIN_ACCESS_TOKEN_SECRET
+            config.ADMIN_ACCESS_SECRET
         );
         return res.status(200).send({
             data: generatedTokens,
@@ -108,10 +108,10 @@ routerAuth.post('/login', async (req: Request, res: Response) => {
 
 routerAuth.post('/refreshToken', async (req: Request, res: Response) => {
     try {
-        const { token } = req.body;
+        const { refreshToken } = req.body;
         const response = authService.refreshToken(
-            token,
-            config.ADMIN_REFRESH_TOKEN_SECRET as string
+            refreshToken,
+            config.ADMIN_ACCESS_SECRET as string
         );
         res.status(200).send({
             data: response,

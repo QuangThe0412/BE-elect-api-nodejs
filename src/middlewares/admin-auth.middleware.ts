@@ -6,8 +6,11 @@ function adminAuthMiddleware(req: Request, res: Response, next: NextFunction) {
     try {
         req.user = authService.validateAccessToken(
             req.headers.authorization,
-            config.ADMIN_ACCESS_TOKEN_SECRET
+            config.ADMIN_ACCESS_SECRET
         );
+
+        console.log('================================')
+        console.log('req.user', req.user);
         next();
     } catch (error: any) {
         if (error.name === 'JsonWebTokenError' || error.name === 'TokenExpiredError') {
