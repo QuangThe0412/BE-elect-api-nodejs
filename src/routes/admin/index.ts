@@ -32,7 +32,7 @@ const roleAccess = [
     },
     {
         path: paths.nguoiDung,
-        role: [RoleEnum.ADMIN]
+        role: [RoleEnum.ADMIN, RoleEnum.CASHIER, RoleEnum.SALER, RoleEnum.INVENTORY, RoleEnum.GUEST]
     },
     {
         path: paths.mon,

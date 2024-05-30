@@ -3,14 +3,9 @@ import { NguoiDung } from '../../models/init-models';
 import { Op } from 'sequelize';
 import schemaValidation from '../../middlewares/schema-validation.middleware';
 import userSchema from '../../schemas/user.schema';
-import { HashPassword, GetRoles } from '../../utils';
-import * as jwt from 'jsonwebtoken';
+import { HashPassword, GetRoles, RoleEnum, IsAdmin } from '../../utils';
 import { AuthUser } from '../../index';
 import config from '../../config/config';
-
-type JwtPayload = {
-    user: AuthUser;
-};
 
 const routerNguoiDung = express.Router();
 
@@ -19,6 +14,12 @@ routerNguoiDung.get('/', async (req: Request, res: Response) => {
         let result: NguoiDung[] = await NguoiDung.findAll({
             order: [['id', 'DESC']],
         });
+
+        result = result.map((item) => {
+            item.password = undefined;
+            return item;
+        });
+
         res.status(200).send({
             data: result,
             code: 'GET_ALL_NGUOIDUNG_SUCCESS',
@@ -30,20 +31,14 @@ routerNguoiDung.get('/', async (req: Request, res: Response) => {
     }
 });
 
-routerNguoiDung.post('/',
+routerNguoiDung.post('/', //--------------------- not OK
     async (req: Request, res: Response) => {
         try {
-            let authorization = req.headers.authorization as string;
-            let secret = config.ACCESS_TOKEN_SECRET as string;
-            const decoded = jwt.verify(authorization, secret) as JwtPayload
+            let checkAdmin = await IsAdmin(req, res);
+            if (checkAdmin) return checkAdmin;
 
-            console.log('Decoded: ', decoded);
+            const { username, password, phone, ngaySinh } = req.body as NguoiDung;
 
-            let payload = { ...req.body };
-            let { username, password, phone, ngaySinh } = payload;
-
-            return res.status(400).json({});
-            //////
             let duplicatedUser = await NguoiDung.findOne({
                 where: {
                     [Op.or]: [
@@ -61,25 +56,10 @@ routerNguoiDung.post('/',
 
             let pwdToStore = await HashPassword(username, password);
 
-            const nguoiDung = await NguoiDung.create({
-                username,
-                password: pwdToStore,
-                phone,
-                admin: false,
-                saler: false,
-                cashier: false,
-                inventory: false,
-                guest: true,
-                ngaySinh,
-                createDate: new Date(),
-                modifyDate: null,
-                Deleted: false,
-            });
-
             return res.status(201).send({
                 // data: tokens,
-                code: 'REGISTER_SUCCESS',
-                mess: 'Đăng ký tài khoản thành công',
+                code: 'CREATE_USER_SUCCESS',
+                mess: 'Tạo user thành công',
             });
         } catch (err) {
             console.error(err);
@@ -109,26 +89,60 @@ routerNguoiDung.get('/:id', async (req: Request, res: Response) => {
     }
 });
 
-routerNguoiDung.put('/:id', async (req: Request, res: Response) => {
+routerNguoiDung.put('/:id', async (req: Request, res: Response) => { ////////////////--- not OK
     try {
+        let checkAdmin = await IsAdmin(req, res);
+        if (checkAdmin) return checkAdmin;
+
         const id = req.params.id;
-        const nguoiDung = req.body as NguoiDung;
-        const result = await NguoiDung.update(nguoiDung, {
+        if (!id) return res.status(400).send({
+            code: 'ID_REQUIRED',
+            mess: 'ID không được để trống',
+        });
+
+        const nguoiDung = await NguoiDung.findByPk(id);
+        if (!nguoiDung) return res.status(404).send({
+            code: 'NOT_FOUND',
+            mess: 'Không tìm thấy người dùng',
+        });
+
+        const newNguoiDung = req.body as NguoiDung;
+        if (newNguoiDung.password) {
+            newNguoiDung.password = await HashPassword(nguoiDung.username, newNguoiDung.password);
+        }
+
+        //check trùng số điện thoại
+        if (newNguoiDung.phone) {
+            let duplicatedUserByPhone =  nguoiDung.phone !== newNguoiDung.phone && await NguoiDung.findOne({
+                where: {
+                    phone: newNguoiDung.phone,
+                },
+            });
+
+            if (duplicatedUserByPhone) {
+                return res.status(400).json({
+                    code: 'phone_exist',
+                    mess: 'Số điện thoại đã tốn tại',
+                });
+            }
+        }
+        newNguoiDung.username = nguoiDung.username;
+        newNguoiDung.modifyDate = new Date();
+        const result = await NguoiDung.update(newNguoiDung, {
             where: {
                 id: id,
             },
         });
-        if (result[0]) {
-            res.status(200).send({
-                code: 'UPDATE_NGUOIDUNG_SUCCESS',
-                mess: 'Cập nhật người dùng thành công',
-            });
-        } else {
-            res.status(404).send({
-                code: 'NOT_FOUND',
-                mess: 'Không tìm thấy người dùng',
-            });
-        }
+
+        if (!result) return res.status(404).send({
+            code: 'NOT_FOUND',
+            mess: 'Không tìm thấy người dùng',
+        });
+
+        res.status(200).send({
+            code: 'UPDATE_NGUOIDUNG_SUCCESS',
+            mess: 'Cập nhật người dùng thành công',
+        });
     } catch (err) {
         console.error(err);
         res.status(500).send(err);

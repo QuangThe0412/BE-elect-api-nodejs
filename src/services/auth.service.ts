@@ -1,7 +1,7 @@
 import * as jwt from 'jsonwebtoken';
 import { AuthUser } from '../index';
 import config from '../config/config';
-type JwtPayload = {
+export type JwtPayload = {
     user: AuthUser;
 };
 const authService = {

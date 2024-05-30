@@ -11,7 +11,10 @@ function adminAuthMiddleware(req: Request, res: Response, next: NextFunction) {
             config.ADMIN_ACCESS_SECRET
         );
 
-        checkRoleAccess(req?.baseUrl, req.user);
+        const result = checkRoleAccess(req?.baseUrl, req.user);
+        if (result) {
+            return result;
+        }
 
         next();
     } catch (error: any) {
@@ -28,7 +31,7 @@ const checkRoleAccess = (path: string, user: AuthUser) => {
             return path.toLowerCase().includes(role.path.toLowerCase());
         });
         if (!role) {
-            throw {
+            return {
                 status: 404,
                 mess: 'Không tìm thấy role cho ' + path
             };
@@ -36,7 +39,7 @@ const checkRoleAccess = (path: string, user: AuthUser) => {
 
         let checkRole = (user.roles as string[]).some(item => role.role.includes(item));
         if (!checkRole) {
-            throw {
+            return {
                 status: 403,
                 mess: 'Bạn không đủ quyền truy cập vào ' + path
             };

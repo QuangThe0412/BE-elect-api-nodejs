@@ -1,6 +1,9 @@
 import bcrypt from 'bcrypt';
 import config from '../config/config';
 import { NguoiDung } from '@models/NguoiDung';
+import { Request, Response } from 'express';
+import * as jwt from 'jsonwebtoken';
+import { JwtPayload } from '@services/auth.service';
 
 export const MergeWithOldData = (oldData: any, newData: any) => {
     for (let key in newData) {
@@ -63,3 +66,24 @@ export const GetRoles = (nguoiDung: NguoiDung) => {
     }
     return roles;
 }
+
+export const IsAdmin = async (req: Request, res: Response) => {
+    try {
+        //check người dùng có phải admin không
+        let authorization = req.headers.authorization as string;
+        let secret = config.ACCESS_TOKEN_SECRET as string;
+        const decoded = jwt.verify(authorization, secret) as JwtPayload
+
+        if (!decoded || !decoded.user || !decoded.user.roles
+            || !Array.isArray(decoded.user.roles)
+            || !decoded.user.roles.some((role) => role === RoleEnum.ADMIN)) {
+            return res.status(403).json({
+                code: 'FORBIDDEN',
+                mess: 'Bạn không có quyền sửa thông tin người dùng',
+            });
+        }
+    } catch (err) {
+        console.error(err);
+        return res.status(500).send(err);
+    }
+};
