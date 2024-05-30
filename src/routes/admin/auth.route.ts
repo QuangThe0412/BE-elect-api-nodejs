@@ -220,4 +220,51 @@ routerAuth.put('/updateProfile', async (req: Request, res: Response) => {
         res.status(500).send(err);
     }
 });
+
+routerAuth.put('/changePassword', async (req: Request, res: Response) => {
+    try {
+        const { idUser, oldPassword, newPassword } = req.body;
+        if (!idUser || !oldPassword || !newPassword) {
+            return res.status(400).json({
+                code: 'missing_idUser_or_password',
+                mess: 'Không tìm thấy idUser hoặc mật khẩu',
+            });
+        }
+
+        const user = await NguoiDung.findOne({
+            where: {
+                id: Number(idUser),
+            },
+        });
+
+        if (!user) {
+            return res.status(400).json({
+                code: 'user_not_found',
+                mess: 'Không tìm thấy người dùng',
+            });
+        }
+
+        if (!(await ComparePassword(user.username, oldPassword, user.password))) {
+            return res.status(400).json({
+                code: 'incorrect_password',
+                mess: 'Mật khẩu hiện tại không đúng',
+            });
+        }
+
+        const newPwd = await HashPassword(user.username, newPassword);
+        user.password = newPwd;
+        user.modifyDate = new Date();
+
+        await NguoiDung.update(user, { where: { id: user.id } });
+
+        res.status(200).send({
+            data: user,
+            code: 'CHANGE_PASSWORD_SUCCESS',
+            mess: 'Đổi mật khẩu thành công',
+        });
+    } catch (err) {
+        res.status(500).send(err);
+    }
+});
+
 export default routerAuth;

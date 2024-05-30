@@ -36,22 +36,30 @@ export const ComparePassword = async (userName: string, password: string, hash: 
     }
 };
 
+export const RoleEnum = {
+    'ADMIN': 'ADMIN',
+    'CASHIER': 'CASHIER',
+    'SALER': 'SALER',
+    'INVENTORY': 'INVENTORY',
+    'GUEST': 'GUEST'
+};
+
 export const GetRoles = (nguoiDung: NguoiDung) => {
     const roles = [];
     if (nguoiDung.admin) {
-        roles.push('ADMIN');
+        roles.push(RoleEnum.ADMIN);
     }
     if (nguoiDung.cashier) {
-        roles.push('CASHIER');
+        roles.push(RoleEnum.CASHIER);
     }
     if (nguoiDung.saler) {
-        roles.push('SALER');
+        roles.push(RoleEnum.SALER);
     }
     if (nguoiDung.inventory) {
-        roles.push('INVENTORY');
+        roles.push(RoleEnum.INVENTORY);
     }
     if (nguoiDung.guest) {
-        roles.push('GUEST');
+        roles.push(RoleEnum.GUEST);
     }
     return roles;
 }

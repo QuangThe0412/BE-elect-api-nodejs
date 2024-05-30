@@ -6,6 +6,7 @@ import routerKhachHang from "./khachHang.route";
 import routerAuth from "./auth.route";
 import routerThongKe from "./thongke.route";
 import adminAuthMiddleware from '../../middlewares/admin-auth.middleware';
+import { RoleEnum } from '../../utils';
 
 const paths = {
     auth: '/auth',
@@ -19,27 +20,27 @@ const paths = {
 const roleAccess = [
     {
         path: paths.auth,
-        role: ['ADMIN', 'CASHIER', 'SALER', 'INVENTORY', 'GUEST']
+        role: [RoleEnum.ADMIN, RoleEnum.CASHIER, RoleEnum.SALER, RoleEnum.INVENTORY, RoleEnum.GUEST]
     },
     {
         path: paths.mon,
-        role: ['ADMIN']
+        role: [RoleEnum.ADMIN]
     },
     {
         path: paths.nhomMon,
-        role: ['ADMIN']
+        role: [RoleEnum.ADMIN]
     },
     {
         path: paths.loaiMon,
-        role: ['ADMIN', 'GUEST']
+        role: [RoleEnum.ADMIN, RoleEnum.GUEST]
     },
     {
         path: paths.khachHang,
-        role: ['ADMIN']
+        role: [RoleEnum.ADMIN]
     },
     {
         path: paths.thongke,
-        role: ['ADMIN', 'GUEST']
+        role: [RoleEnum.ADMIN,  RoleEnum.GUEST]
     }
 ];
 
