@@ -8,7 +8,7 @@ const userSchema = {
                 .string()
                 .required()
                 .matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/),
-                phone: yup
+            phone: yup
                 .string()
                 .required()
                 .matches(/(84|0[3|5|7|8|9])+([0-9]{8})\b/),

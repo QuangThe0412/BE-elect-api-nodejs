@@ -18,7 +18,7 @@ routerMon.get(
             res.status(200).send({
                 data: result,
                 code: 'GET_ALL_MON_SUCCESS',
-                mess: 'Get all mon success',
+                mess: 'Nhận danh sách món thành công',
             });
         } catch (err) {
             console.error(err);
@@ -40,7 +40,7 @@ routerMon.get(
             res.status(200).send({
                 data: result,
                 code: 'GET_MON_SUCCESS',
-                mess: 'Get mon success',
+                mess: 'Nhận thông tin món thành công',
             });
         } catch (err) {
             console.error(err);
@@ -82,7 +82,7 @@ routerMon.post(
             res.status(200).send({
                 data: result,
                 code: 'CREATE_MON_SUCCESS',
-                mess: 'Create mon success',
+                mess: 'Tạo món thành công',
             });
         } catch (err) {
             console.error(err);
@@ -127,7 +127,7 @@ routerMon.put(
             res.status(200).send({
                 data: mon,
                 code: 'UPDATE_MON_SUCCESS',
-                mess: 'Update mon success',
+                mess: 'Cập nhật món thành công',
             });
         } catch (err) {
             console.error(err);

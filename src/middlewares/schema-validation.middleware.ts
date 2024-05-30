@@ -14,7 +14,7 @@ const validate =
         } catch (err: any) {
             return res
                 .status(500)
-                .json({ type: err.name, message: err.message });
+                .json({ type: err.name, mess: err.message });
         }
     };
 

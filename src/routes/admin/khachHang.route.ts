@@ -13,7 +13,7 @@ routerKhachHang.get('/', async (req: Request, res: Response) => {
         res.status(200).send({
             data: result,
             code: 'GET_ALL_KHACHHANG_SUCCESS',
-            mess: 'Get all khach hang success',
+            mess: 'Nhận danh sách khách hàng thành công',
         });
     } catch (err) {
         console.error(err);
@@ -30,7 +30,7 @@ routerKhachHang.post('/', async (req: Request, res: Response) => {
         res.status(200).send({
             data: result,
             code: 'CREATE_KHACHHANG_SUCCESS',
-            mess: 'Create khach hang success',
+            mess: 'Tạo khách hàng thành công',
         });
     } catch (err) {
         console.error(err);
@@ -50,7 +50,7 @@ routerKhachHang.get('/:id', async (req: Request, res: Response) => {
         res.status(200).send({
             data: result,
             code: 'GET_KHACHHANG_SUCCESS',
-            mess: 'Get khach hang success',
+            mess: 'Nhận thông tin khách hàng thành công',
         });
     } catch (err) {
         console.error(err);
@@ -76,7 +76,7 @@ routerKhachHang.put('/:id', async (req: Request, res: Response) => {
         res.status(200).send({
             data: response,
             code: 'UPDATE_KHACHHANG_SUCCESS',
-            mess: 'Update khach hang success',
+            mess: 'Cập nhật khách hàng thành công',
         });
     } catch (err) {
         console.error(err);
@@ -91,11 +91,21 @@ routerKhachHang.delete('/:id', async (req: Request, res: Response) => {
 
         if (!id) return res.status(400).send('id is required');
 
-        const response = await KhachHang.update({ Deleted: true, NgaySua: new Date() }, { where: { IDKhachHang: id } });
+        let khachHang = await KhachHang.findOne({ where: { IDKhachHang: id } });
+
+        if (!khachHang) return res.status(404).send({
+            code: 'KHACHHANG_NOT_FOUND',
+            mess: 'Không tìm thấy khách hàng',
+        });
+
+        khachHang.Deleted = !khachHang.Deleted;
+        khachHang.NgaySua = new Date();
+
+        const response = await KhachHang.update(khachHang, { where: { IDKhachHang: id } });
         res.status(200).send({
             data: response,
             code: 'DELETE_KHACHHANG_SUCCESS',
-            mess: 'Delete khach hang success',
+            mess: 'Bật/tắt khách hàng thành công',
         });
     } catch (err) {
         console.error(err);

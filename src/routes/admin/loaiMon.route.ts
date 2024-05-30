@@ -14,7 +14,7 @@ routerLoaiMon.get(
             res.status(200).send({
                 data: result,
                 code: 'GET_ALL_LOAIMON_SUCCESS',
-                mess: 'Get all loai mon success',
+                mess: 'Nhận danh sách loại món thành công',
             });
         } catch (err) {
             console.error(err);
@@ -62,7 +62,7 @@ routerLoaiMon.post(
             res.status(200).send({
                 data: result,
                 code: 'CREATE_LOAIMON_SUCCESS',
-                mess: 'Create loai mon success',
+                mess: 'Tạo loại món thành công',
             });
         } catch (err) {
             console.error(err);
@@ -84,7 +84,7 @@ routerLoaiMon.get(
             res.status(200).send({
                 data: result,
                 code: 'GET_LOAIMON_SUCCESS',
-                mess: 'Get loai mon success',
+                mess: 'Nhận thông tin loại món thành công',
             });
         } catch (err) {
             console.error(err);
@@ -145,7 +145,7 @@ routerLoaiMon.put(
             res.status(200).send({
                 data: response,
                 code: 'UPDATE_LOAIMON_SUCCESS',
-                mess: 'Update loai mon success',
+                mess: 'Cập nhật loại món thành công',
             });
         } catch (err) {
             console.error(err);

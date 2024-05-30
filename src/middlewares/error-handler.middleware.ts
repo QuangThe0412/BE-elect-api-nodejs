@@ -9,30 +9,30 @@ function errorHandlerMiddleware(
 ) {
     console.log(err);
     if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
-        return res.status(400).json({ message: 'Bad Request' });
+        return res.status(400).json({ mess: 'Bad Request Middleware' });
     }
 
     if (err.status === 401) {
-        return res.status(401).json({ message: 'Unauthorized' });
+        return res.status(401).json({ mess: 'Unauthorized Middleware' });
     }
 
     if (err.status === 403) {
-        return res.status(403).json({ message: 'Forbidden' });
+        return res.status(403).json({ mess: 'Forbidden Middleware' });
     }
 
     if (err.status === 404) {
-        return res.status(404).json({ message: 'Not Found' });
+        return res.status(404).json({ mess: 'Not Found Middleware' });
     }
 
     if (err.status === 409) {
-        return res.status(409).json({ message: 'Conflict' });
+        return res.status(409).json({ mess: 'Conflict Middleware' });
     }
 
     if (err.status === 422) {
-        return res.status(422).json({ message: 'Unprocessable Entity' });
+        return res.status(422).json({ mess: 'Unprocessable Entity Middleware' });
     }
 
-    return res.status(500).json({ message: 'Internal Server Error' });
+    return res.status(500).json({ mess: 'Internal Server Error Middleware' });
 }
 
 export default errorHandlerMiddleware;

@@ -14,7 +14,7 @@ routerNhomMon.get(
             res.status(200).send({
                 data: result,
                 code: 'GET_ALL_NHOMMON_SUCCESS',
-                mess: 'Get all nhom mon success',
+                mess: 'Nhận danh sách nhóm món thành công',
             });
         } catch (err) {
             console.error(err);
@@ -40,7 +40,7 @@ routerNhomMon.post(
             if(getNhomByName){
                 return res.status(400).send({
                     code: 'NAME_NHOMMON_EXISTED',
-                    mess: 'Name NhomMon already existed',
+                    mess: 'Tên nhóm món đã tồn tại',
                 });
             }
 
@@ -48,7 +48,7 @@ routerNhomMon.post(
             res.status(200).send({
                 data: result,
                 code: 'CREATE_NHOMMON_SUCCESS',
-                mess: 'Create nhom mon success',
+                mess: 'Tạo nhóm món thành công',
             });
         } catch (err) {
             console.error(err);
@@ -70,7 +70,7 @@ routerNhomMon.get(
             res.status(200).send({
                 data: result,
                 code: 'GET_NHOMMON_SUCCESS',
-                mess: 'Get nhom mon success',
+                mess: 'Nhận thông tin nhóm món thành công',
             });
         } catch (err) {
             console.error(err);
@@ -108,7 +108,7 @@ routerNhomMon.put(
                 if (nhomMonByName) {
                     return res.status(400).send({
                         code: 'NAME_NHOMMON_EXISTED',
-                        mess: 'Name NhomMon already existed',
+                        mess: 'Tên nhóm món đã tồn tại',
                     });
                 }
             }
@@ -116,7 +116,7 @@ routerNhomMon.put(
             res.status(200).send({
                 data: response,
                 code: 'UPDATE_NHOMMON_SUCCESS',
-                mess: 'Update nhom mon success',
+                mess: 'Cập nhật nhóm món thành công',
             });
         } catch (err) {
             console.error(err);

@@ -27,17 +27,18 @@ const checkRoleAccess = (path: string, user: AuthUser) => {
         const role = roleAccess.find((role) => {
             return path.toLowerCase().includes(role.path.toLowerCase());
         });
-
         if (!role) {
             throw {
                 status: 404,
-                message: 'Not found'
+                mess: 'Không tìm thấy role cho ' + path
             };
         }
-        if (!role.role.includes(user.roles.toString())) {
+
+        let checkRole = (user.roles as string[]).some(item => role.role.includes(item));
+        if (!checkRole) {
             throw {
                 status: 403,
-                message: 'Bạn không đủ quyền truy cập vào ' + path
+                mess: 'Bạn không đủ quyền truy cập vào ' + path
             };
         }
     } catch (error: any) {

@@ -73,7 +73,7 @@ routerThongKe.get(
             res.status(200).send({
                 data: result,
                 code: 'GET_THONG_KE_SUCCESS',
-                mess: 'Get thong ke success!',
+                mess: 'Nhận thông tin thống kê thành công',
             });
         } catch (err) {
             console.error(err);
