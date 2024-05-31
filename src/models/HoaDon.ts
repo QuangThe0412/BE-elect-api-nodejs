@@ -8,7 +8,7 @@ export interface HoaDonAttributes {
     CongNo?: number;
     TrangThai?: number;
     GhiChu?: string;
-    createdDate?: Date;
+    createDate?: Date;
     modifyDate?: Date;
     createBy?: string;
     modifyBy?: string;
@@ -22,7 +22,7 @@ export class HoaDon extends Model<HoaDonAttributes> implements HoaDonAttributes 
     CongNo?: number;
     TrangThai?: number; // 0: pending, 1: finish, 2: cancel
     GhiChu?: string;
-    createdDate?: Date;
+    createDate?: Date;
     modifyDate?: Date;
     createBy?: string;
     modifyBy?: string;
@@ -60,7 +60,7 @@ export class HoaDon extends Model<HoaDonAttributes> implements HoaDonAttributes 
                     type: DataTypes.INTEGER,
                     allowNull: false,
                 },
-                createdDate: {
+                createDate: {
                     type: DataTypes.DATE,
                     allowNull: true,
                 },

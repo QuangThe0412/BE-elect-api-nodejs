@@ -76,7 +76,7 @@ routerMon.post(
                 code: 'LOAIMON_NOT_FOUND',
                 mess: 'Không tìm thấy loại món',
             });
-            mon.createdDate = new Date();
+            mon.createDate = new Date();
             mon.createBy = await GetCurrentUser(req);
             mon.modifyDate = null;
             const result = await Mon.create(mon);

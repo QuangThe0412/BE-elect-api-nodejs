@@ -3,7 +3,7 @@ import { DataTypes, Model, Sequelize } from 'sequelize';
 export interface NhomMonAttributes {
     IDNhomMon?: number;
     TenNhom?: string;
-    createdDate?: Date;
+    createDate?: Date;
     modifyDate?: Date;
     createBy?: string;
     modifyBy?: string;
@@ -13,7 +13,7 @@ export class NhomMon extends Model<NhomMonAttributes, NhomMonAttributes> impleme
 {
     IDNhomMon?: number;
     TenNhom?: string;
-    createdDate?: Date;
+    createDate?: Date;
     modifyDate?: Date;
     createBy?: string;
     modifyBy?: string;
@@ -32,10 +32,10 @@ export class NhomMon extends Model<NhomMonAttributes, NhomMonAttributes> impleme
                     type: DataTypes.STRING,
                     allowNull: false,
                 },
-                createdDate: {
+                createDate: {
                     type: DataTypes.DATE,
                     allowNull: true,
-                    field: 'createdDate',
+                    field: 'createDate',
                 },
                 modifyDate: {
                     type: DataTypes.DATE,

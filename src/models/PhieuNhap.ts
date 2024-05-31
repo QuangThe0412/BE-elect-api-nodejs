@@ -6,7 +6,7 @@ export interface PhieuNhapAttributes {
     NhaCungCap?: string;
     TongGiaTri?: number;
     GhiChu?: string;
-    createdDate?: Date;
+    createDate?: Date;
     modifyDate?: Date;
     createBy?: string;
     modifyBy?: string;
@@ -19,7 +19,7 @@ export class PhieuNhap extends Model<PhieuNhapAttributes> implements PhieuNhapAt
     NhaCungCap?: string;
     TongGiaTri?: number;
     GhiChu?: string;
-    createdDate?: Date;
+    createDate?: Date;
     modifyDate?: Date;
     createBy?: string;
     modifyBy?: string;
@@ -50,7 +50,7 @@ export class PhieuNhap extends Model<PhieuNhapAttributes> implements PhieuNhapAt
                     type: DataTypes.STRING,
                     allowNull: true,
                 },
-                createdDate: {
+                createDate: {
                     type: DataTypes.DATE,
                     allowNull: true,
                 },

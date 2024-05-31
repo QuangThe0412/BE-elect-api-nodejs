@@ -17,7 +17,7 @@ export class BaoGia extends Model<BaoGiaAttributes> implements BaoGiaAttributes 
     TotalMoney?: number;
     NgayLap?: Date;
     modifyDate?: Date;
-    createdDate?: Date;
+    createDate?: Date;
     createBy?: string;
     modifyBy?: string;
     Deleted?: boolean;

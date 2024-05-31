@@ -5,7 +5,7 @@ export interface PhieuXuatAttributes {
     IDKhachHang?: number;
     TongGiaTri?: number;
     GhiChu?: string;
-    createdDate?: Date;
+    createDate?: Date;
     modifyDate?: Date;
     createBy?: string;
     modifyBy?: string;
@@ -18,7 +18,7 @@ export class PhieuXuat extends Model<PhieuXuatAttributes> implements PhieuXuatAt
     IDKhachHang?: number;
     TongGiaTri?: number;
     GhiChu?: string;
-    createdDate?: Date;
+    createDate?: Date;
     modifyDate?: Date;
     createBy?: string;
     modifyBy?: string;
@@ -44,7 +44,7 @@ export class PhieuXuat extends Model<PhieuXuatAttributes> implements PhieuXuatAt
                     type: DataTypes.STRING,
                     allowNull: true,
                 },
-                createdDate: {
+                createDate: {
                     type: DataTypes.DATE,
                     allowNull: true,
                 },

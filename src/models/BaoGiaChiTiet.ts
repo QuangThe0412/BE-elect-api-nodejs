@@ -14,7 +14,7 @@ export interface BaoGiaChiTietAttributes {
     TienChuaCK?: number;
     SoTienCK?: number;
     TienSauCK?: number;
-    createdDate?: Date;
+    createDate?: Date;
     modifyDate?: Date;
     createBy?: string;
     modifyBy?: string;
@@ -35,7 +35,7 @@ export class BaoGiaChiTiet extends Model<BaoGiaChiTietAttributes> implements Bao
     TienChuaCK?: number;
     SoTienCK?: number;
     TienSauCK?: number;
-    createdDate?: Date;
+    createDate?: Date;
     modifyDate?: Date;
     createBy?: string;
     modifyBy?: string;
@@ -97,7 +97,7 @@ export class BaoGiaChiTiet extends Model<BaoGiaChiTietAttributes> implements Bao
                     type: DataTypes.FLOAT,
                     allowNull: false,
                 },
-                createdDate: {
+                createDate: {
                     type: DataTypes.DATE,
                     allowNull: true,
                 },

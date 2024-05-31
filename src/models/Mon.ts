@@ -12,7 +12,7 @@ export interface MonAttributes {
   SoLuongTonKho?: number;
   ThoiGianBH?: number;
   GhiChu?: string;
-  createdDate?: Date;
+  createDate?: Date;
   modifyDate?: Date;
   createBy?: string;
   modifyBy?: string;
@@ -33,7 +33,7 @@ export class Mon
   SoLuongTonKho?: number;
   ThoiGianBH?: number;
   GhiChu?: string;
-  createdDate?: Date;
+  createDate?: Date;
   modifyDate?: Date;
   createBy?: string;
   modifyBy?: string;
@@ -93,7 +93,7 @@ export class Mon
           type: DataTypes.STRING,
           allowNull: true,
         },
-        createdDate: {
+        createDate: {
           type: DataTypes.DATE,
           allowNull: true,
         },

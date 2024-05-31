@@ -26,7 +26,7 @@ routerKhachHang.post('/', async (req: Request, res: Response) => {
     try {
         const khachHang = req.body as KhachHang;
         khachHang.IDKhachHang = null;
-        khachHang.createdDate = new Date();
+        khachHang.createDate = new Date();
         khachHang.createBy = await GetCurrentUser(req);
         const result = await KhachHang.create(khachHang);
         res.status(201).send({
