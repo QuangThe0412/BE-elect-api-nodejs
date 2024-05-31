@@ -5,8 +5,6 @@ export interface BaoGiaAttributes {
     IDKhachHang?: number;
     TotalMoney?: number;
     NgayLap?: Date;
-    NgaySua?: Date;
-    createdDate?: Date;
     modifyDate?: Date;
     createdBy?: string;
     modifyBy?: string;
@@ -18,9 +16,8 @@ export class BaoGia extends Model<BaoGiaAttributes> implements BaoGiaAttributes 
     IDKhachHang?: number;
     TotalMoney?: number;
     NgayLap?: Date;
-    NgaySua?: Date;
-    createdDate?: Date;
     modifyDate?: Date;
+    createdDate?: Date;
     createdBy?: string;
     modifyBy?: string;
     Deleted?: boolean;
@@ -45,14 +42,6 @@ export class BaoGia extends Model<BaoGiaAttributes> implements BaoGiaAttributes 
                     type: DataTypes.DATE,
                     allowNull: false,
                     defaultValue: DataTypes.NOW,
-                },
-                NgaySua: {
-                    type: DataTypes.DATE,
-                    allowNull: true,
-                },
-                createdDate: {
-                    type: DataTypes.DATE,
-                    allowNull: true,
                 },
                 modifyDate: {
                     type: DataTypes.DATE,

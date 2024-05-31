@@ -1,6 +1,6 @@
 import express, { Response } from 'express';
 import { Request } from '../../index';
-import { ComparePassword, HashPassword, GetRoles } from '../../utils';
+import { ComparePassword, HashPassword, GetRoles, GetCurrentUser } from '../../utils';
 import { NguoiDung } from '../../models/init-models';
 
 const routerAccount = express.Router();
@@ -88,6 +88,7 @@ routerAccount.put('/updateProfile', async (req: Request, res: Response) => {
         user.phone = phone;
         user.ngaySinh = ngaySinh;
         user.modifyDate = new Date();
+        user.modifyBy = await GetCurrentUser(req);
 
         await NguoiDung.update(user, { where: { id: user.id } });
 
@@ -134,6 +135,7 @@ routerAccount.put('/changePassword', async (req: Request, res: Response) => {
         const newPwd = await HashPassword(user.username, newPassword);
         user.password = newPwd;
         user.modifyDate = new Date();
+        user.modifyBy = await GetCurrentUser(req);
 
         await NguoiDung.update(user, { where: { id: user.id } });
 

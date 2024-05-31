@@ -13,6 +13,8 @@ export interface NguoiDungAttributes {
   guest?: boolean;
   createDate?: Date;
   modifyDate?: Date;
+  createdBy?: string;
+  modifyBy?: string;
   Deleted?: boolean;
 }
 
@@ -26,7 +28,9 @@ export class NguoiDung extends Model<NguoiDungAttributes> implements NguoiDungAt
   saler?: boolean;
   inventory?: boolean;
   guest?: boolean;
-  ngaySinh?: Date;
+  ngaySinh?: Date;  
+  createdBy?: string;
+  modifyBy?: string;
   createDate?: Date;
   modifyDate?: Date;
   Deleted?: boolean;
@@ -87,6 +91,14 @@ export class NguoiDung extends Model<NguoiDungAttributes> implements NguoiDungAt
         },
         modifyDate: {
           type: DataTypes.DATE,
+          allowNull: true,
+        },
+        createdBy: {
+          type: DataTypes.STRING,
+          allowNull: true,
+        },
+        modifyBy: {
+          type: DataTypes.STRING,
           allowNull: true,
         },
         Deleted: {

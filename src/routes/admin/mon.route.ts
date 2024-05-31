@@ -1,6 +1,6 @@
 import express from 'express';
 import { LoaiMon, Mon } from '../../models/init-models';
-import { MergeWithOldData } from '../../utils';
+import { GetCurrentUser, MergeWithOldData } from '../../utils';
 import multer from 'multer';
 import { uploadFile,tryDeleteFile } from '../../services/serviceGoogleApi';
 
@@ -76,8 +76,9 @@ routerMon.post(
                 code: 'LOAIMON_NOT_FOUND',
                 mess: 'Không tìm thấy loại món',
             });
-            mon.NgayTao = new Date();
-            mon.NgaySua = null;
+            mon.createdDate = new Date();
+            mon.createdBy = await GetCurrentUser(req);
+            mon.modifyDate = null;
             const result = await Mon.create(mon);
             res.status(201).send({
                 data: result,
@@ -118,7 +119,8 @@ routerMon.put(
                 });
             }
 
-            mon.NgaySua = new Date();
+            mon.modifyDate = new Date();
+            mon.modifyBy = await GetCurrentUser(req);
             await Mon.update(mon, {
                 where: {
                     IDMon: id,
@@ -150,7 +152,8 @@ routerMon.delete(
             }
 
             mon.Deleted = !mon.Deleted;
-            mon.NgaySua = new Date();
+            mon.modifyDate = new Date();
+            mon.modifyBy = await GetCurrentUser(req);
             await Mon.update(mon, {
                 where: {
                     IDMon: id,

@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import { KhachHang } from '../../models/init-models';
-import { MergeWithOldData } from '../../utils';
+import { GetCurrentUser, MergeWithOldData } from '../../utils';
 
 const routerKhachHang = express.Router();
 
@@ -26,7 +26,8 @@ routerKhachHang.post('/', async (req: Request, res: Response) => {
     try {
         const khachHang = req.body as KhachHang;
         khachHang.IDKhachHang = null;
-        khachHang.NgayTao = new Date();
+        khachHang.createdDate = new Date();
+        khachHang.createdBy = await GetCurrentUser(req);
         const result = await KhachHang.create(khachHang);
         res.status(201).send({
             data: result,
@@ -71,7 +72,8 @@ routerKhachHang.put('/:id', async (req: Request, res: Response) => {
         if (!oldKhachHang) return res.status(404).send('KhachHang not found');
 
         khachHang = MergeWithOldData(oldKhachHang, khachHang);
-        khachHang.NgaySua = new Date();
+        khachHang.modifyDate = new Date();
+        khachHang.modifyBy = await GetCurrentUser(req);
 
         const response = await KhachHang.update(khachHang, { where: { IDKhachHang: id } });
         res.status(200).send({
@@ -100,7 +102,8 @@ routerKhachHang.delete('/:id', async (req: Request, res: Response) => {
         });
 
         khachHang.Deleted = !khachHang.Deleted;
-        khachHang.NgaySua = new Date();
+        khachHang.modifyDate = new Date();
+        khachHang.modifyBy = await GetCurrentUser(req);
 
         const response = await KhachHang.update(khachHang, { where: { IDKhachHang: id } });
         res.status(200).send({

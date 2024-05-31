@@ -10,8 +10,6 @@ export interface KhachHangAttributes {
     SoTaiKhoan?: string;
     IDLoaiKH?: number;
     ThongTinKhac?: string;
-    NgayTao?: Date;
-    NgaySua?: Date;
     createdDate?: Date;
     modifyDate?: Date;
     createdBy?: string;

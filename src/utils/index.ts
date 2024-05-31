@@ -87,3 +87,16 @@ export const IsAdmin = async (req: Request, res: Response) => {
         return res.status(500).send(err);
     }
 };
+
+export const GetCurrentUser = async (req: Request) => {
+    try {
+        let authorization = req.headers.authorization as string;
+        let secret = config.ACCESS_TOKEN_SECRET as string;
+        const decoded = jwt.verify(authorization, secret) as JwtPayload
+
+        return decoded?.user?.username;
+    } catch (err) {
+        console.error(err);
+        return null;
+    }
+}

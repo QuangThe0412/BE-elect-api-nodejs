@@ -3,7 +3,7 @@ import { Op } from 'sequelize';
 import schemaValidation from '../../middlewares/schema-validation.middleware';
 import { Request } from '../../index';
 import userSchema from '../../schemas/user.schema';
-import { ComparePassword, HashPassword, GetRoles } from '../../utils';
+import { ComparePassword, HashPassword, GetRoles, GetCurrentUser } from '../../utils';
 import authService from '../../services/auth.service';
 import config from '../../config/config';
 import { AuthUser } from '../../index';
@@ -48,6 +48,7 @@ routerAuth.post(
                 guest: true,
                 ngaySinh,
                 createDate: new Date(),
+                createdBy : await GetCurrentUser(req),
                 modifyDate: null,
                 Deleted: false,
             });

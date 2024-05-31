@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import { NguoiDung } from '../../models/init-models';
-import { HashPassword, IsAdmin } from '../../utils';
+import { GetCurrentUser, HashPassword, IsAdmin } from '../../utils';
 
 const routerNguoiDung = express.Router();
 
@@ -63,6 +63,7 @@ routerNguoiDung.post('/',
 
             user.password = await HashPassword(username, password);
             user.createDate = new Date();
+            user.createdBy = await GetCurrentUser(req);
 
             const newUser = await NguoiDung.create(user);
             newUser.password = undefined;
@@ -139,6 +140,7 @@ routerNguoiDung.put('/:id', async (req: Request, res: Response) => {
         }
         newNguoiDung.username = nguoiDung.username;
         newNguoiDung.modifyDate = new Date();
+        newNguoiDung.modifyBy = await GetCurrentUser(req);
         const result = await NguoiDung.update(newNguoiDung, {
             where: {
                 id: id,
@@ -179,6 +181,7 @@ routerNguoiDung.delete('/:id', async (req: Request, res: Response) => {
 
         nguoiDung.Deleted = !nguoiDung.Deleted;
         nguoiDung.modifyDate = new Date();
+        nguoiDung.modifyBy = await GetCurrentUser(req);
 
         await NguoiDung.update(nguoiDung, {
             where: {
