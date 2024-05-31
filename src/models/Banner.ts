@@ -4,18 +4,22 @@ export interface BannerAttributes {
     IdBanner?: number;
     Image?: string;
     Priority?: number;
+    createdDate?: Date;
+    modifyDate?: Date;
+    createdBy?: string;
+    modifyBy?: string;
     Deleted?: boolean;
-    CreateDay?: Date;
-    ModifyDay?: Date;
 }
 
 export class Banner extends Model<BannerAttributes> implements BannerAttributes {
     IdBanner?: number;
     Image?: string;
     Priority?: number;
+    createdDate?: Date;
+    modifyDate?: Date;
+    createdBy?: string;
+    modifyBy?: string;
     Deleted?: boolean;
-    CreateDay?: Date;
-    ModifyDay?: Date;
 
     static initModel(sequelize: Sequelize) {
         Banner.init(
@@ -33,20 +37,26 @@ export class Banner extends Model<BannerAttributes> implements BannerAttributes 
                     type: DataTypes.INTEGER,
                     allowNull: false,
                 },
-                Deleted: {
-                    type: DataTypes.BOOLEAN,
-                    allowNull: false,
-                    defaultValue: false,
-                },
-                CreateDay: {
-                    type: DataTypes.DATE,
-                    allowNull: false,
-                    defaultValue: DataTypes.NOW,
-                },
-                ModifyDay: {
+                createdDate: {
                     type: DataTypes.DATE,
                     allowNull: true,
                 },
+                modifyDate: {
+                    type: DataTypes.DATE,
+                    allowNull: true,
+                },
+                createdBy: {
+                    type: DataTypes.STRING,
+                    allowNull: true,
+                },
+                modifyBy: {
+                    type: DataTypes.STRING,
+                    allowNull: true,
+                },
+                Deleted: {
+                    type: DataTypes.BOOLEAN,
+                    allowNull: true,
+                },    
             },
             {
                 sequelize,

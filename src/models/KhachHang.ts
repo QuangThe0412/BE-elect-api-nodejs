@@ -12,6 +12,10 @@ export interface KhachHangAttributes {
     ThongTinKhac?: string;
     NgayTao?: Date;
     NgaySua?: Date;
+    createdDate?: Date;
+    modifyDate?: Date;
+    createdBy?: string;
+    modifyBy?: string;
     Deleted?: boolean;
 }
 
@@ -25,8 +29,10 @@ export class KhachHang extends Model<KhachHangAttributes> implements KhachHangAt
     SoTaiKhoan?: string;
     IDLoaiKH?: number;
     ThongTinKhac?: string;
-    NgayTao?: Date;
-    NgaySua?: Date;
+    createdDate?: Date;
+    modifyDate?: Date;
+    createdBy?: string;
+    modifyBy?: string;
     Deleted?: boolean;
 
     static initModel(sequelize: Sequelize) {
@@ -69,20 +75,26 @@ export class KhachHang extends Model<KhachHangAttributes> implements KhachHangAt
                     type: DataTypes.STRING,
                     allowNull: true,
                 },
-                NgayTao: {
+                createdDate: {
                     type: DataTypes.DATE,
-                    allowNull: false,
-                    defaultValue: DataTypes.NOW,
+                    allowNull: true,
                 },
-                NgaySua: {
+                modifyDate: {
                     type: DataTypes.DATE,
+                    allowNull: true,
+                },
+                createdBy: {
+                    type: DataTypes.STRING,
+                    allowNull: true,
+                },
+                modifyBy: {
+                    type: DataTypes.STRING,
                     allowNull: true,
                 },
                 Deleted: {
                     type: DataTypes.BOOLEAN,
-                    allowNull: false,
-                    defaultValue: false,
-                },
+                    allowNull: true,
+                },      
             },
             {
                 sequelize,

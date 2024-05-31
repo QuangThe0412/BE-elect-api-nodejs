@@ -1,18 +1,24 @@
-import { Sequelize } from 'sequelize';
+import { Sequelize, DATE } from 'sequelize';
+DATE.prototype._stringify = function _stringify(date: any, options: any) {
+    date = this._applyTimezone(date, options);
+    return date.format('YYYY-MM-DD HH:mm:ss.SSS');
+};
+
 import { Mon, MonAttributes } from './Mon';
 import { NhomMon, NhomMonAttributes } from './NhomMon';
 import { LoaiMon, LoaiMonAttributes } from './LoaiMon';
-import { Banner,BannerAttributes } from './Banner';
-import { ChiTietHD,ChiTietHDAttributes } from './ChiTietHD';
-import { HoaDon,HoaDonAttributes } from './HoaDon';
-import { KhachHang,KhachHangAttributes } from './KhachHang';
-import { BaoGia,BaoGiaAttributes } from './BaoGia';
-import { BaoGiaChiTiet,BaoGiaChiTietAttributes } from './BaoGiaChiTiet';
-import { PhieuNhap,PhieuNhapAttributes } from './PhieuNhap';
-import { ChiTietPhieuNhap,ChiTietPhieuNhapAttributes } from './ChiTietPhieuNhap';
-import { PhieuXuat,PhieuXuatAttributes } from './PhieuXuat';
-import { ChiTietPhieuXuat,ChiTietPhieuXuatAttributes } from './ChiTietPhieuXuat';
-import { NguoiDung,NguoiDungAttributes } from './NguoiDung';
+import { Banner, BannerAttributes } from './Banner';
+import { ChiTietHD, ChiTietHDAttributes } from './ChiTietHD';
+import { HoaDon, HoaDonAttributes } from './HoaDon';
+import { KhachHang, KhachHangAttributes } from './KhachHang';
+import { BaoGia, BaoGiaAttributes } from './BaoGia';
+import { BaoGiaChiTiet, BaoGiaChiTietAttributes } from './BaoGiaChiTiet';
+import { PhieuNhap, PhieuNhapAttributes } from './PhieuNhap';
+import { ChiTietPhieuNhap, ChiTietPhieuNhapAttributes } from './ChiTietPhieuNhap';
+import { PhieuXuat, PhieuXuatAttributes } from './PhieuXuat';
+import { ChiTietPhieuXuat, ChiTietPhieuXuatAttributes } from './ChiTietPhieuXuat';
+import { NguoiDung, NguoiDungAttributes } from './NguoiDung';
+
 
 export {
     Mon as Mon,

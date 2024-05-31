@@ -1,9 +1,5 @@
-import { DataTypes, Model, Sequelize, DATE } from 'sequelize';
+import { DataTypes, Model, Sequelize } from 'sequelize';
 
-DATE.prototype._stringify = function _stringify(date: any, options: any) {
-  date = this._applyTimezone(date, options);
-  return date.format('YYYY-MM-DD HH:mm:ss.SSS');
-};
 export interface MonAttributes {
   IDMon?: number;
   IDLoaiMon?: number;
@@ -16,15 +12,17 @@ export interface MonAttributes {
   SoLuongTonKho?: number;
   ThoiGianBH?: number;
   GhiChu?: string;
-  NgayTao?: Date;
-  NgaySua?: Date;
+  createdDate?: Date;
+  modifyDate?: Date;
+  createdBy?: string;
+  modifyBy?: string;
   Deleted?: boolean;
 }
 
 export class Mon
   extends Model<MonAttributes, MonAttributes>
   implements MonAttributes {
-  IDMon?: number ;
+  IDMon?: number;
   IDLoaiMon?: number;
   TenMon?: string;
   Image?: string;
@@ -35,8 +33,10 @@ export class Mon
   SoLuongTonKho?: number;
   ThoiGianBH?: number;
   GhiChu?: string;
-  NgayTao?: Date;
-  NgaySua?: Date;
+  createdDate?: Date;
+  modifyDate?: Date;
+  createdBy?: string;
+  modifyBy?: string;
   Deleted?: boolean;
 
   static initModel(sequelize: Sequelize) {
@@ -93,20 +93,25 @@ export class Mon
           type: DataTypes.STRING,
           allowNull: true,
         },
-        NgayTao: {
+        createdDate: {
           type: DataTypes.DATE,
           allowNull: true,
-          field: 'NgayTao',
         },
-        NgaySua: {
+        modifyDate: {
           type: DataTypes.DATE,
           allowNull: true,
-          field: 'NgaySua',
+        },
+        createdBy: {
+          type: DataTypes.STRING,
+          allowNull: true,
+        },
+        modifyBy: {
+          type: DataTypes.STRING,
+          allowNull: true,
         },
         Deleted: {
           type: DataTypes.BOOLEAN,
           allowNull: true,
-          defaultValue: false,
         },
       },
       {

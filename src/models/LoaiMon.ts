@@ -4,6 +4,10 @@ export interface LoaiMonAttributes {
     IDLoaiMon?: number;
     IDNhomMon?: number;
     TenLoai?: string;
+    createdDate?: Date;
+    modifyDate?: Date;
+    createdBy?: string;
+    modifyBy?: string;
     Deleted?: boolean;
 }
 
@@ -11,6 +15,10 @@ export class LoaiMon extends Model<LoaiMonAttributes> implements LoaiMonAttribut
     IDLoaiMon?: number;
     IDNhomMon?: number;
     TenLoai?: string;
+    createdDate?: Date;
+    modifyDate?: Date;
+    createdBy?: string;
+    modifyBy?: string;
     Deleted?: boolean;
 
     static initModel(sequelize: Sequelize) {
@@ -29,11 +37,26 @@ export class LoaiMon extends Model<LoaiMonAttributes> implements LoaiMonAttribut
                     type: DataTypes.STRING,
                     allowNull: false,
                 },
+                createdDate: {
+                    type: DataTypes.DATE,
+                    allowNull: true,
+                },
+                modifyDate: {
+                    type: DataTypes.DATE,
+                    allowNull: true,
+                },
+                createdBy: {
+                    type: DataTypes.STRING,
+                    allowNull: true,
+                },
+                modifyBy: {
+                    type: DataTypes.STRING,
+                    allowNull: true,
+                },
                 Deleted: {
                     type: DataTypes.BOOLEAN,
-                    allowNull: false,
-                    defaultValue: false, // Set default value
-                },
+                    allowNull: true,
+                },               
             },
             {
                 sequelize,

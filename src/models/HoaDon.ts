@@ -5,8 +5,13 @@ export interface HoaDonAttributes {
     IDBaoGia?: number;
     IDKhachHang?: number;
     NgayLap?: Date;
-    GhiChu?: string;
     CongNo?: number;
+    TrangThai?: number;
+    GhiChu?: string;
+    createdDate?: Date;
+    modifyDate?: Date;
+    createdBy?: string;
+    modifyBy?: string;
 }
 
 export class HoaDon extends Model<HoaDonAttributes> implements HoaDonAttributes {
@@ -14,8 +19,13 @@ export class HoaDon extends Model<HoaDonAttributes> implements HoaDonAttributes 
     IDBaoGia?: number;
     IDKhachHang?: number;
     NgayLap?: Date;
-    GhiChu?: string;
     CongNo?: number;
+    TrangThai?: number; // 0: pending, 1: finish, 2: cancel
+    GhiChu?: string;
+    createdDate?: Date;
+    modifyDate?: Date;
+    createdBy?: string;
+    modifyBy?: string;
 
     static initModel(sequelize: Sequelize) {
         HoaDon.init(
@@ -45,6 +55,26 @@ export class HoaDon extends Model<HoaDonAttributes> implements HoaDonAttributes 
                 CongNo: {
                     type: DataTypes.FLOAT,
                     allowNull: false,
+                },
+                TrangThai: {
+                    type: DataTypes.INTEGER,
+                    allowNull: false,
+                },
+                createdDate: {
+                    type: DataTypes.DATE,
+                    allowNull: true,
+                },
+                modifyDate: {
+                    type: DataTypes.DATE,
+                    allowNull: true,
+                },
+                createdBy: {
+                    type: DataTypes.STRING,
+                    allowNull: true,
+                },
+                modifyBy: {
+                    type: DataTypes.STRING,
+                    allowNull: true,
                 },
             },
             {

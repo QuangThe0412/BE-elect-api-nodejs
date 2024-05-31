@@ -1,9 +1,4 @@
-import { DataTypes, Model, Sequelize, DATE } from 'sequelize';
-
-DATE.prototype._stringify = function _stringify(date: any, options: any) {
-  date = this._applyTimezone(date, options);
-  return date.format('YYYY-MM-DD HH:mm:ss.SSS');
-};
+import { DataTypes, Model, Sequelize } from 'sequelize';
 
 export interface NguoiDungAttributes {
   id?: number;

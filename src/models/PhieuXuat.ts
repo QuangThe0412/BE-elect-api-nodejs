@@ -2,11 +2,13 @@ import { DataTypes, Model, Sequelize } from 'sequelize';
 
 export interface PhieuXuatAttributes {
     IDPhieuXuat?: number;
-    NgayXuat?: Date;
     IDKhachHang?: number;
     TongGiaTri?: number;
-    TenNhanVien?: string;
-    GhiChuXuat?: string;
+    GhiChu?: string;
+    createdDate?: Date;
+    modifyDate?: Date;
+    createdBy?: string;
+    modifyBy?: string;
     Deleted?: boolean;
 }
 
@@ -15,8 +17,11 @@ export class PhieuXuat extends Model<PhieuXuatAttributes> implements PhieuXuatAt
     NgayXuat?: Date;
     IDKhachHang?: number;
     TongGiaTri?: number;
-    TenNhanVien?: string;
-    GhiChuXuat?: string;
+    GhiChu?: string;
+    createdDate?: Date;
+    modifyDate?: Date;
+    createdBy?: string;
+    modifyBy?: string;
     Deleted?: boolean;
 
     static initModel(sequelize: Sequelize) {
@@ -26,12 +31,7 @@ export class PhieuXuat extends Model<PhieuXuatAttributes> implements PhieuXuatAt
                     type: DataTypes.INTEGER,
                     primaryKey: true,
                     autoIncrement: true,
-                },
-                NgayXuat: {
-                    type: DataTypes.DATE,
-                    allowNull: false,
-                    defaultValue: DataTypes.NOW,
-                },
+                },                
                 IDKhachHang: {
                     type: DataTypes.INTEGER,
                     allowNull: false,
@@ -40,19 +40,30 @@ export class PhieuXuat extends Model<PhieuXuatAttributes> implements PhieuXuatAt
                     type: DataTypes.FLOAT,
                     allowNull: false,
                 },
-                TenNhanVien: {
+                GhiChu: {
                     type: DataTypes.STRING,
-                    allowNull: false,
+                    allowNull: true,
                 },
-                GhiChuXuat: {
+                createdDate: {
+                    type: DataTypes.DATE,
+                    allowNull: true,
+                },
+                modifyDate: {
+                    type: DataTypes.DATE,
+                    allowNull: true,
+                },
+                createdBy: {
+                    type: DataTypes.STRING,
+                    allowNull: true,
+                },
+                modifyBy: {
                     type: DataTypes.STRING,
                     allowNull: true,
                 },
                 Deleted: {
                     type: DataTypes.BOOLEAN,
-                    allowNull: false,
-                    defaultValue: false,
-                },
+                    allowNull: true,
+                },               
             },
             {
                 sequelize,

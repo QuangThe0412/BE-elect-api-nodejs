@@ -14,6 +14,10 @@ export interface BaoGiaChiTietAttributes {
     TienChuaCK?: number;
     SoTienCK?: number;
     TienSauCK?: number;
+    createdDate?: Date;
+    modifyDate?: Date;
+    createdBy?: string;
+    modifyBy?: string;
     Deleted?: boolean;
 }
 
@@ -31,6 +35,10 @@ export class BaoGiaChiTiet extends Model<BaoGiaChiTietAttributes> implements Bao
     TienChuaCK?: number;
     SoTienCK?: number;
     TienSauCK?: number;
+    createdDate?: Date;
+    modifyDate?: Date;
+    createdBy?: string;
+    modifyBy?: string;
     Deleted?: boolean;
 
     static initModel(sequelize: Sequelize) {
@@ -89,11 +97,26 @@ export class BaoGiaChiTiet extends Model<BaoGiaChiTietAttributes> implements Bao
                     type: DataTypes.FLOAT,
                     allowNull: false,
                 },
+                createdDate: {
+                    type: DataTypes.DATE,
+                    allowNull: true,
+                },
+                modifyDate: {
+                    type: DataTypes.DATE,
+                    allowNull: true,
+                },
+                createdBy: {
+                    type: DataTypes.STRING,
+                    allowNull: true,
+                },
+                modifyBy: {
+                    type: DataTypes.STRING,
+                    allowNull: true,
+                },
                 Deleted: {
                     type: DataTypes.BOOLEAN,
-                    allowNull: false,
-                    defaultValue: false,
-                },
+                    allowNull: true,
+                },    
             },
             {
                 sequelize,

@@ -10,6 +10,10 @@ export interface ChiTietHDAttributes {
     TienChuaCK?: number;
     TienCK?: number;
     TienSauCK?: number;
+    createdDate?: Date;
+    modifyDate?: Date;
+    createdBy?: string;
+    modifyBy?: string;
     Deleted?: boolean;
 }
 
@@ -23,6 +27,10 @@ export class ChiTietHD extends Model<ChiTietHDAttributes> implements ChiTietHDAt
     TienChuaCK?: number;
     TienCK?: number;
     TienSauCK?: number;
+    createdDate?: Date;
+    modifyDate?: Date;
+    createdBy?: string;
+    modifyBy?: string;
     Deleted?: boolean;
 
     static initModel(sequelize: Sequelize) {
@@ -65,11 +73,26 @@ export class ChiTietHD extends Model<ChiTietHDAttributes> implements ChiTietHDAt
                     type: DataTypes.FLOAT,
                     allowNull: false,
                 },
+                createdDate: {
+                    type: DataTypes.DATE,
+                    allowNull: true,
+                },
+                modifyDate: {
+                    type: DataTypes.DATE,
+                    allowNull: true,
+                },
+                createdBy: {
+                    type: DataTypes.STRING,
+                    allowNull: true,
+                },
+                modifyBy: {
+                    type: DataTypes.STRING,
+                    allowNull: true,
+                },
                 Deleted: {
                     type: DataTypes.BOOLEAN,
-                    allowNull: false,
-                    defaultValue: false,
-                },
+                    allowNull: true,
+                },    
             },
             {
                 sequelize,

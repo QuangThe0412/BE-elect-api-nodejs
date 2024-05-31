@@ -3,12 +3,20 @@ import { DataTypes, Model, Sequelize } from 'sequelize';
 export interface NhomMonAttributes {
     IDNhomMon?: number;
     TenNhom?: string;
+    createdDate?: Date;
+    modifyDate?: Date;
+    createdBy?: string;
+    modifyBy?: string;
 }
 
 export class NhomMon extends Model<NhomMonAttributes, NhomMonAttributes> implements NhomMonAttributes
 {
     IDNhomMon?: number;
     TenNhom?: string;
+    createdDate?: Date;
+    modifyDate?: Date;
+    createdBy?: string;
+    modifyBy?: string;
 
     static initModel(sequelize: Sequelize) {
         NhomMon.init(
@@ -23,6 +31,26 @@ export class NhomMon extends Model<NhomMonAttributes, NhomMonAttributes> impleme
                 TenNhom: {
                     type: DataTypes.STRING,
                     allowNull: false,
+                },
+                createdDate: {
+                    type: DataTypes.DATE,
+                    allowNull: true,
+                    field: 'createdDate',
+                },
+                modifyDate: {
+                    type: DataTypes.DATE,
+                    allowNull: true,
+                    field: 'modifyDate',
+                },
+                createdBy: {
+                    type: DataTypes.STRING,
+                    allowNull: true,
+                    field: 'createdBy',
+                },
+                modifyBy: {
+                    type: DataTypes.STRING,
+                    allowNull: true,
+                    field: 'modifyBy',
                 },
             },
             {

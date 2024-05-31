@@ -5,8 +5,11 @@ export interface PhieuNhapAttributes {
     NgayNhap?: Date;
     NhaCungCap?: string;
     TongGiaTri?: number;
-    TenNhanVien?: string;
-    GhiChuNhap?: string;
+    GhiChu?: string;
+    createdDate?: Date;
+    modifyDate?: Date;
+    createdBy?: string;
+    modifyBy?: string;
     Deleted?: boolean;
 }
 
@@ -15,10 +18,13 @@ export class PhieuNhap extends Model<PhieuNhapAttributes> implements PhieuNhapAt
     NgayNhap?: Date;
     NhaCungCap?: string;
     TongGiaTri?: number;
-    TenNhanVien?: string;
-    GhiChuNhap?: string;
+    GhiChu?: string;
+    createdDate?: Date;
+    modifyDate?: Date;
+    createdBy?: string;
+    modifyBy?: string;
     Deleted?: boolean;
-
+   
     static initModel(sequelize: Sequelize) {
         PhieuNhap.init(
             {
@@ -40,19 +46,31 @@ export class PhieuNhap extends Model<PhieuNhapAttributes> implements PhieuNhapAt
                     type: DataTypes.FLOAT,
                     allowNull: false,
                 },
-                TenNhanVien: {
+                GhiChu: {
                     type: DataTypes.STRING,
-                    allowNull: false,
+                    allowNull: true,
                 },
-                GhiChuNhap: {
+                createdDate: {
+                    type: DataTypes.DATE,
+                    allowNull: true,
+                },
+                modifyDate: {
+                    type: DataTypes.DATE,
+                    allowNull: true,
+                },
+                createdBy: {
+                    type: DataTypes.STRING,
+                    allowNull: true,
+                },
+                modifyBy: {
                     type: DataTypes.STRING,
                     allowNull: true,
                 },
                 Deleted: {
                     type: DataTypes.BOOLEAN,
-                    allowNull: false,
-                    defaultValue: false,
-                },
+                    allowNull: true,
+                },   
+                
             },
             {
                 sequelize,
