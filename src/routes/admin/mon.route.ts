@@ -79,7 +79,7 @@ routerMon.post(
             mon.NgayTao = new Date();
             mon.NgaySua = null;
             const result = await Mon.create(mon);
-            res.status(200).send({
+            res.status(201).send({
                 data: result,
                 code: 'CREATE_MON_SUCCESS',
                 mess: 'Tạo món thành công',

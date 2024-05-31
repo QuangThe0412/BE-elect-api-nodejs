@@ -45,7 +45,7 @@ routerNhomMon.post(
             }
 
             const result = await NhomMon.create(nhomMon);
-            res.status(200).send({
+            res.status(201).send({
                 data: result,
                 code: 'CREATE_NHOMMON_SUCCESS',
                 mess: 'Tạo nhóm món thành công',

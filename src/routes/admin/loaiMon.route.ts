@@ -59,7 +59,7 @@ routerLoaiMon.post(
             }
 
             const result = await LoaiMon.create(loaiMon);
-            res.status(200).send({
+            res.status(201).send({
                 data: result,
                 code: 'CREATE_LOAIMON_SUCCESS',
                 mess: 'Tạo loại món thành công',

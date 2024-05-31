@@ -28,7 +28,7 @@ routerKhachHang.post('/', async (req: Request, res: Response) => {
         khachHang.IDKhachHang = null;
         khachHang.NgayTao = new Date();
         const result = await KhachHang.create(khachHang);
-        res.status(200).send({
+        res.status(201).send({
             data: result,
             code: 'CREATE_KHACHHANG_SUCCESS',
             mess: 'Tạo khách hàng thành công',
