@@ -31,33 +31,41 @@ routerNguoiDung.get('/', async (req: Request, res: Response) => {
     }
 });
 
-routerNguoiDung.post('/', //--------------------- not OK
+routerNguoiDung.post('/',
     async (req: Request, res: Response) => {
         try {
             let checkAdmin = await IsAdmin(req, res);
             if (checkAdmin) return checkAdmin;
 
-            const { username, password, phone, ngaySinh } = req.body as NguoiDung;
-
-            let duplicatedUser = await NguoiDung.findOne({
-                where: {
-                    [Op.or]: [
-                        { phone },
-                        { username },
-                    ],
-                },
+            const user = req.body as NguoiDung;
+            if (!user.username || !user.password) return res.status(400).send({
+                code: 'USERNAME_PASSWORD_REQUIRED',
+                mess: 'Username và password không được để trống',
             });
-            if (duplicatedUser) {
-                return res.status(400).json({
-                    code: 'phone_or_username_exist',
-                    mess: 'Số điện thoại hoặc tài khoản đã tốn tại',
+
+            //check trùng số điện thoại
+            if (user.phone) {
+                let duplicatedUserByPhone = await NguoiDung.findOne({
+                    where: {
+                        phone: user.phone,
+                    },
                 });
+
+                if (duplicatedUserByPhone) {
+                    return res.status(400).json({
+                        code: 'phone_exist',
+                        mess: 'Số điện thoại đã tốn tại',
+                    });
+                }
             }
 
-            let pwdToStore = await HashPassword(username, password);
+            user.password = await HashPassword(user.username, user.password);
+            user.createDate = new Date();
 
-            return res.status(201).send({
-                // data: tokens,
+            const newUser = await NguoiDung.create(user);
+            const {password,...rest} = newUser.get();
+            res.status(201).send({
+                data: rest,
                 code: 'CREATE_USER_SUCCESS',
                 mess: 'Tạo user thành công',
             });
@@ -89,7 +97,7 @@ routerNguoiDung.get('/:id', async (req: Request, res: Response) => {
     }
 });
 
-routerNguoiDung.put('/:id', async (req: Request, res: Response) => { ////////////////--- not OK
+routerNguoiDung.put('/:id', async (req: Request, res: Response) => {
     try {
         let checkAdmin = await IsAdmin(req, res);
         if (checkAdmin) return checkAdmin;
