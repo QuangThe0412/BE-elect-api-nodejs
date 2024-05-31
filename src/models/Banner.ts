@@ -6,7 +6,7 @@ export interface BannerAttributes {
     Priority?: number;
     createdDate?: Date;
     modifyDate?: Date;
-    createdBy?: string;
+    createBy?: string;
     modifyBy?: string;
     Deleted?: boolean;
 }
@@ -17,7 +17,7 @@ export class Banner extends Model<BannerAttributes> implements BannerAttributes 
     Priority?: number;
     createdDate?: Date;
     modifyDate?: Date;
-    createdBy?: string;
+    createBy?: string;
     modifyBy?: string;
     Deleted?: boolean;
 
@@ -45,7 +45,7 @@ export class Banner extends Model<BannerAttributes> implements BannerAttributes 
                     type: DataTypes.DATE,
                     allowNull: true,
                 },
-                createdBy: {
+                createBy: {
                     type: DataTypes.STRING,
                     allowNull: true,
                 },

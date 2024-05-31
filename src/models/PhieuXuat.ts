@@ -7,7 +7,7 @@ export interface PhieuXuatAttributes {
     GhiChu?: string;
     createdDate?: Date;
     modifyDate?: Date;
-    createdBy?: string;
+    createBy?: string;
     modifyBy?: string;
     Deleted?: boolean;
 }
@@ -20,7 +20,7 @@ export class PhieuXuat extends Model<PhieuXuatAttributes> implements PhieuXuatAt
     GhiChu?: string;
     createdDate?: Date;
     modifyDate?: Date;
-    createdBy?: string;
+    createBy?: string;
     modifyBy?: string;
     Deleted?: boolean;
 
@@ -52,7 +52,7 @@ export class PhieuXuat extends Model<PhieuXuatAttributes> implements PhieuXuatAt
                     type: DataTypes.DATE,
                     allowNull: true,
                 },
-                createdBy: {
+                createBy: {
                     type: DataTypes.STRING,
                     allowNull: true,
                 },

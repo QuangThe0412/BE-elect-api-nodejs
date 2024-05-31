@@ -48,7 +48,7 @@ routerAuth.post(
                 guest: true,
                 ngaySinh,
                 createDate: new Date(),
-                createdBy : await GetCurrentUser(req),
+                createBy : await GetCurrentUser(req),
                 modifyDate: null,
                 Deleted: false,
             });

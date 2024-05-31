@@ -8,7 +8,7 @@ export interface PhieuNhapAttributes {
     GhiChu?: string;
     createdDate?: Date;
     modifyDate?: Date;
-    createdBy?: string;
+    createBy?: string;
     modifyBy?: string;
     Deleted?: boolean;
 }
@@ -21,7 +21,7 @@ export class PhieuNhap extends Model<PhieuNhapAttributes> implements PhieuNhapAt
     GhiChu?: string;
     createdDate?: Date;
     modifyDate?: Date;
-    createdBy?: string;
+    createBy?: string;
     modifyBy?: string;
     Deleted?: boolean;
    
@@ -58,7 +58,7 @@ export class PhieuNhap extends Model<PhieuNhapAttributes> implements PhieuNhapAt
                     type: DataTypes.DATE,
                     allowNull: true,
                 },
-                createdBy: {
+                createBy: {
                     type: DataTypes.STRING,
                     allowNull: true,
                 },

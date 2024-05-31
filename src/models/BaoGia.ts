@@ -6,7 +6,7 @@ export interface BaoGiaAttributes {
     TotalMoney?: number;
     NgayLap?: Date;
     modifyDate?: Date;
-    createdBy?: string;
+    createBy?: string;
     modifyBy?: string;
     Deleted?: boolean;
 }
@@ -18,7 +18,7 @@ export class BaoGia extends Model<BaoGiaAttributes> implements BaoGiaAttributes 
     NgayLap?: Date;
     modifyDate?: Date;
     createdDate?: Date;
-    createdBy?: string;
+    createBy?: string;
     modifyBy?: string;
     Deleted?: boolean;
 
@@ -47,7 +47,7 @@ export class BaoGia extends Model<BaoGiaAttributes> implements BaoGiaAttributes 
                     type: DataTypes.DATE,
                     allowNull: true,
                 },
-                createdBy: {
+                createBy: {
                     type: DataTypes.STRING,
                     allowNull: true,
                 },

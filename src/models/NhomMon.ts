@@ -5,7 +5,7 @@ export interface NhomMonAttributes {
     TenNhom?: string;
     createdDate?: Date;
     modifyDate?: Date;
-    createdBy?: string;
+    createBy?: string;
     modifyBy?: string;
 }
 
@@ -15,7 +15,7 @@ export class NhomMon extends Model<NhomMonAttributes, NhomMonAttributes> impleme
     TenNhom?: string;
     createdDate?: Date;
     modifyDate?: Date;
-    createdBy?: string;
+    createBy?: string;
     modifyBy?: string;
 
     static initModel(sequelize: Sequelize) {
@@ -42,10 +42,10 @@ export class NhomMon extends Model<NhomMonAttributes, NhomMonAttributes> impleme
                     allowNull: true,
                     field: 'modifyDate',
                 },
-                createdBy: {
+                createBy: {
                     type: DataTypes.STRING,
                     allowNull: true,
-                    field: 'createdBy',
+                    field: 'createBy',
                 },
                 modifyBy: {
                     type: DataTypes.STRING,

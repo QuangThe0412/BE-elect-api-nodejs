@@ -10,7 +10,7 @@ export interface HoaDonAttributes {
     GhiChu?: string;
     createdDate?: Date;
     modifyDate?: Date;
-    createdBy?: string;
+    createBy?: string;
     modifyBy?: string;
 }
 
@@ -24,7 +24,7 @@ export class HoaDon extends Model<HoaDonAttributes> implements HoaDonAttributes 
     GhiChu?: string;
     createdDate?: Date;
     modifyDate?: Date;
-    createdBy?: string;
+    createBy?: string;
     modifyBy?: string;
 
     static initModel(sequelize: Sequelize) {
@@ -68,7 +68,7 @@ export class HoaDon extends Model<HoaDonAttributes> implements HoaDonAttributes 
                     type: DataTypes.DATE,
                     allowNull: true,
                 },
-                createdBy: {
+                createBy: {
                     type: DataTypes.STRING,
                     allowNull: true,
                 },

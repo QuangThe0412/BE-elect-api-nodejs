@@ -10,7 +10,7 @@ export interface ChiTietPhieuNhapAttributes {
     ThanhTien?: number;
     createdDate?: Date;
     modifyDate?: Date;
-    createdBy?: string;
+    createBy?: string;
     modifyBy?: string;
     Deleted?: boolean;
 }
@@ -25,7 +25,7 @@ export class ChiTietPhieuNhap extends Model<ChiTietPhieuNhapAttributes> implemen
     ThanhTien?: number;
     createdDate?: Date;
     modifyDate?: Date;
-    createdBy?: string;
+    createBy?: string;
     modifyBy?: string;
     Deleted?: boolean;
 
@@ -69,7 +69,7 @@ export class ChiTietPhieuNhap extends Model<ChiTietPhieuNhapAttributes> implemen
                     type: DataTypes.DATE,
                     allowNull: true,
                 },
-                createdBy: {
+                createBy: {
                     type: DataTypes.STRING,
                     allowNull: true,
                 },

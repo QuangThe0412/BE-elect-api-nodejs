@@ -63,7 +63,7 @@ routerNguoiDung.post('/',
 
             user.password = await HashPassword(username, password);
             user.createDate = new Date();
-            user.createdBy = await GetCurrentUser(req);
+            user.createBy = await GetCurrentUser(req);
 
             const newUser = await NguoiDung.create(user);
             newUser.password = undefined;

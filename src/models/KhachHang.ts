@@ -12,7 +12,7 @@ export interface KhachHangAttributes {
     ThongTinKhac?: string;
     createdDate?: Date;
     modifyDate?: Date;
-    createdBy?: string;
+    createBy?: string;
     modifyBy?: string;
     Deleted?: boolean;
 }
@@ -29,7 +29,7 @@ export class KhachHang extends Model<KhachHangAttributes> implements KhachHangAt
     ThongTinKhac?: string;
     createdDate?: Date;
     modifyDate?: Date;
-    createdBy?: string;
+    createBy?: string;
     modifyBy?: string;
     Deleted?: boolean;
 
@@ -81,7 +81,7 @@ export class KhachHang extends Model<KhachHangAttributes> implements KhachHangAt
                     type: DataTypes.DATE,
                     allowNull: true,
                 },
-                createdBy: {
+                createBy: {
                     type: DataTypes.STRING,
                     allowNull: true,
                 },

@@ -14,7 +14,7 @@ export interface MonAttributes {
   GhiChu?: string;
   createdDate?: Date;
   modifyDate?: Date;
-  createdBy?: string;
+  createBy?: string;
   modifyBy?: string;
   Deleted?: boolean;
 }
@@ -35,7 +35,7 @@ export class Mon
   GhiChu?: string;
   createdDate?: Date;
   modifyDate?: Date;
-  createdBy?: string;
+  createBy?: string;
   modifyBy?: string;
   Deleted?: boolean;
 
@@ -101,7 +101,7 @@ export class Mon
           type: DataTypes.DATE,
           allowNull: true,
         },
-        createdBy: {
+        createBy: {
           type: DataTypes.STRING,
           allowNull: true,
         },

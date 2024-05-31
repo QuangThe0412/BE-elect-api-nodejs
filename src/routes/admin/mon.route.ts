@@ -77,7 +77,7 @@ routerMon.post(
                 mess: 'Không tìm thấy loại món',
             });
             mon.createdDate = new Date();
-            mon.createdBy = await GetCurrentUser(req);
+            mon.createBy = await GetCurrentUser(req);
             mon.modifyDate = null;
             const result = await Mon.create(mon);
             res.status(201).send({

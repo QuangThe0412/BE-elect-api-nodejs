@@ -12,7 +12,7 @@ export interface ChiTietHDAttributes {
     TienSauCK?: number;
     createdDate?: Date;
     modifyDate?: Date;
-    createdBy?: string;
+    createBy?: string;
     modifyBy?: string;
     Deleted?: boolean;
 }
@@ -29,7 +29,7 @@ export class ChiTietHD extends Model<ChiTietHDAttributes> implements ChiTietHDAt
     TienSauCK?: number;
     createdDate?: Date;
     modifyDate?: Date;
-    createdBy?: string;
+    createBy?: string;
     modifyBy?: string;
     Deleted?: boolean;
 
@@ -81,7 +81,7 @@ export class ChiTietHD extends Model<ChiTietHDAttributes> implements ChiTietHDAt
                     type: DataTypes.DATE,
                     allowNull: true,
                 },
-                createdBy: {
+                createBy: {
                     type: DataTypes.STRING,
                     allowNull: true,
                 },

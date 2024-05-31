@@ -6,7 +6,7 @@ export interface LoaiMonAttributes {
     TenLoai?: string;
     createdDate?: Date;
     modifyDate?: Date;
-    createdBy?: string;
+    createBy?: string;
     modifyBy?: string;
     Deleted?: boolean;
 }
@@ -17,7 +17,7 @@ export class LoaiMon extends Model<LoaiMonAttributes> implements LoaiMonAttribut
     TenLoai?: string;
     createdDate?: Date;
     modifyDate?: Date;
-    createdBy?: string;
+    createBy?: string;
     modifyBy?: string;
     Deleted?: boolean;
 
@@ -45,7 +45,7 @@ export class LoaiMon extends Model<LoaiMonAttributes> implements LoaiMonAttribut
                     type: DataTypes.DATE,
                     allowNull: true,
                 },
-                createdBy: {
+                createBy: {
                     type: DataTypes.STRING,
                     allowNull: true,
                 },
