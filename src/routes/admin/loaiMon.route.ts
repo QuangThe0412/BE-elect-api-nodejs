@@ -197,7 +197,7 @@ routerLoaiMon.delete(
             const response = await LoaiMon.update(loaiMon, { where: { IDLoaiMon: id } });
             res.status(200).send({
                 data: response,
-                code: 'TOGGLE_LOAIMON_SUCCESS',
+                code: 'TOGGLE_ACTIVE_LOAIMON_SUCCESS',
                 mess: 'Bật/Tắt loại món thành công',
             });
         } catch (err) {

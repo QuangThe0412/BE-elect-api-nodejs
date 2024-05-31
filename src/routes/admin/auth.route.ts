@@ -37,6 +37,7 @@ routerAuth.post(
             let pwdToStore = await HashPassword(username, password);
             // console.log('Password to store :===>', pwdToStore);
             const nguoiDung = await NguoiDung.create({
+                id: null,
                 username,
                 password: pwdToStore,
                 phone,
@@ -72,22 +73,31 @@ routerAuth.post(
 routerAuth.post('/login', async (req: Request, res: Response) => {
     const { username, password } = req.body;
     try {
-        const admin = await NguoiDung.findOne({
+        const nguoidDung = await NguoiDung.findOne({
             where: {
                 username,
             },
         });
-        if (!admin || !(await ComparePassword(username, password, admin.password))) {
+
+        if(nguoidDung.Deleted){
+            return res.status(400).json({
+                code: 'account_deleted',
+                mess: 'Tài khoản đã bị khóa vui lòng liện hệ admin để biết thêm chi tiết',
+            });
+        }
+
+        if (!nguoidDung || !(await ComparePassword(username, password, nguoidDung.password))) {
             return res.status(400).json({
                 code: 'incorrect_password_or_user_name',
                 mess: 'Mật khẩu hoặc tài khoản không đúng',
             });
         }
 
+
         const authPayload: AuthUser = {
-            username: admin.username,
-            roles: GetRoles(admin),
-            userId: admin.id,
+            username: nguoidDung.username,
+            roles: GetRoles(nguoidDung),
+            userId: nguoidDung.id,
         };
 
         const generatedTokens = authService.generateTokens(

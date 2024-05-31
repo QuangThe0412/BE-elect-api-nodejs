@@ -1,11 +1,6 @@
 import express, { Request, Response } from 'express';
 import { NguoiDung } from '../../models/init-models';
-import { Op } from 'sequelize';
-import schemaValidation from '../../middlewares/schema-validation.middleware';
-import userSchema from '../../schemas/user.schema';
-import { HashPassword, GetRoles, RoleEnum, IsAdmin } from '../../utils';
-import { AuthUser } from '../../index';
-import config from '../../config/config';
+import { HashPassword, IsAdmin } from '../../utils';
 
 const routerNguoiDung = express.Router();
 
@@ -38,13 +33,20 @@ routerNguoiDung.post('/',
             if (checkAdmin) return checkAdmin;
 
             const user = req.body as NguoiDung;
-            if (!user.username || !user.password) return res.status(400).send({
+            user.id = null;
+            const { username, password, phone } = user;
+            if (!username || !password) return res.status(400).send({
                 code: 'USERNAME_PASSWORD_REQUIRED',
                 mess: 'Username và password không được để trống',
             });
 
             //check trùng số điện thoại
-            if (user.phone) {
+            if (!phone) {
+                return res.status(400).send({
+                    code: 'PHONE_REQUIRED',
+                    mess: 'Số điện thoại không được để trống',
+                });
+            } else {
                 let duplicatedUserByPhone = await NguoiDung.findOne({
                     where: {
                         phone: user.phone,
@@ -59,13 +61,14 @@ routerNguoiDung.post('/',
                 }
             }
 
-            user.password = await HashPassword(user.username, user.password);
+            user.password = await HashPassword(username, password);
             user.createDate = new Date();
 
             const newUser = await NguoiDung.create(user);
-            const {password,...rest} = newUser.get();
+            newUser.password = undefined;
+
             res.status(201).send({
-                data: rest,
+                data: newUser,
                 code: 'CREATE_USER_SUCCESS',
                 mess: 'Tạo user thành công',
             });
@@ -121,7 +124,7 @@ routerNguoiDung.put('/:id', async (req: Request, res: Response) => {
 
         //check trùng số điện thoại
         if (newNguoiDung.phone) {
-            let duplicatedUserByPhone =  nguoiDung.phone !== newNguoiDung.phone && await NguoiDung.findOne({
+            let duplicatedUserByPhone = nguoiDung.phone !== newNguoiDung.phone && await NguoiDung.findOne({
                 where: {
                     phone: newNguoiDung.phone,
                 },
@@ -150,6 +153,42 @@ routerNguoiDung.put('/:id', async (req: Request, res: Response) => {
         res.status(200).send({
             code: 'UPDATE_NGUOIDUNG_SUCCESS',
             mess: 'Cập nhật người dùng thành công',
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send(err);
+    }
+});
+
+routerNguoiDung.delete('/:id', async (req: Request, res: Response) => {
+    try {
+        let checkAdmin = await IsAdmin(req, res);
+        if (checkAdmin) return checkAdmin;
+
+        const id = req.params.id;
+        if (!id) return res.status(400).send({
+            code: 'ID_REQUIRED',
+            mess: 'ID không được để trống',
+        });
+
+        const nguoiDung = await NguoiDung.findByPk(id);
+        if (!nguoiDung) return res.status(404).send({
+            code: 'NOT_FOUND',
+            mess: 'Không tìm thấy người dùng',
+        });
+
+        nguoiDung.Deleted = !nguoiDung.Deleted;
+        nguoiDung.modifyDate = new Date();
+
+        await NguoiDung.update(nguoiDung, {
+            where: {
+                id: id,
+            },
+        });
+        
+        res.status(200).send({
+            code: 'TOGGLE_ACTIVE_NGUOIDUNG_SUCCESS',
+            mess: 'Bật/Tắt người dùng thành công',
         });
     } catch (err) {
         console.error(err);

@@ -25,6 +25,7 @@ routerKhachHang.get('/', async (req: Request, res: Response) => {
 routerKhachHang.post('/', async (req: Request, res: Response) => {
     try {
         const khachHang = req.body as KhachHang;
+        khachHang.IDKhachHang = null;
         khachHang.NgayTao = new Date();
         const result = await KhachHang.create(khachHang);
         res.status(200).send({
