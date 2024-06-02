@@ -9,6 +9,7 @@ import routerThongKe from "./thongke.route";
 import adminAuthMiddleware from '../../middlewares/admin-auth.middleware';
 import routerAccount from "./account.route";
 import routerNguoiDung from "./nguoiDung.route";
+import routerLoaiKhachHang from "./loaiKhachHang.route";
 
 const paths = {
     auth: '/auth',
@@ -18,7 +19,8 @@ const paths = {
     khachHang: '/khachHang',
     thongke: '/thongke',
     account: '/account',
-    nguoiDung: '/nguoiDung'
+    nguoiDung: '/nguoiDung',
+    loaiKhachHang: '/loaiKhachHang'
 };
 
 const roleAccess = [
@@ -53,6 +55,10 @@ const roleAccess = [
     {
         path: paths.thongke,
         role: [RoleEnum.ADMIN]
+    },
+    {
+        path: paths.loaiKhachHang,
+        role: [RoleEnum.ADMIN]
     }
 ];
 
@@ -66,5 +72,6 @@ router.use(paths.nhomMon, adminAuthMiddleware, routerNhomMon);
 router.use(paths.loaiMon, adminAuthMiddleware, routerLoaiMon);
 router.use(paths.khachHang, adminAuthMiddleware, routerKhachHang);
 router.use(paths.thongke, adminAuthMiddleware, routerThongKe);
+router.use(paths.loaiKhachHang, adminAuthMiddleware, routerLoaiKhachHang);
 
 export { router, roleAccess, paths };

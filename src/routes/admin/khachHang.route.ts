@@ -41,7 +41,7 @@ routerKhachHang.post('/', async (req: Request, res: Response) => {
         const khachHang = req.body as KhachHang;
         khachHang.IDKhachHang = null;
 
-        const { username, password, DienThoai } = khachHang;
+        const { username, password, DienThoai,IDLoaiKH } = khachHang;
 
         if (!username || !password) {
             return res.status(400).send({
@@ -66,8 +66,8 @@ routerKhachHang.post('/', async (req: Request, res: Response) => {
             });
         }
 
+        khachHang.IDLoaiKH = IDLoaiKH;
         khachHang.password = await HashPassword(username, password);
-
         khachHang.createDate = new Date();
         khachHang.createBy = await GetCurrentUser(req);
 
@@ -136,7 +136,7 @@ routerKhachHang.put('/:id', async (req: Request, res: Response) => {
             });
         }
 
-        const { username, DienThoai, TenKhachHang, password } = req.body as KhachHang;
+        const { username, DienThoai, TenKhachHang, password,IDLoaiKH } = req.body as KhachHang;
 
         //check if change username
         if (username && username !== khachHang.username) {
@@ -168,6 +168,7 @@ routerKhachHang.put('/:id', async (req: Request, res: Response) => {
             khachHang.password = await HashPassword(khachHang.username, password);
         }
 
+        khachHang.IDLoaiKH = IDLoaiKH;
         khachHang.TenKhachHang = TenKhachHang;
         khachHang.modifyDate = new Date();
         khachHang.modifyBy = await GetCurrentUser(req);

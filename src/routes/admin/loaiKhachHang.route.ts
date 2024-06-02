@@ -48,7 +48,6 @@ routerLoaiKhachHang.post('/', async (req: Request, res: Response) => {
                 mess: 'Loại khách hàng đã tồn tại',
             });
         }
-
         const result = await LoaiKhachHang.create(loaiKhachHang);
         res.status(201).send({
             data: result,
@@ -133,3 +132,5 @@ routerLoaiKhachHang.put('/', async (req: Request, res: Response) => {
         res.status(500).send(err);
     }
 });
+
+export default routerLoaiKhachHang;
