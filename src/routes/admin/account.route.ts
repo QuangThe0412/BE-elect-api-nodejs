@@ -1,6 +1,6 @@
 import express, { Response } from 'express';
 import { Request } from '../../index';
-import { ComparePassword, HashPassword, GetRoles, GetCurrentUser } from '../../utils';
+import { ComparePassword, HashPassword, GetRoles, GetCurrentUser, IsAdmin } from '../../utils';
 import { NguoiDung } from '../../models/init-models';
 
 const routerAccount = express.Router();
@@ -49,11 +49,11 @@ routerAccount.get('/me', async (req: Request, res: Response) => {
 
 routerAccount.put('/updateProfile', async (req: Request, res: Response) => {
     try {
-        const { id, phone, ngaySinh } = req.body;
-        if (!id || !phone) {
+        const { id, ngaySinh, phone } = req.body;
+        if (!id) {
             return res.status(400).json({
-                code: 'missing_user_id_or_phone',
-                mess: 'Không tìm thấy id hoặc số điện thoại',
+                code: 'missing_user_id',
+                mess: 'Không tìm thấy id',
             });
         }
 
@@ -72,6 +72,15 @@ routerAccount.put('/updateProfile', async (req: Request, res: Response) => {
 
         // kiem tra so dien thoai da ton tai chua
         if (phone && phone !== user.phone) {
+            // check admin for update phone
+            let checkAdmin = await IsAdmin(req, res);
+            if (!checkAdmin) {
+                return res.status(403).send({
+                    code: 'FORBIDDEN',
+                    mess: 'Bạn không có quyền sửa số điện thoại người dùng',
+                });
+            }
+
             const userByPhone = await NguoiDung.findOne({
                 where: {
                     phone,
@@ -85,6 +94,7 @@ routerAccount.put('/updateProfile', async (req: Request, res: Response) => {
                 });
             }
         }
+
         user.phone = phone;
         user.ngaySinh = ngaySinh;
         user.modifyDate = new Date();

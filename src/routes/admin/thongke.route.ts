@@ -26,13 +26,13 @@ routerThongKe.get(
             //get hoa don
             let hoaDon = await HoaDon.findAll({
                 where: {
-                    NgayLap: {
+                    createDate: {
                         [Op.between]: [dateFrom, dateTo]
                     }
                 },
-                attributes: ['IDHoaDon', 'IDKhachHang', 'NgayLap']
+                attributes: ['IDHoaDon', 'IDKhachHang', 'createDate']
             });
-            let hoaDonMap = new Map(hoaDon.map(hd => [hd.IDHoaDon, hd.NgayLap]));
+            let hoaDonMap = new Map(hoaDon.map(hd => [hd.IDHoaDon, hd.createDate]));
 
             let khachHang = await KhachHang.findAll({
                 where: {
@@ -65,7 +65,7 @@ routerThongKe.get(
 
             let result = chiTietHD.map(chiTiet => ({
                 ...chiTiet,
-                NgayLap: hoaDonMap.get(chiTiet.IDHoaDon),
+                createDate: hoaDonMap.get(chiTiet.IDHoaDon),
                 TenKhachHang: khachHangMap.get(hoaDon.find(hd => hd.IDHoaDon === chiTiet.IDHoaDon).IDKhachHang),
                 TenMon: monMap.get(chiTiet.IDMon)
             }));

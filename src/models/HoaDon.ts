@@ -4,7 +4,6 @@ export interface HoaDonAttributes {
     IDHoaDon?: number;
     IDBaoGia?: number;
     IDKhachHang?: number;
-    NgayLap?: Date;
     CongNo?: number;
     TrangThai?: number;
     GhiChu?: string;
@@ -18,7 +17,6 @@ export class HoaDon extends Model<HoaDonAttributes> implements HoaDonAttributes 
     IDHoaDon?: number;
     IDBaoGia?: number;
     IDKhachHang?: number;
-    NgayLap?: Date;
     CongNo?: number;
     TrangThai?: number; // 0: pending, 1: finish, 2: cancel
     GhiChu?: string;
@@ -42,11 +40,6 @@ export class HoaDon extends Model<HoaDonAttributes> implements HoaDonAttributes 
                 IDKhachHang: {
                     type: DataTypes.INTEGER,
                     allowNull: false,
-                },
-                NgayLap: {
-                    type: DataTypes.DATE,
-                    allowNull: false,
-                    defaultValue: DataTypes.NOW,
                 },
                 GhiChu: {
                     type: DataTypes.STRING,

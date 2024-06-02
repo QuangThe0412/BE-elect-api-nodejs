@@ -30,7 +30,12 @@ routerNguoiDung.post('/',
     async (req: Request, res: Response) => {
         try {
             let checkAdmin = await IsAdmin(req, res);
-            if (checkAdmin) return checkAdmin;
+            if (!checkAdmin) {
+                return res.status(403).send({
+                    code: 'FORBIDDEN',
+                    mess: 'Bạn không có quyền tạo người dùng',
+                });
+            }
 
             const user = req.body as NguoiDung;
             user.id = null;
@@ -104,7 +109,12 @@ routerNguoiDung.get('/:id', async (req: Request, res: Response) => {
 routerNguoiDung.put('/:id', async (req: Request, res: Response) => {
     try {
         let checkAdmin = await IsAdmin(req, res);
-        if (checkAdmin) return checkAdmin;
+        if (!checkAdmin) {
+            return res.status(403).send({
+                code: 'FORBIDDEN',
+                mess: 'Bạn không có quyền sửa thông tin người dùng',
+            });
+        }
 
         const id = req.params.id;
         if (!id) return res.status(400).send({
@@ -165,7 +175,12 @@ routerNguoiDung.put('/:id', async (req: Request, res: Response) => {
 routerNguoiDung.delete('/:id', async (req: Request, res: Response) => {
     try {
         let checkAdmin = await IsAdmin(req, res);
-        if (checkAdmin) return checkAdmin;
+        if (!checkAdmin) {
+            return res.status(403).send({
+                code: 'FORBIDDEN',
+                mess: 'Bạn không có quyền bật/tắt người dùng',
+            });
+        }
 
         const id = req.params.id;
         if (!id) return res.status(400).send({

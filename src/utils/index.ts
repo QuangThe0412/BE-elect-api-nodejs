@@ -68,6 +68,7 @@ export const GetRoles = (nguoiDung: NguoiDung) => {
 }
 
 export const IsAdmin = async (req: Request, res: Response) => {
+    let result = true;
     try {
         //check người dùng có phải admin không
         let authorization = req.headers.authorization as string;
@@ -77,15 +78,13 @@ export const IsAdmin = async (req: Request, res: Response) => {
         if (!decoded || !decoded.user || !decoded.user.roles
             || !Array.isArray(decoded.user.roles)
             || !decoded.user.roles.some((role) => role === RoleEnum.ADMIN)) {
-            return res.status(403).json({
-                code: 'FORBIDDEN',
-                mess: 'Bạn không có quyền sửa thông tin người dùng',
-            });
+            result = false;
         }
     } catch (err) {
+        result = false;
         console.error(err);
-        return res.status(500).send(err);
     }
+    return result;
 };
 
 export const GetCurrentUser = async (req: Request) => {
