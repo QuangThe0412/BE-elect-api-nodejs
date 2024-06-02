@@ -4,7 +4,6 @@ export interface KhuyenmaiAttributes {
     IDKhuyenMai?: number;
     TenKhuyenMai?: string;
     IdLoaiKH?: number;
-    GiaTriKM?: number;
     TuNgay?: Date;
     DenNgay?: Date;
     createDate?: Date;
@@ -18,7 +17,6 @@ export class Khuyenmai extends Model<KhuyenmaiAttributes> implements KhuyenmaiAt
     IDKhuyenMai?: number;
     TenKhuyenMai?: string;
     IdLoaiKH?: number;
-    GiaTriKM?: number;
     TuNgay?: Date;
     DenNgay?: Date;
     createDate?: Date;
@@ -41,10 +39,6 @@ export class Khuyenmai extends Model<KhuyenmaiAttributes> implements KhuyenmaiAt
                 },
                 IdLoaiKH: {
                     type: DataTypes.INTEGER,
-                    allowNull: false,
-                },
-                GiaTriKM: {
-                    type: DataTypes.DECIMAL(18),
                     allowNull: true,
                 },
                 TuNgay: {

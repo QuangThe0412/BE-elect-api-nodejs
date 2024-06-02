@@ -66,12 +66,13 @@ routerKhachHang.post('/', async (req: Request, res: Response) => {
             });
         }
 
-        const hashPassword = await HashPassword(username, password);
-        khachHang.password = hashPassword;
+        khachHang.password = await HashPassword(username, password);
 
         khachHang.createDate = new Date();
         khachHang.createBy = await GetCurrentUser(req);
+
         const result = await KhachHang.create(khachHang);
+        result.dataValues.password = null;
 
         res.status(201).send({
             data: result,
@@ -95,7 +96,7 @@ routerKhachHang.get('/:id', async (req: Request, res: Response) => {
         })
 
         result.password = null;
-        
+
         res.status(200).send({
             data: result,
             code: 'GET_KHACHHANG_SUCCESS',
@@ -135,7 +136,7 @@ routerKhachHang.put('/:id', async (req: Request, res: Response) => {
             });
         }
 
-        const { username, DienThoai,TenKhachHang } = req.body as KhachHang;
+        const { username, DienThoai, TenKhachHang, password } = req.body as KhachHang;
 
         //check if change username
         if (username && username !== khachHang.username) {
@@ -162,13 +163,20 @@ routerKhachHang.put('/:id', async (req: Request, res: Response) => {
             khachHang.DienThoai = DienThoai;
         }
 
-        khachHang.modifyDate = new Date();
+        //check if change password
+        if(password){
+            khachHang.password = await HashPassword(khachHang.username, password);
+        }
+
         khachHang.TenKhachHang = TenKhachHang;
+        khachHang.modifyDate = new Date();
         khachHang.modifyBy = await GetCurrentUser(req);
 
-        const response = await KhachHang.update(khachHang, { where: { IDKhachHang: id } });
+        await KhachHang.update(khachHang, { where: { IDKhachHang: id } });
+        khachHang.password = null;
+
         res.status(200).send({
-            data: response,
+            data: khachHang,
             code: 'UPDATE_KHACHHANG_SUCCESS',
             mess: 'Cập nhật khách hàng thành công',
         });

@@ -18,6 +18,7 @@ import { ChiTietPhieuNhap, ChiTietPhieuNhapAttributes } from './ChiTietPhieuNhap
 import { PhieuXuat, PhieuXuatAttributes } from './PhieuXuat';
 import { ChiTietPhieuXuat, ChiTietPhieuXuatAttributes } from './ChiTietPhieuXuat';
 import { NguoiDung, NguoiDungAttributes } from './NguoiDung';
+import { LoaiKhachHang,LoaiKhachHangAttributes } from './LoaiKhachHang';
 
 
 export {
@@ -49,6 +50,8 @@ export {
     ChiTietPhieuXuatAttributes as ChiTietPhieuXuatAttributes,
     NguoiDung as NguoiDung,
     NguoiDungAttributes as NguoiDungAttributes,
+    LoaiKhachHang as LoaiKhachHang,
+    LoaiKhachHangAttributes as LoaiKhachHangAttributes,
 
 };
 
@@ -67,6 +70,7 @@ export function initModels(sequelize: Sequelize) {
     PhieuXuat.initModel(sequelize);
     ChiTietPhieuXuat.initModel(sequelize);
     NguoiDung.initModel(sequelize);
+    LoaiKhachHang.initModel(sequelize);
     return {
         Mon,
         NhomMon,
@@ -82,5 +86,6 @@ export function initModels(sequelize: Sequelize) {
         PhieuXuat,
         ChiTietPhieuXuat,
         NguoiDung,
+        LoaiKhachHang,
     };
 }
