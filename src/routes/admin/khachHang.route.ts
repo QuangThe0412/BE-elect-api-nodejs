@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import { KhachHang } from '../../models/init-models';
-import { GetCurrentUser, MergeWithOldData } from '../../utils';
+import { GetCurrentUser, HashPassword, IsAdmin, MergeWithOldData } from '../../utils';
+import { Op } from 'sequelize';
 
 const routerKhachHang = express.Router();
 
@@ -10,6 +11,11 @@ routerKhachHang.get('/', async (req: Request, res: Response) => {
         let result: KhachHang[] = await KhachHang.findAll({
             order: [['IDKhachHang', 'DESC']],
         });
+
+        result.map((khachHang) => {
+            khachHang.password = null;
+        });
+
         res.status(200).send({
             data: result,
             code: 'GET_ALL_KHACHHANG_SUCCESS',
@@ -24,11 +30,49 @@ routerKhachHang.get('/', async (req: Request, res: Response) => {
 //create
 routerKhachHang.post('/', async (req: Request, res: Response) => {
     try {
+        const idAdmin = await IsAdmin(req, res);
+        if (!idAdmin) {
+            return res.status(403).send({
+                code: 'PERMISSION_DENIED',
+                mess: 'Bạn không có quyền thực hiện hành động này',
+            });
+        }
+
         const khachHang = req.body as KhachHang;
         khachHang.IDKhachHang = null;
+
+        const { username, password, DienThoai } = khachHang;
+
+        if (!username || !password) {
+            return res.status(400).send({
+                code: 'USERNAME_PASSWORD_REQUIRED',
+                mess: 'Username và password không được để trống',
+            });
+        }
+
+        const existedKhachHang = await KhachHang.findOne({
+            where: {
+                [Op.or]: [
+                    { username: username },
+                    { DienThoai: DienThoai }
+                ]
+            }
+        });
+
+        if (existedKhachHang) {
+            return res.status(400).send({
+                code: 'USERNAME_PHONE_EXISTED',
+                mess: 'Username hoặc số điện thoại đã tồn tại',
+            });
+        }
+
+        const hashPassword = await HashPassword(username, password);
+        khachHang.password = hashPassword;
+
         khachHang.createDate = new Date();
         khachHang.createBy = await GetCurrentUser(req);
         const result = await KhachHang.create(khachHang);
+
         res.status(201).send({
             data: result,
             code: 'CREATE_KHACHHANG_SUCCESS',
@@ -49,6 +93,9 @@ routerKhachHang.get('/:id', async (req: Request, res: Response) => {
                 IDKhachHang: id,
             },
         })
+
+        result.password = null;
+        
         res.status(200).send({
             data: result,
             code: 'GET_KHACHHANG_SUCCESS',
@@ -63,16 +110,60 @@ routerKhachHang.get('/:id', async (req: Request, res: Response) => {
 //update
 routerKhachHang.put('/:id', async (req: Request, res: Response) => {
     try {
+        const isAdmin = await IsAdmin(req, res);
+        if (!isAdmin) {
+            return res.status(403).send({
+                code: 'PERMISSION_DENIED',
+                mess: 'Bạn không có quyền thực hiện hành động này',
+            });
+        }
+
         const { id } = req.params;
-        let khachHang = req.body as KhachHang;
 
-        if (!id) return res.status(400).send('id is required');
+        if (!id) {
+            return res.status(400).send({
+                code: 'ID_REQUIRED',
+                mess: 'ID không được để trống',
+            });
+        }
 
-        const oldKhachHang = await KhachHang.findOne({ where: { IDKhachHang: id } });
-        if (!oldKhachHang) return res.status(404).send('KhachHang not found');
+        const khachHang = await KhachHang.findOne({ where: { IDKhachHang: id } });
+        if (!khachHang) {
+            return res.status(404).send({
+                code: 'KHACHHANG_NOT_FOUND',
+                mess: 'Không tìm thấy khách hàng',
+            });
+        }
 
-        khachHang = MergeWithOldData(oldKhachHang, khachHang);
+        const { username, DienThoai,TenKhachHang } = req.body as KhachHang;
+
+        //check if change username
+        if (username && username !== khachHang.username) {
+            return res.status(400).send({
+                code: 'USERNAME_NOT_ALLOWED',
+                mess: 'Không được phép cập nhật username',
+            });
+        }
+
+        //check if change DienThoai
+        if (DienThoai && DienThoai !== khachHang.DienThoai) {
+            const existedKhachHangByPhone = await KhachHang.findOne({
+                where: {
+                    DienThoai: DienThoai,
+                }
+            });
+
+            if (existedKhachHangByPhone) {
+                return res.status(400).send({
+                    code: 'PHONE_EXISTED',
+                    mess: 'Số điện thoại đã tồn tại',
+                });
+            }
+            khachHang.DienThoai = DienThoai;
+        }
+
         khachHang.modifyDate = new Date();
+        khachHang.TenKhachHang = TenKhachHang;
         khachHang.modifyBy = await GetCurrentUser(req);
 
         const response = await KhachHang.update(khachHang, { where: { IDKhachHang: id } });
@@ -90,9 +181,22 @@ routerKhachHang.put('/:id', async (req: Request, res: Response) => {
 //delete
 routerKhachHang.delete('/:id', async (req: Request, res: Response) => {
     try {
+        const isAdmin = await IsAdmin(req, res);
+        if (!isAdmin) {
+            return res.status(403).send({
+                code: 'PERMISSION_DENIED',
+                mess: 'Bạn không có quyền thực hiện hành động này',
+            });
+        }
+
         const { id } = req.params;
 
-        if (!id) return res.status(400).send('id is required');
+        if (!id) {
+            return res.status(400).send({
+                code: 'ID_REQUIRED',
+                mess: 'ID không được để trống',
+            });
+        }
 
         let khachHang = await KhachHang.findOne({ where: { IDKhachHang: id } });
 

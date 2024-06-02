@@ -88,6 +88,7 @@ routerNguoiDung.get('/:id', async (req: Request, res: Response) => {
     try {
         const id = req.params.id;
         const result = await NguoiDung.findByPk(id);
+        result.password = undefined;
         if (result) {
             res.status(200).send({
                 data: result,

@@ -2,14 +2,11 @@ import { DataTypes, Model, Sequelize } from 'sequelize';
 
 export interface KhachHangAttributes {
     IDKhachHang?: number;
-    MaKhachHang?: string;
-    TenKhachHang?: string;
-    DiaChiKH?: string;
-    DienThoai?: string;
-    Email?: string;
-    SoTaiKhoan?: string;
     IDLoaiKH?: number;
-    ThongTinKhac?: string;
+    TenKhachHang?: string;
+    username?: string;
+    password?: string;
+    DienThoai?: string;
     createDate?: Date;
     modifyDate?: Date;
     createBy?: string;
@@ -19,14 +16,11 @@ export interface KhachHangAttributes {
 
 export class KhachHang extends Model<KhachHangAttributes> implements KhachHangAttributes {
     IDKhachHang?: number;
-    MaKhachHang?: string;
-    TenKhachHang?: string;
-    DiaChiKH?: string;
-    DienThoai?: string;
-    Email?: string;
-    SoTaiKhoan?: string;
     IDLoaiKH?: number;
-    ThongTinKhac?: string;
+    TenKhachHang?: string;
+    DienThoai?: string;
+    username?: string;
+    password?: string;
     createDate?: Date;
     modifyDate?: Date;
     createBy?: string;
@@ -41,36 +35,24 @@ export class KhachHang extends Model<KhachHangAttributes> implements KhachHangAt
                     primaryKey: true,
                     autoIncrement: true,
                 },
-                MaKhachHang: {
-                    type: DataTypes.STRING,
-                    allowNull: true,
-                },
                 TenKhachHang: {
                     type: DataTypes.STRING,
                     allowNull: false,
                 },
-                DiaChiKH: {
-                    type: DataTypes.STRING,
-                    allowNull: true,
-                },
                 DienThoai: {
                     type: DataTypes.STRING,
-                    allowNull: true,
+                    allowNull: false,
                 },
-                Email: {
+                username: {
                     type: DataTypes.STRING,
-                    allowNull: true,
+                    allowNull: false,
                 },
-                SoTaiKhoan: {
+                password: {
                     type: DataTypes.STRING,
-                    allowNull: true,
+                    allowNull: false,
                 },
                 IDLoaiKH: {
                     type: DataTypes.INTEGER,
-                    allowNull: true,
-                },
-                ThongTinKhac: {
-                    type: DataTypes.STRING,
                     allowNull: true,
                 },
                 createDate: {
