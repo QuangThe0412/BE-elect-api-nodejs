@@ -4,8 +4,8 @@ export interface KhuyenmaiAttributes {
     IDKhuyenMai?: number;
     TenKhuyenMai?: string;
     IdLoaiKH?: number;
-    TuNgay?: Date;
-    DenNgay?: Date;
+    TuNgay: Date;
+    DenNgay: Date;
     createDate?: Date;
     modifyDate?: Date;
     createBy?: string;
@@ -17,8 +17,8 @@ export class Khuyenmai extends Model<KhuyenmaiAttributes> implements KhuyenmaiAt
     IDKhuyenMai?: number;
     TenKhuyenMai?: string;
     IdLoaiKH?: number;
-    TuNgay?: Date;
-    DenNgay?: Date;
+    TuNgay: Date;
+    DenNgay: Date;
     createDate?: Date;
     modifyDate?: Date;
     createBy?: string;
