@@ -24,7 +24,7 @@ const paths = {
     nguoiDung: '/nguoiDung',
     loaiKhachHang: '/loaiKhachHang',
     khuyenMai: '/khuyenMai',
-    chiTietKM: '/khuyenMai',
+    chiTietKM: '/chiTietKhuyenMai',
 };
 
 const roleAccess = [
