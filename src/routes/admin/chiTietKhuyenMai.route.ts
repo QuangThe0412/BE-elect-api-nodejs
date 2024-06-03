@@ -62,3 +62,5 @@ routerChiTietKM.delete('/:id', async (req: Request, res: Response) => {
         res.json({ message: error });
     }
 });
+
+export default routerChiTietKM;
