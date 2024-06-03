@@ -27,13 +27,30 @@ routerLoaiKhachHang.post('/', async (req: Request, res: Response) => {
         const loaiKhachHang = req.body as LoaiKhachHang;
         loaiKhachHang.IDLoaiKH = null;
 
-        const { TenLoaiKH } = loaiKhachHang;
+        const { TenLoaiKH, MoTa } = loaiKhachHang;
 
         if (!TenLoaiKH) {
             return res.status(400).send({
                 code: 'TENLOAIKH_PHANTRAMGG_REQUIRED',
-                mess: 'Tên loại khách hàng và phần trăm giảm giá không được để trống',
+                mess: 'Tên loại khách hàng không được để trống',
             });
+        }
+
+
+        if (TenLoaiKH) {
+            const existedLoaiKhachHangByName = await LoaiKhachHang.findOne({
+                where: {
+                    TenLoaiKH: TenLoaiKH,
+                },
+            });
+
+            if (existedLoaiKhachHangByName) {
+                return res.status(400).send({
+                    code: 'LOAIKHACHHANG_EXISTED',
+                    mess: 'Tên loại khách hàng đã tồn tại',
+                });
+            }
+
         }
 
         const existedLoaiKhachHang = await LoaiKhachHang.findOne({
@@ -48,6 +65,8 @@ routerLoaiKhachHang.post('/', async (req: Request, res: Response) => {
                 mess: 'Loại khách hàng đã tồn tại',
             });
         }
+        loaiKhachHang.MoTa = MoTa;
+
         const result = await LoaiKhachHang.create(loaiKhachHang);
         res.status(201).send({
             data: result,
@@ -90,18 +109,10 @@ routerLoaiKhachHang.get('/:IDLoaiKH', async (req: Request, res: Response) => {
 });
 
 //update
-routerLoaiKhachHang.put('/', async (req: Request, res: Response) => {
+routerLoaiKhachHang.put('/:IDLoaiKH', async (req: Request, res: Response) => {
     try {
+        const { IDLoaiKH } = req.params;
         const loaiKhachHang = req.body as LoaiKhachHang;
-
-        const { IDLoaiKH, TenLoaiKH } = loaiKhachHang;
-
-        if (!IDLoaiKH || !TenLoaiKH ) {
-            return res.status(400).send({
-                code: 'IDLOAIKH_TENLOAIKH_PHANTRAMGG_REQUIRED',
-                mess: 'ID loại khách hàng, tên loại khách hàng và phần trăm giảm giá không được để trống',
-            });
-        }
 
         const existedLoaiKhachHang = await LoaiKhachHang.findOne({
             where: {
@@ -110,20 +121,44 @@ routerLoaiKhachHang.put('/', async (req: Request, res: Response) => {
         });
 
         if (!existedLoaiKhachHang) {
-            return res.status(400).send({
-                code: 'LOAIKHACHHANG_NOT_EXISTED',
+            return res.status(404).send({
+                code: 'LOAIKHACHHANG_NOT_FOUND',
                 mess: 'Loại khách hàng không tồn tại',
             });
         }
 
-        const result = await LoaiKhachHang.update(loaiKhachHang, {
-            where: {
-                IDLoaiKH: IDLoaiKH,
-            },
-        });
+        const { TenLoaiKH, MoTa } = loaiKhachHang;
+
+        if (!TenLoaiKH) {
+            return res.status(400).send({
+                code: 'TENLOAIKH_PHANTRAMGG_REQUIRED',
+                mess: 'Tên loại khách hàng không được để trống',
+            });
+        }
+
+        if (TenLoaiKH && existedLoaiKhachHang.TenLoaiKH !== TenLoaiKH) {
+            const existedLoaiKhachHangByName = await LoaiKhachHang.findOne({
+                where: {
+                    TenLoaiKH: TenLoaiKH,
+                },
+            });
+
+            if (existedLoaiKhachHangByName) {
+                return res.status(400).send({
+                    code: 'LOAIKHACHHANG_EXISTED',
+                    mess: 'Tên loại khách hàng đã tồn tại',
+                });
+            }
+
+        }
+
+        existedLoaiKhachHang.TenLoaiKH = TenLoaiKH;
+        existedLoaiKhachHang.MoTa = MoTa;
+
+        await LoaiKhachHang.update(existedLoaiKhachHang, { where: { IDLoaiKH: IDLoaiKH } });
 
         res.status(200).send({
-            data: result,
+            data: existedLoaiKhachHang,
             code: 'UPDATE_LOAIKHACHHANG_SUCCESS',
             mess: 'Cập nhật loại khách hàng thành công',
         });

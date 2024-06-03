@@ -3,6 +3,7 @@ import { DataTypes, Model, Sequelize } from 'sequelize';
 export interface LoaiKhachHangAttributes {
     IDLoaiKH: number;
     TenLoaiKH: string;
+    MoTa?: string;
     createDate?: Date;
     modifyDate?: Date;
     createBy?: string;
@@ -12,6 +13,7 @@ export interface LoaiKhachHangAttributes {
 export class LoaiKhachHang extends Model<LoaiKhachHangAttributes> implements LoaiKhachHangAttributes {
     IDLoaiKH: number;
     TenLoaiKH: string;
+    MoTa?: string;
     createDate?: Date;
     modifyDate?: Date;
     createBy?: string;
@@ -28,6 +30,10 @@ export class LoaiKhachHang extends Model<LoaiKhachHangAttributes> implements Loa
                 TenLoaiKH: {
                     type: DataTypes.STRING,
                     allowNull: false,
+                },
+                MoTa: {
+                    type: DataTypes.STRING,
+                    allowNull: true,
                 },
                 createDate: {
                     type: DataTypes.DATE,
