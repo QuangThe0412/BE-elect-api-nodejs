@@ -59,11 +59,23 @@ routerChiTietKM.delete(
         try {
             const id = req.params.id;
 
-            // await ChiTietKM.destroy({
-            //     where: {
-            //         IDChiTietKM: id,
-            //     },
-            // });
+            const chiTietKM = await ChiTietKM.findByPk(id);
+            if (!chiTietKM) {
+                return res.status(404).send({
+                    code: 'CHITIETKM_NOT_FOUND',
+                    mess: 'Không tìm thấy chi tiết khuyến mãi',
+                });
+            }
+
+            chiTietKM.modifyBy = await GetCurrentUser(req);
+            chiTietKM.modifyDate = new Date();
+
+            await ChiTietKM.update(chiTietKM, {
+                where: {
+                    IDChiTietKM: id,
+                },
+            });
+            
             res.status(200).send({
                 code: 'DELETE_CHITIETKM_SUCCESS',
                 mess: 'Xóa chi tiết khuyến mãi thành công',
