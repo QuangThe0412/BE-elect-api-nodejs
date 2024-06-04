@@ -69,6 +69,7 @@ routerChiTietKM.delete(
 
             chiTietKM.modifyBy = await GetCurrentUser(req);
             chiTietKM.modifyDate = new Date();
+            chiTietKM.Deleted = true;
 
             await ChiTietKM.update(chiTietKM, {
                 where: {
