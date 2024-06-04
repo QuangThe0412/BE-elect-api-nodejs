@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express';
 import { ChiTietKM } from '../../models/init-models';
+import { GetCurrentUser } from '../../utils/index';
 
 const routerChiTietKM = express.Router();
 
@@ -10,6 +11,9 @@ routerChiTietKM.post(
         try {
             const chiTietKM = req.body as ChiTietKM;
             chiTietKM.IDChiTietKM = null;
+
+            chiTietKM.createBy = await GetCurrentUser(req);
+            chiTietKM.createDate = new Date();
 
             await ChiTietKM.create(chiTietKM);
             res.status(201).send({
@@ -29,6 +33,9 @@ routerChiTietKM.put(
         try {
             const chiTietKM = req.body as ChiTietKM;
             const id = req.params.id;
+
+            chiTietKM.modifyBy = await GetCurrentUser(req);
+            chiTietKM.modifyDate = new Date();
 
             await ChiTietKM.update(chiTietKM, {
                 where: {
