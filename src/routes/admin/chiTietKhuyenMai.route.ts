@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { ChiTietKM } from '../../models/init-models';
+import { ChiTietKM, Khuyenmai } from '../../models/init-models';
 import { GetCurrentUser } from '../../utils/index';
 
 const routerChiTietKM = express.Router();
@@ -11,6 +11,30 @@ routerChiTietKM.post(
         try {
             const chiTietKM = req.body as ChiTietKM;
             chiTietKM.IDChiTietKM = null;
+
+            const { IDKhuyenMai, IDMon } = chiTietKM;
+            if (!IDKhuyenMai || !IDMon) {
+                return res.status(400).send({
+                    code: 'CHITIETKM_INVALID',
+                    mess: 'Chi tiết khuyến mãi không hợp lệ',
+                });
+            }
+
+            //check exist product
+            const getChiTietKMByIDMon = await ChiTietKM.findOne({
+                where: {
+                    IDKhuyenMai: IDKhuyenMai,
+                    IDMon: IDMon,
+                    Deleted: false,
+                },
+            });
+
+            if (getChiTietKMByIDMon) {
+                return res.status(400).send({
+                    code: 'CHITIETKM_EXISTED',
+                    mess: 'Món đã tồn tại trong khuyến mãi này',
+                });
+            }
 
             chiTietKM.createBy = await GetCurrentUser(req);
             chiTietKM.createDate = new Date();
@@ -33,6 +57,29 @@ routerChiTietKM.put(
         try {
             const chiTietKM = req.body as ChiTietKM;
             const id = req.params.id;
+            if(!id) {
+                return res.status(400).send({
+                    code: 'CHITIETKM_ID_INVALID',
+                    mess: 'ID chi tiết khuyến mãi không hợp lệ',
+                });
+            }
+
+            //check exist product
+            const { IDKhuyenMai, IDMon } = chiTietKM;
+            const getChiTietKMByIDMon = await ChiTietKM.findOne({
+                where: {
+                    IDKhuyenMai: IDKhuyenMai,
+                    IDMon: IDMon,
+                    Deleted: false,
+                },
+            });
+
+            if (getChiTietKMByIDMon && getChiTietKMByIDMon.IDChiTietKM !== Number(id)) {
+                return res.status(400).send({
+                    code: 'CHITIETKM_EXISTED',
+                    mess: 'Món đã tồn tại trong khuyến mãi này',
+                });
+            }
 
             chiTietKM.modifyBy = await GetCurrentUser(req);
             chiTietKM.modifyDate = new Date();
@@ -76,7 +123,7 @@ routerChiTietKM.delete(
                     IDChiTietKM: id,
                 },
             });
-            
+
             res.status(200).send({
                 code: 'DELETE_CHITIETKM_SUCCESS',
                 mess: 'Xóa chi tiết khuyến mãi thành công',
