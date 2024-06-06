@@ -35,11 +35,11 @@ export class HoaDon extends Model<HoaDonAttributes> implements HoaDonAttributes 
                 },
                 IDBaoGia: {
                     type: DataTypes.INTEGER,
-                    allowNull: false,
+                    allowNull: true,
                 },
                 IDKhachHang: {
                     type: DataTypes.INTEGER,
-                    allowNull: false,
+                    allowNull: true,
                 },
                 GhiChu: {
                     type: DataTypes.STRING,
@@ -47,11 +47,11 @@ export class HoaDon extends Model<HoaDonAttributes> implements HoaDonAttributes 
                 },
                 CongNo: {
                     type: DataTypes.FLOAT,
-                    allowNull: false,
+                    allowNull: true,
                 },
                 TrangThai: {
                     type: DataTypes.INTEGER,
-                    allowNull: false,
+                    allowNull: true,
                 },
                 createDate: {
                     type: DataTypes.DATE,

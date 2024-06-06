@@ -12,7 +12,8 @@ import routerNguoiDung from "./nguoiDung.route";
 import routerLoaiKhachHang from "./loaiKhachHang.route";
 import routerKhuyenMai from "./khuyenMai.route";
 import routerChiTietKM from "./chiTietKhuyenMai.route";
-import routerOrder from "./order.route";
+import routerHoaDon from "./hoaDon.route";
+import routerChiTietHD from "./chiTietHD.route";
 
 const paths = {
     auth: '/auth',
@@ -98,6 +99,7 @@ router.use(paths.thongke, adminAuthMiddleware, routerThongKe);
 router.use(paths.loaiKhachHang, adminAuthMiddleware, routerLoaiKhachHang);
 router.use(paths.khuyenMai, adminAuthMiddleware, routerKhuyenMai);
 router.use(paths.chiTietKM, adminAuthMiddleware, routerChiTietKM);
-router.use(paths.hoaDon, adminAuthMiddleware, routerOrder);
+router.use(paths.hoaDon, adminAuthMiddleware, routerHoaDon);
+router.use(paths.chiTietHD, adminAuthMiddleware, routerChiTietHD);
 
 export { router, roleAccess, paths };

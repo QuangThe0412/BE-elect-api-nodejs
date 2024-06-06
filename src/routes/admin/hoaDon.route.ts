@@ -1,8 +1,6 @@
 import express, { Request, Response } from 'express';
-import { HoaDon, ChiTietHD } from '../../models/init-models';
-import { GetCurrentUser } from '../../utils/index';
-import { paths } from '.';
-import { or } from 'sequelize';
+import { HoaDon } from '../../models/init-models';
+import { GetCurrentUser, STATUS_ENUM } from '../../utils/index';
 
 const routerOrder = express.Router();
 
@@ -32,6 +30,7 @@ routerOrder.put(
         try {
             const id = req.params.id;
             const status = req.body.status;
+
             const order = await HoaDon.findByPk(id);
             if (!order) {
                 return res.status(404).send({
@@ -39,6 +38,14 @@ routerOrder.put(
                     mess: 'Không tìm thấy đơn hàng',
                 });
             }
+            
+            if (status < 0 || !Object.values(STATUS_ENUM).includes(status)) {
+                return res.status(400).send({
+                    code: 'INVALID_STATUS',
+                    mess: 'Trạng thái không hợp lệ',
+                });
+            }
+
             order.TrangThai = status;
 
             order.modifyDate = new Date();
@@ -61,4 +68,4 @@ routerOrder.put(
         }
     });
 
-    export default routerOrder;
+export default routerOrder;

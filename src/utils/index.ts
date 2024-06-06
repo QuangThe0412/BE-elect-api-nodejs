@@ -99,3 +99,9 @@ export const GetCurrentUser = async (req: Request) => {
         return null;
     }
 }
+
+export enum STATUS_ENUM {
+    PENDING = 0,
+    FINISH = 1,
+    CANCEL = 2,
+}
