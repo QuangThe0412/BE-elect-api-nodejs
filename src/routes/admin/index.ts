@@ -12,6 +12,7 @@ import routerNguoiDung from "./nguoiDung.route";
 import routerLoaiKhachHang from "./loaiKhachHang.route";
 import routerKhuyenMai from "./khuyenMai.route";
 import routerChiTietKM from "./chiTietKhuyenMai.route";
+import routerOrder from "./order.route";
 
 const paths = {
     auth: '/auth',
@@ -25,6 +26,8 @@ const paths = {
     loaiKhachHang: '/loaiKhachHang',
     khuyenMai: '/khuyenMai',
     chiTietKM: '/chiTietKhuyenMai',
+    hoaDon:'/hoaDon',
+    chiTietHD:'/chiTietHoaDon',
 };
 
 const roleAccess = [
@@ -72,6 +75,14 @@ const roleAccess = [
         path: paths.chiTietKM,
         role: [RoleEnum.ADMIN]
     },
+    {
+        path: paths.hoaDon,
+        role: [RoleEnum.ADMIN]
+    },
+    {
+        path: paths.chiTietHD,
+        role: [RoleEnum.ADMIN]
+    },
 ];
 
 const router = express.Router();
@@ -87,5 +98,6 @@ router.use(paths.thongke, adminAuthMiddleware, routerThongKe);
 router.use(paths.loaiKhachHang, adminAuthMiddleware, routerLoaiKhachHang);
 router.use(paths.khuyenMai, adminAuthMiddleware, routerKhuyenMai);
 router.use(paths.chiTietKM, adminAuthMiddleware, routerChiTietKM);
+router.use(paths.hoaDon, adminAuthMiddleware, routerOrder);
 
 export { router, roleAccess, paths };
