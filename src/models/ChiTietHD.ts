@@ -47,31 +47,31 @@ export class ChiTietHD extends Model<ChiTietHDAttributes> implements ChiTietHDAt
                 },
                 IDMon: {
                     type: DataTypes.INTEGER,
-                    allowNull: false,
+                    allowNull: true,
                 },
                 SoLuong: {
                     type: DataTypes.INTEGER,
-                    allowNull: false,
+                    allowNull: true,
                 },
                 DonGia: {
                     type: DataTypes.FLOAT,
-                    allowNull: false,
+                    allowNull: true,
                 },
                 ChietKhau: {
                     type: DataTypes.FLOAT,
-                    allowNull: false,
+                    allowNull: true,
                 },
                 TienChuaCK: {
                     type: DataTypes.FLOAT,
-                    allowNull: false,
+                    allowNull: true,
                 },
                 TienCK: {
                     type: DataTypes.FLOAT,
-                    allowNull: false,
+                    allowNull: true,
                 },
                 TienSauCK: {
                     type: DataTypes.FLOAT,
-                    allowNull: false,
+                    allowNull: true,
                 },
                 createDate: {
                     type: DataTypes.DATE,

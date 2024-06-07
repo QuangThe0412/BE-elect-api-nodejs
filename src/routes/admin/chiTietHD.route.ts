@@ -4,7 +4,7 @@ import { GetCurrentUser, STATUS_ENUM } from '../../utils/index';
 
 const routerChiTietHD = express.Router();
 
-//get details
+//get all details
 routerChiTietHD.get(
     '/:id',
     async (req: Request, res: Response) => {
@@ -122,7 +122,7 @@ routerChiTietHD.delete(
                     mess: 'Chi tiết hóa đơn không tồn tại',
                 });
             }
-
+            
             chiTietHD.Deleted = true;
             chiTietHD.modifyBy = await GetCurrentUser(req);
             chiTietHD.modifyDate = new Date();
