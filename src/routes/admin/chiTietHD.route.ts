@@ -1,46 +1,8 @@
 import express, { Request, Response } from 'express';
-import { ChiTietHD } from '../../models/init-models';
-import { GetCurrentUser, STATUS_ENUM } from '../../utils/index';
+import { ChiTietHD, HoaDon, Mon } from '../../models/init-models';
+import { GetCurrentUser, IsPendingStatus, STATUS_ENUM } from '../../utils/index';
 
 const routerChiTietHD = express.Router();
-
-//get all details
-routerChiTietHD.get(
-    '/:id',
-    async (req: Request, res: Response) => {
-        try {
-            const id = req.params.id;
-
-            if (!id) {
-                return res.status(400).send({
-                    code: 'CHITIETHD_ID_INVALID',
-                    mess: 'ID chi tiết hóa đơn không hợp lệ',
-                });
-            }
-
-            const chiTietHD = await ChiTietHD.findOne({
-                where: {
-                    IDHoaDon: id,
-                },
-            });
-
-            if (!chiTietHD) {
-                return res.status(404).send({
-                    code: 'CHITIETHD_NOT_FOUND',
-                    mess: 'Chi tiết hóa đơn không tồn tại',
-                });
-            }
-
-            res.status(200).send({
-                data: chiTietHD,
-                code: 'GET_CHITIETHD_SUCCESS',
-            });
-
-        } catch (err) {
-            console.error(err);
-            res.status(500).send(err);
-        }
-    });
 
 //update
 routerChiTietHD.put(
@@ -48,12 +10,27 @@ routerChiTietHD.put(
     async (req: Request, res: Response) => {
         try {
             const chiTietHD = req.body as ChiTietHD;
-            const { IDMon, SoLuong, ChietKhau } = chiTietHD;
+            const { IDMon, SoLuong, ChietKhau, IDHoaDon } = chiTietHD;
             const id = req.params.id;
             if (!id) {
                 return res.status(400).send({
                     code: 'CHITIETHD_INVALID',
                     mess: 'Chi tiết hóa đơn không hợp lệ',
+                });
+            }
+
+            const hoaDon = await HoaDon.findByPk(IDHoaDon);
+            if (!hoaDon) {
+                return res.status(404).send({
+                    code: 'HOADON_NOT_FOUND',
+                    mess: 'Hóa đơn không tồn tại',
+                });
+            }
+
+            if (!IsPendingStatus(hoaDon.TrangThai)) {
+                return res.status(400).send({
+                    code: 'HOADON_INVALID',
+                    mess: 'Trạng thái hóa đơn không hợp lệ',
                 });
             }
 
@@ -65,20 +42,30 @@ routerChiTietHD.put(
                 });
             }
 
-            if (!ChietKhau || ChietKhau < 0 || ChietKhau > 100 || !SoLuong || SoLuong < 0 || !IDMon) {
+            if (ChietKhau < 0 || ChietKhau > 100 || !SoLuong || SoLuong < 0 || !IDMon) {
                 return res.status(400).send({
                     code: 'CHITIETHD_INVALID',
                     mess: 'Chi tiết hóa đơn không hợp lệ',
                 });
             }
 
-            const moneyBeforeDiscount = chiTietHDUpdate.DonGia * SoLuong;
-            const moneyDiscount = chiTietHDUpdate.DonGia * (ChietKhau / 100);
-            const moneyAfterDiscount = moneyBeforeDiscount - moneyDiscount;
+            const product = await Mon.findByPk(IDMon);
+            if (!product) {
+                return res.status(404).send({
+                    code: 'MON_NOT_FOUND',
+                    mess: 'Món không tồn tại',
+                });
+            }
 
-            chiTietHDUpdate.TienCK = moneyDiscount;
-            chiTietHDUpdate.TienSauCK = moneyAfterDiscount;
-            chiTietHDUpdate.TienSauCK = moneyAfterDiscount;
+            const DonGia = product.DonGiaBanLe;
+            const TienChuaCK = DonGia * SoLuong;
+            const TienCK = ChietKhau * TienChuaCK / 100;
+            const TienSauCK = TienChuaCK - TienCK;
+
+            chiTietHDUpdate.TienCK = TienCK;
+            chiTietHDUpdate.DonGia = DonGia;
+            chiTietHDUpdate.TienSauCK = TienSauCK;
+            chiTietHDUpdate.TienChuaCK = TienChuaCK;
             chiTietHDUpdate.IDMon = IDMon;
             chiTietHDUpdate.SoLuong = SoLuong;
             chiTietHDUpdate.ChietKhau = ChietKhau;
@@ -95,6 +82,74 @@ routerChiTietHD.put(
                 data: result,
                 code: 'UPDATE_CHITIETHD_SUCCESS',
                 mess: 'Cập nhật chi tiết hóa đơn thành công',
+            });
+        } catch (err) {
+            console.error(err);
+            res.status(500).send(err);
+        }
+    });
+
+//create
+routerChiTietHD.post(
+    '/',
+    async (req: Request, res: Response) => {
+        try {
+            const chiTietHD = req.body as ChiTietHD;
+            const { IDMon, SoLuong, ChietKhau, IDHoaDon } = chiTietHD;
+            if (!IDMon || !SoLuong || SoLuong < 0 || !IDHoaDon || ChietKhau < 0 || ChietKhau > 100) {
+                return res.status(400).send({
+                    code: 'CHITIETHD_INVALID',
+                    mess: 'Chi tiết hóa đơn không hợp lệ',
+                });
+            }
+
+            const product = await Mon.findByPk(IDMon);
+            if (!product) {
+                return res.status(404).send({
+                    code: 'MON_NOT_FOUND',
+                    mess: 'Món không tồn tại',
+                });
+            }
+
+            const hoaDon = await HoaDon.findByPk(IDHoaDon);
+            if (!hoaDon) {
+                return res.status(404).send({
+                    code: 'ORDER_NOT_FOUND',
+                    mess: 'Hóa đơn không tồn tại',
+                });
+            }
+
+            if (!IsPendingStatus(hoaDon.TrangThai)) {
+                return res.status(400).send({
+                    code: 'ORDER_INVALID',
+                    mess: 'Trạng thái hóa đơn không hợp lệ',
+                });
+            }
+
+            const { DonGiaBanLe } = product;
+
+            const DonGia = DonGiaBanLe;
+            const TienChuaCK = DonGia * SoLuong;
+            const TienCK = ChietKhau * TienChuaCK / 100;
+            const TienSauCK = TienChuaCK - TienCK;
+
+            const chiTietHDCreate = await ChiTietHD.create({
+                IDMon,
+                SoLuong,
+                ChietKhau,
+                IDHoaDon,
+                DonGia: DonGiaBanLe,
+                TienCK: TienCK,
+                TienSauCK: TienSauCK,
+                TienChuaCK: TienChuaCK,
+                createBy: await GetCurrentUser(req),
+                createDate: new Date(),
+            });
+
+            res.status(201).send({
+                data: chiTietHDCreate,
+                code: 'CREATE_CHITIETHD_SUCCESS',
+                mess: 'Tạo chi tiết hóa đơn thành công',
             });
         } catch (err) {
             console.error(err);
@@ -122,7 +177,21 @@ routerChiTietHD.delete(
                     mess: 'Chi tiết hóa đơn không tồn tại',
                 });
             }
-            
+
+            const hoaDon = await HoaDon.findByPk(chiTietHD.IDHoaDon);
+            if (!hoaDon) {
+                return res.status(404).send({
+                    code: 'ORDER_NOT_FOUND',
+                    mess: 'Hóa đơn không tồn tại',
+                });
+            }
+            if (!IsPendingStatus(hoaDon.TrangThai)) {
+                return res.status(400).send({
+                    code: 'ORDER_INVALID',
+                    mess: 'Trạng thái hóa đơn không hợp lệ',
+                });
+            }
+
             chiTietHD.Deleted = true;
             chiTietHD.modifyBy = await GetCurrentUser(req);
             chiTietHD.modifyDate = new Date();

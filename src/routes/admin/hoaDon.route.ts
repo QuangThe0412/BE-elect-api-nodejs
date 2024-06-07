@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import { ChiTietHD, HoaDon } from '../../models/init-models';
-import { GetCurrentUser, STATUS_ENUM } from '../../utils/index';
+import { GetCurrentUser, IsPendingStatus, STATUS_ENUM } from '../../utils/index';
 
 const routerOrder = express.Router();
 

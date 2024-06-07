@@ -105,3 +105,7 @@ export enum STATUS_ENUM {
     FINISH = 1,
     CANCEL = 2,
 }
+
+export const IsPendingStatus = (status: number) => {
+    return status === STATUS_ENUM.PENDING;
+};
