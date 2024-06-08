@@ -4,9 +4,8 @@ import { CongNoKH } from './CongNoKH';
 export interface ChiTietCongNoKHAttributes {
     idChiTietCongNoKH?: number;
     idCongNoKH?: number;
-    NgayTra?: Date;
     SoTienTra?: number;
-    CongNoCuoi?: number;
+    Deleted?: boolean;
     createDate?: Date;
     modifyDate?: Date;
     createBy?: string;
@@ -16,9 +15,8 @@ export interface ChiTietCongNoKHAttributes {
 export class ChiTietCongNoKH extends Model<ChiTietCongNoKHAttributes> implements ChiTietCongNoKHAttributes {
     idChiTietCongNoKH?: number;
     idCongNoKH?: number;
-    NgayTra?: Date;
     SoTienTra?: number;
-    CongNoCuoi?: number;
+    Deleted?: boolean;
     createDate?: Date;
     modifyDate?: Date;
     createBy?: string;
@@ -36,16 +34,12 @@ export class ChiTietCongNoKH extends Model<ChiTietCongNoKHAttributes> implements
                     type: DataTypes.INTEGER,
                     allowNull: false,
                 },
-                NgayTra: {
-                    type: DataTypes.DATE,
-                    allowNull: true,
-                },
                 SoTienTra: {
                     type: DataTypes.DECIMAL(18),
                     allowNull: true,
                 },
-                CongNoCuoi: {
-                    type: DataTypes.DECIMAL(18),
+                Deleted: {
+                    type: DataTypes.BOOLEAN,
                     allowNull: true,
                 },
                 createDate: {

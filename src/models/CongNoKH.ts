@@ -7,8 +7,6 @@ export interface CongNoKHAttributes {
     IDKhachHang?: number;
     IDHoaDon?: number;
     CongNoDau?: number;
-    SoTienTra?: number;
-    CongNoCuoi?: number;
     createDate?: Date;
     modifyDate?: Date;
     createBy?: string;
@@ -20,8 +18,6 @@ export class CongNoKH extends Model<CongNoKHAttributes> implements CongNoKHAttri
     IDKhachHang?: number;
     IDHoaDon?: number;
     CongNoDau?: number;
-    SoTienTra?: number;
-    CongNoCuoi?: number;
     createDate?: Date;
     modifyDate?: Date;
     createBy?: string;
@@ -44,14 +40,6 @@ export class CongNoKH extends Model<CongNoKHAttributes> implements CongNoKHAttri
                     allowNull: false,
                 },
                 CongNoDau: {
-                    type: DataTypes.DECIMAL(18),
-                    allowNull: true,
-                },
-                SoTienTra: {
-                    type: DataTypes.DECIMAL(18),
-                    allowNull: true,
-                },
-                CongNoCuoi: {
                     type: DataTypes.DECIMAL(18),
                     allowNull: true,
                 },
