@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import { CongNoKH } from '../../models/init-models';
-import { GetCurrentUser} from '../../utils/index';
+import { GetCurrentUser } from '../../utils/index';
 
 const routerCongNoKH = express.Router();
 
@@ -15,6 +15,34 @@ routerCongNoKH.get('/', async (req: Request, res: Response) => {
             data: result,
             code: 'GET_ALL_CONGNO_SUCCESS',
             mess: 'Nhận danh sách công nợ thành công',
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send(err);
+    }
+});
+
+//get by id
+routerCongNoKH.get('/:id', async (req: Request, res: Response) => {
+    try {
+        const id = req.params.id;
+        let result: any = await CongNoKH.findOne({
+            where: {
+                Id: id,
+            }
+        });
+
+        if (!result) {
+            return res.status(404).send({
+                code: 'CONGNO_NOT_FOUND',
+                mess: 'Không tìm thấy công nợ',
+            });
+        }
+
+        res.status(200).send({
+            data: result,
+            code: 'GET_CONGNO_SUCCESS',
+            mess: 'Nhận công nợ thành công',
         });
     } catch (err) {
         console.error(err);
@@ -67,12 +95,13 @@ routerCongNoKH.post('/', async (req: Request, res: Response) => {
 });
 
 //update
-routerCongNoKH.put('/', async (req: Request, res: Response) => {
+routerCongNoKH.put('/:id', async (req: Request, res: Response) => {
     try {
         const congNoKH = req.body as CongNoKH;
-        const { Id, IDKhachHang, IDHoaDon, CongNoDau } = congNoKH;
+        const id = req.params.id;
+        const { IDKhachHang, IDHoaDon, CongNoDau } = congNoKH;
 
-        if (!Id || !IDKhachHang || !IDHoaDon || !CongNoDau) {
+        if (!IDKhachHang || !IDHoaDon || !CongNoDau) {
             return res.status(400).send({
                 code: 'MISSING_FIELDS',
                 mess: 'Thiếu trường bắt buộc',
@@ -81,8 +110,7 @@ routerCongNoKH.put('/', async (req: Request, res: Response) => {
 
         const existedCongNoKH = await CongNoKH.findOne({
             where: {
-                IDKhachHang: IDKhachHang,
-                IDHoaDon: IDHoaDon,
+                Id: id,
             }
         });
 
@@ -97,8 +125,7 @@ routerCongNoKH.put('/', async (req: Request, res: Response) => {
         congNoKH.modifyDate = new Date();
         const updatedCongNoKH = await CongNoKH.update(congNoKH, {
             where: {
-                IDKhachHang: IDKhachHang,
-                IDHoaDon: IDHoaDon,
+                Id: id,
             }
         });
 

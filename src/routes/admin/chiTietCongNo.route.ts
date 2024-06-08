@@ -4,6 +4,24 @@ import { GetCurrentUser } from '../../utils/index';
 
 const routerChiTietCongNoKH = express.Router();
 
+//get all
+routerChiTietCongNoKH.get('/', async (req: Request, res: Response) => {
+    try {
+        let result: ChiTietCongNoKH[] = await ChiTietCongNoKH.findAll({
+            order: [['idChiTietCongNoKH', 'DESC']],
+        });
+
+        res.status(200).send({
+            data: result,
+            code: 'GET_ALL_CHITIETCONGNO_SUCCESS',
+            mess: 'Nhận danh sách chi tiết công nợ thành công',
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send(err);
+    }
+});
+
 //create
 routerChiTietCongNoKH.post('/', async (req: Request, res: Response) => {
     try {
