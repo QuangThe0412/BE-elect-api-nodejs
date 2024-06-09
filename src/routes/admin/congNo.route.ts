@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { CongNoKH } from '../../models/init-models';
+import { ChiTietCongNoKH, CongNoKH } from '../../models/init-models';
 import { GetCurrentUser } from '../../utils/index';
 
 const routerCongNoKH = express.Router();
@@ -144,11 +144,11 @@ routerCongNoKH.put('/:id', async (req: Request, res: Response) => {
 routerCongNoKH.get('/:idCongNo' + '/chiTietCongNo', async (req: Request, res: Response) => {
     try {
         const idCongNo = req.params.idCongNo;
-        let result: any = await CongNoKH.findAll({
+        let result: any = await ChiTietCongNoKH.findAll({
             where: {
-                Id: idCongNo,
+                idCongNoKH: idCongNo,
             },
-            order: [['Id', 'DESC']],
+            order: [['idChiTietCongNoKH', 'DESC']],
         });
 
         res.status(200).send({

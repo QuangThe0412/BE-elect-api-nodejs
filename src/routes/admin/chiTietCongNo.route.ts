@@ -50,12 +50,21 @@ routerChiTietCongNoKH.post('/', async (req: Request, res: Response) => {
             });
         }
 
+        const totalSoTienTra = await totalSoTienDaTra(idCongNoKH, null);
+        const moneyCheck = Number(totalSoTienTra) + Number(SoTienTra);
+        if (Number(congNo.CongNoDau) < Number(moneyCheck)) {
+            return res.status(400).send({
+                code: 'SOTIENTRA_INVALID',
+                mess: 'Số tiền trả vượt quá số tiền còn lại trong công nợ',
+            })
+        }
+
         chiTietCongNoKH.createBy = await GetCurrentUser(req);
         chiTietCongNoKH.createDate = new Date();
 
         const result = await ChiTietCongNoKH.create(chiTietCongNoKH);
 
-        res.status(200).send({
+        res.status(201).send({
             data: result,
             code: 'CREATE_CHITIETCONGNO_SUCCESS',
             mess: 'Tạo chi tiết công nợ thành công',
@@ -116,6 +125,16 @@ routerChiTietCongNoKH.put(
                 });
             }
 
+            const totalSoTienTra = await totalSoTienDaTra(idCongNoKH, Number(idChiTietCongNoKH));
+            const moneyCheck = Number(totalSoTienTra) + Number(SoTienTra);
+            if (Number(congNo.CongNoDau) < Number(moneyCheck)) {
+                return res.status(400).send({
+                    code: 'SOTIENTRA_INVALID',
+                    mess: 'Số tiền trả vượt quá số tiền còn lại trong công nợ',
+                })
+            }
+
+            chiTietCongNoKH.SoTienTra = SoTienTra;
             chiTietCongNoKH.modifyBy = await GetCurrentUser(req);
             chiTietCongNoKH.modifyDate = new Date();
 
@@ -181,5 +200,23 @@ routerChiTietCongNoKH.delete('/:id', async (req: Request, res: Response) => {
         res.status(500).send(err);
     }
 });
+
+const totalSoTienDaTra = async (idCongNoKhachHang: number, exceptId: number | null) => {
+    const result = await ChiTietCongNoKH.findAll({
+        where: {
+            idCongNoKH: idCongNoKhachHang,
+        }
+    });
+    if (exceptId) {
+        return result.reduce((total, item) => {
+            if (item.idChiTietCongNoKH !== exceptId) {
+                return total + item.SoTienTra;
+            }
+            return total;
+        }, 0);
+    }
+
+    return result.reduce((total, item) => total + item.SoTienTra, 0);
+};
 
 export default routerChiTietCongNoKH;
