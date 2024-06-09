@@ -207,8 +207,11 @@ const totalSoTienDaTra = async (idCongNoKhachHang: number, exceptId: number | nu
             idCongNoKH: idCongNoKhachHang,
         }
     });
+
+    const _result = result.filter(item => item.Deleted === false);
+
     if (exceptId) {
-        return result.reduce((total, item) => {
+        return _result.reduce((total, item) => {
             if (item.idChiTietCongNoKH !== exceptId) {
                 return total + item.SoTienTra;
             }
@@ -216,7 +219,7 @@ const totalSoTienDaTra = async (idCongNoKhachHang: number, exceptId: number | nu
         }, 0);
     }
 
-    return result.reduce((total, item) => total + item.SoTienTra, 0);
+    return _result.reduce((total, item) => total + item.SoTienTra, 0);
 };
 
 export default routerChiTietCongNoKH;
