@@ -57,6 +57,27 @@ routerChiTietHD.put(
                 });
             }
 
+            //check mon existed in order
+            console.log({ IDHoaDon });
+            console.log('IDMon', IDMon);
+            console.log(IDMon !== chiTietHDUpdate.IDMon)
+            if (IDMon && IDMon !== chiTietHDUpdate.IDMon) {
+                const monInOrder = await ChiTietHD.findAll({
+                    where: {
+                        IDHoaDon,
+                        IDMon,
+                        Deleted: false,
+                    },
+                });
+                console.log('monInOrder', monInOrder);
+                if (monInOrder.length > 0) {
+                    return res.status(400).send({
+                        code: 'MON_EXISTED',
+                        mess: 'Món đã tồn tại trong hóa đơn',
+                    });
+                }
+            }
+
             const DonGia = product.DonGiaBanLe;
             const TienChuaCK = DonGia * SoLuong;
             const TienCK = ChietKhau * TienChuaCK / 100;
@@ -123,6 +144,22 @@ routerChiTietHD.post(
                 return res.status(400).send({
                     code: 'ORDER_INVALID',
                     mess: 'Trạng thái hóa đơn không hợp lệ',
+                });
+            }
+
+            //check mon existed in order
+            const monInOrder = await ChiTietHD.findAll({
+                where: {
+                    IDHoaDon,
+                    IDMon,
+                    Deleted: false,
+                },
+            });
+
+            if (monInOrder.length > 0) {
+                return res.status(400).send({
+                    code: 'MON_EXISTED',
+                    mess: 'Món đã tồn tại trong hóa đơn',
                 });
             }
 

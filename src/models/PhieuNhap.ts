@@ -2,9 +2,7 @@ import { DataTypes, Model, Sequelize } from 'sequelize';
 
 export interface PhieuNhapAttributes {
     IDPhieuNhap?: number;
-    NgayNhap?: Date;
     NhaCungCap?: string;
-    TongGiaTri?: number;
     GhiChu?: string;
     createDate?: Date;
     modifyDate?: Date;
@@ -15,9 +13,7 @@ export interface PhieuNhapAttributes {
 
 export class PhieuNhap extends Model<PhieuNhapAttributes> implements PhieuNhapAttributes {
     IDPhieuNhap?: number;
-    NgayNhap?: Date;
     NhaCungCap?: string;
-    TongGiaTri?: number;
     GhiChu?: string;
     createDate?: Date;
     modifyDate?: Date;
@@ -33,17 +29,8 @@ export class PhieuNhap extends Model<PhieuNhapAttributes> implements PhieuNhapAt
                     primaryKey: true,
                     autoIncrement: true,
                 },
-                NgayNhap: {
-                    type: DataTypes.DATE,
-                    allowNull: false,
-                    defaultValue: DataTypes.NOW,
-                },
                 NhaCungCap: {
                     type: DataTypes.STRING,
-                    allowNull: false,
-                },
-                TongGiaTri: {
-                    type: DataTypes.FLOAT,
                     allowNull: false,
                 },
                 GhiChu: {

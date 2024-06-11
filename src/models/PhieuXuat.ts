@@ -3,7 +3,6 @@ import { DataTypes, Model, Sequelize } from 'sequelize';
 export interface PhieuXuatAttributes {
     IDPhieuXuat?: number;
     IDKhachHang?: number;
-    TongGiaTri?: number;
     GhiChu?: string;
     createDate?: Date;
     modifyDate?: Date;
@@ -14,9 +13,7 @@ export interface PhieuXuatAttributes {
 
 export class PhieuXuat extends Model<PhieuXuatAttributes> implements PhieuXuatAttributes {
     IDPhieuXuat?: number;
-    NgayXuat?: Date;
     IDKhachHang?: number;
-    TongGiaTri?: number;
     GhiChu?: string;
     createDate?: Date;
     modifyDate?: Date;
@@ -34,10 +31,6 @@ export class PhieuXuat extends Model<PhieuXuatAttributes> implements PhieuXuatAt
                 },                
                 IDKhachHang: {
                     type: DataTypes.INTEGER,
-                    allowNull: false,
-                },
-                TongGiaTri: {
-                    type: DataTypes.FLOAT,
                     allowNull: false,
                 },
                 GhiChu: {
