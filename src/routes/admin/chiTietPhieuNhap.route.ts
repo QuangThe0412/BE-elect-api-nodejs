@@ -2,13 +2,13 @@ import express, { Request, Response } from 'express';
 import { ChiTietPhieuNhap, PhieuNhap } from '../../models/init-models';
 import { GetCurrentUser } from '../../utils/index';
 
-const routerPhieuNhap = express.Router();
+const routerChiTietPhieuNhap = express.Router();
 
 //get all
-routerPhieuNhap.get('/', async (req: Request, res: Response) => {
+routerChiTietPhieuNhap.get('/', async (req: Request, res: Response) => {
     try {
-        let result: PhieuNhap[] = await PhieuNhap.findAll({
-            order: [['IDPhieuNhap', 'DESC']],
+        let result: ChiTietPhieuNhap[] = await ChiTietPhieuNhap.findAll({
+            order: [['IDChiTietPhieuNhap', 'DESC']],
         });
 
         res.status(200).send({
@@ -23,10 +23,10 @@ routerPhieuNhap.get('/', async (req: Request, res: Response) => {
 });
 
 //get by id
-routerPhieuNhap.get('/:id', async (req: Request, res: Response) => {
+routerChiTietPhieuNhap.get('/:id', async (req: Request, res: Response) => {
     try {
         const id = req.params.id;
-        let result: PhieuNhap = await PhieuNhap.findOne({
+        let result: ChiTietPhieuNhap = await ChiTietPhieuNhap.findOne({
             where: {
                 IDPhieuNhap: id,
             }
@@ -50,16 +50,18 @@ routerPhieuNhap.get('/:id', async (req: Request, res: Response) => {
     }
 });
 
-//create
-routerPhieuNhap.post('/', async (req: Request, res: Response) => {
+//create detail
+routerChiTietPhieuNhap.post('/', async (req: Request, res: Response) => {
     try {
-        const phieuNhap = req.body as PhieuNhap;
-        phieuNhap.IDPhieuNhap = null;
+        const chiTietPhieuNhap = req.body as ChiTietPhieuNhap;
+        chiTietPhieuNhap.IDPhieuNhap = null;
 
-        phieuNhap.createDate = new Date();
-        phieuNhap.createBy = await GetCurrentUser(req);
+        const { IDPhieuNhap, IDMon, SoLuongNhap, DonGiaNhap, ChietKhau, ThanhTien, } = req.body as ChiTietPhieuNhap;
 
-        const result = await PhieuNhap.create(phieuNhap);
+        chiTietPhieuNhap.createDate = new Date();
+        chiTietPhieuNhap.createBy = await GetCurrentUser(req);
+
+        const result = await ChiTietPhieuNhap.create(chiTietPhieuNhap);
 
         res.status(201).send({
             data: result,
@@ -72,4 +74,4 @@ routerPhieuNhap.post('/', async (req: Request, res: Response) => {
     }
 });
 
-export default routerPhieuNhap;
+export default routerChiTietPhieuNhap;

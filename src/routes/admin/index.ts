@@ -16,6 +16,8 @@ import routerHoaDon from "./hoaDon.route";
 import routerChiTietHD from "./chiTietHD.route";
 import routerCongNo from "./congNo.route";
 import routerChiTietCongNo from "./chiTietCongNo.route";
+import routerPhieuNhap from "./phieuNhap.route";
+import routerChiTietPhieuNhap from "./chiTietPhieuNhap.route";
 
 const paths = {
     auth: '/auth',
@@ -32,7 +34,11 @@ const paths = {
     hoaDon:'/hoaDon',
     chiTietHD:'/chiTietHoaDon',
     congNo : '/congNo',
-    chiTietCongNo : '/chiTietCongNo'
+    chiTietCongNo : '/chiTietCongNo',
+    phieuNhap: '/phieuNhap',
+    chiTietPhieuNhap: '/chiTietPhieuNhap',
+    phieuXuat: '/phieuXuat',
+    chiTietPhieuXuat: '/chiTietPhieuXuat',
 };
 
 const roleAccess = [
@@ -95,7 +101,23 @@ const roleAccess = [
     {
         path: paths.chiTietCongNo,
         role: [RoleEnum.ADMIN]
-    }    
+    },
+    {
+        path: paths.phieuNhap,
+        role: [RoleEnum.ADMIN]
+    },
+    {
+        path: paths.chiTietPhieuNhap,
+        role: [RoleEnum.ADMIN]
+    },
+    {
+        path: paths.phieuXuat,
+        role: [RoleEnum.ADMIN]
+    },
+    {
+        path: paths.chiTietPhieuXuat,
+        role: [RoleEnum.ADMIN]
+    },
 ];
 
 const router = express.Router();
@@ -115,5 +137,7 @@ router.use(paths.hoaDon, adminAuthMiddleware, routerHoaDon);
 router.use(paths.chiTietHD, adminAuthMiddleware, routerChiTietHD);
 router.use(paths.congNo, adminAuthMiddleware, routerCongNo);
 router.use(paths.chiTietCongNo, adminAuthMiddleware, routerChiTietCongNo);
+router.use(paths.phieuNhap, adminAuthMiddleware, routerPhieuNhap);
+router.use(paths.chiTietPhieuNhap, adminAuthMiddleware, routerChiTietPhieuNhap);
 
 export { router, roleAccess, paths };

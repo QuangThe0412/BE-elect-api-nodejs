@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import { ChiTietPhieuNhap, PhieuNhap } from '../../models/init-models';
-import { GetCurrentUser } from 'src/utils';
+import { GetCurrentUser } from '../../utils/index';
 
 const routerPhieuNhap = express.Router();
 
