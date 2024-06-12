@@ -2,6 +2,11 @@ import express, { Request, Response } from 'express';
 import { ChiTietPhieuNhap, Mon, PhieuNhap } from '../../models/init-models';
 import { GetCurrentUser } from '../../utils/index';
 
+type typeUpdateMon = {
+    IdMon: number;
+    SoLuongNhap: number;
+}
+
 const routerPhieuNhap = express.Router();
 
 //get all
@@ -139,10 +144,13 @@ routerPhieuNhap.delete('/:id', async (req: Request, res: Response) => {
                 IDPhieuNhap: id,
             }
         });
-//=============================
-        const arrayIdMon = [] as number[];
+
+        const arrayIdMon = [] as typeUpdateMon[];
         chiTietPhieuNhap.forEach(async (item) => {
-            arrayIdMon.push(item.IDMon);
+            arrayIdMon.push({
+                IdMon: item.IDMon,
+                SoLuongNhap: item.SoLuongNhap,
+            });
             await ChiTietPhieuNhap.update({
                 Deleted: true,
                 modifyBy: await GetCurrentUser(req),
@@ -154,14 +162,23 @@ routerPhieuNhap.delete('/:id', async (req: Request, res: Response) => {
             });
         });
 
-        if(arrayIdMon.length > 0) {
-            await Mon.update({
-                SoLuongTonKho: 0,
-                modifyBy: await GetCurrentUser(req),
-                modifyDate: new Date(),
-            }, {
+        if (arrayIdMon.length > 0) {
+            const mons: Mon[] = await Mon.findAll({
                 where: {
-                    IDMon: arrayIdMon,
+                    IDMon: arrayIdMon.map((item) => item.IdMon),
+                }
+            });
+
+            mons.forEach(async (item) => {
+                const mon = arrayIdMon.find((mon) => mon.IdMon === item.IDMon);
+                if (mon) {
+                    const soLuong = item.SoLuongTonKho - mon.SoLuongNhap;
+                    item.SoLuongTonKho = soLuong < 0 ? 0 : soLuong;
+                    await Mon.update(item, {
+                        where: {
+                            IDMon: item.IDMon,
+                        }
+                    });
                 }
             });
         }
@@ -177,7 +194,7 @@ routerPhieuNhap.delete('/:id', async (req: Request, res: Response) => {
 });
 
 //get all chi tiết phiếu nhập theo id phiếu nhập
-routerPhieuNhap.get('/:id/chi-tiet-phieu-nhap', async (req: Request, res: Response) => {
+routerPhieuNhap.get('/:id/chiTietPhieuNhap', async (req: Request, res: Response) => {
     try {
         const id = req.params.id;
         const result: ChiTietPhieuNhap[] = await ChiTietPhieuNhap.findAll({

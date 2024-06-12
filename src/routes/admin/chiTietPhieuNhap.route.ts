@@ -212,4 +212,49 @@ routerChiTietPhieuNhap.post('/', async (req: Request, res: Response) => {
     }
 });
 
+//delete
+routerChiTietPhieuNhap.delete('/:id', async (req: Request, res: Response) => {
+    try {
+        const id = req.params.id;
+        const chiTietPhieuNhap = await ChiTietPhieuNhap.findByPk(id);
+        if (!chiTietPhieuNhap) {
+            return res.status(404).send({
+                code: 'PHIEUNHAP_NOT_FOUND',
+                mess: 'Không tìm thấy phiếu nhập',
+            });
+        }
+
+        const result = await ChiTietPhieuNhap.update({
+            Deleted: true,
+            modifyDate: new Date(),
+            modifyBy: await GetCurrentUser(req),
+        }, {
+            where: {
+                IDChiTietPhieuNhap: id,
+            }
+        });
+
+        //update Món trong bảng món
+        const mon = await Mon.findByPk(chiTietPhieuNhap.IDMon);
+        const soLuong = mon.SoLuongTonKho - chiTietPhieuNhap.SoLuongNhap
+        mon.SoLuongTonKho = soLuong < 0 ? 0 : soLuong;
+        mon.modifyDate = new Date();
+        mon.modifyBy = await GetCurrentUser(req);
+        await Mon.update(mon, {
+            where: {
+                IDMon: chiTietPhieuNhap.IDMon,
+            }
+        });
+
+        res.status(200).send({
+            data: result,
+            code: 'DELETE_PHIEUNHAP_SUCCESS',
+            mess: 'Xóa phiếu nhập thành công',
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send(err);
+    }
+});
+
 export default routerChiTietPhieuNhap;
