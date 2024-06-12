@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { ChiTietPhieuNhap, PhieuNhap } from '../../models/init-models';
+import { ChiTietPhieuNhap, Mon, PhieuNhap } from '../../models/init-models';
 import { GetCurrentUser } from '../../utils/index';
 
 const routerPhieuNhap = express.Router();
@@ -71,7 +71,6 @@ routerPhieuNhap.post('/', async (req: Request, res: Response) => {
     }
 });
 
-
 //update
 routerPhieuNhap.put(
     '/:id',
@@ -134,6 +133,38 @@ routerPhieuNhap.delete('/:id', async (req: Request, res: Response) => {
                 IDPhieuNhap: id,
             }
         });
+
+        const chiTietPhieuNhap = await ChiTietPhieuNhap.findAll({
+            where: {
+                IDPhieuNhap: id,
+            }
+        });
+//=============================
+        const arrayIdMon = [] as number[];
+        chiTietPhieuNhap.forEach(async (item) => {
+            arrayIdMon.push(item.IDMon);
+            await ChiTietPhieuNhap.update({
+                Deleted: true,
+                modifyBy: await GetCurrentUser(req),
+                modifyDate: new Date(),
+            }, {
+                where: {
+                    IDChiTietPhieuNhap: item.IDChiTietPhieuNhap,
+                }
+            });
+        });
+
+        if(arrayIdMon.length > 0) {
+            await Mon.update({
+                SoLuongTonKho: 0,
+                modifyBy: await GetCurrentUser(req),
+                modifyDate: new Date(),
+            }, {
+                where: {
+                    IDMon: arrayIdMon,
+                }
+            });
+        }
 
         res.status(200).send({
             code: 'DELETE_PHIEUNHAP_SUCCESS',
