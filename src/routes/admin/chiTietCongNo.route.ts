@@ -137,15 +137,14 @@ routerChiTietCongNoKH.put(
             chiTietCongNoKH.SoTienTra = SoTienTra;
             chiTietCongNoKH.modifyBy = await GetCurrentUser(req);
             chiTietCongNoKH.modifyDate = new Date();
-
-            const result = await ChiTietCongNoKH.update(chiTietCongNoKH, {
+            
+            await ChiTietCongNoKH.update(chiTietCongNoKH, {
                 where: {
                     idChiTietCongNoKH: idChiTietCongNoKH,
                 }
             });
 
             res.status(200).send({
-                data: result,
                 code: 'UPDATE_CHITIETCONGNO_SUCCESS',
                 mess: 'Cập nhật chi tiết công nợ thành công',
             });

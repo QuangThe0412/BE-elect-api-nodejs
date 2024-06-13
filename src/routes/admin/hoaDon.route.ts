@@ -86,6 +86,7 @@ routerOrder.get(
                 where: {
                     IDHoaDon: idOrder,
                 },
+                order: [['IDChiTietHD', 'DESC']],
             });
 
             res.status(200).send({
@@ -93,7 +94,7 @@ routerOrder.get(
                 code: 'GET_ALL_ORDER_DETAIL_SUCCESS',
                 mess: 'Nhận danh sách chi tiết đơn hàng thành công',
             });
-            
+
         } catch (err) {
             console.error(err);
             res.status(500).send(err);

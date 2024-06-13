@@ -200,7 +200,8 @@ routerPhieuNhap.get('/:id/chiTietPhieuNhap', async (req: Request, res: Response)
         const result: ChiTietPhieuNhap[] = await ChiTietPhieuNhap.findAll({
             where: {
                 IDPhieuNhap: id,
-            }
+            },
+            order: [['IDChiTietPhieuNhap', 'DESC']],
         });
 
         res.status(200).send({
