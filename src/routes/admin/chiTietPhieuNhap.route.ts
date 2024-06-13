@@ -65,7 +65,7 @@ routerChiTietPhieuNhap.put('/:id', async (req: Request, res: Response) => {
 
         const { IDPhieuNhap, IDMon, SoLuongNhap, DonGiaNhap, ChietKhau } = req.body as ChiTietPhieuNhap;
 
-        if (!IDPhieuNhap || !IDMon || !SoLuongNhap || !DonGiaNhap || !ChietKhau) {
+        if (!IDPhieuNhap || !IDMon || !SoLuongNhap || !DonGiaNhap) {
             return res.status(400).send({
                 code: 'MISSING_INFO',
                 mess: 'Thiếu trường thông tin',
@@ -100,7 +100,7 @@ routerChiTietPhieuNhap.put('/:id', async (req: Request, res: Response) => {
         chiTietPhieuNhap.IDMon = IDMon;
         chiTietPhieuNhap.SoLuongNhap = SoLuongNhap;
         chiTietPhieuNhap.DonGiaNhap = DonGiaNhap;
-        chiTietPhieuNhap.ChietKhau = ChietKhau;
+        chiTietPhieuNhap.ChietKhau = ChietKhau < 0 ? 0 : ChietKhau;
 
         const thanhTien = SoLuongNhap * DonGiaNhap * (1 - ChietKhau / 100);
         chiTietPhieuNhap.ThanhTien = thanhTien;
@@ -149,7 +149,7 @@ routerChiTietPhieuNhap.post('/', async (req: Request, res: Response) => {
 
         let { IDPhieuNhap, IDMon, SoLuongNhap, DonGiaNhap, ChietKhau } = chiTietPhieuNhap;
 
-        if (!IDPhieuNhap || !SoLuongNhap || !DonGiaNhap || !ChietKhau) {
+        if (!IDPhieuNhap || !SoLuongNhap || !DonGiaNhap) {
             return res.status(400).send({
                 code: 'MISSING_INFO',
                 mess: 'Thiếu trường thông tin',
@@ -178,7 +178,8 @@ routerChiTietPhieuNhap.post('/', async (req: Request, res: Response) => {
             });
         }
 
-        const thanhTien = SoLuongNhap * DonGiaNhap * (1 - ChietKhau / 100);
+        const chietKhau = ChietKhau < 0 ? 0 : ChietKhau;
+        const thanhTien = SoLuongNhap * DonGiaNhap * (1 - chietKhau / 100);
 
         const newChiTietPhieuNhap = await ChiTietPhieuNhap.create({
             IDPhieuNhap,
