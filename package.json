@@ -6,11 +6,13 @@
   "type": "commonjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "ts-node src/index.ts",
-    "build": "tsc"
+    "start": "node -r dotenv/config build/index.js dotenv_config_path=.env.production",
+    "build:production": "tsc && node -r dotenv/config build/index.js dotenv_config_path=.env.production",
+    "dev": "nodemon -r dotenv/config src/index.ts dotenv_config_path=.env.dev",
+    "build:dev": "tsc && node -r dotenv/config build/index.js dotenv_config_path=.env.dev"
   },
   "keywords": [],
-  "author": "",
+  "author": "Mr.Bee",
   "license": "ISC",
   "devDependencies": {
     "@types/express": "^4.17.21",
@@ -20,8 +22,16 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
+    "@types/multer": "^1.4.11",
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
-    "mssql": "^10.0.2"
+    "googleapis": "^137.1.0",
+    "mssql": "^10.0.2",
+    "multer": "^1.4.5-lts.1",
+    "sequelize": "^6.37.3",
+    "tedious": "^18.1.0",
+    "yup": "^1.4.0"
   }
 }

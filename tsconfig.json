@@ -1,27 +1,25 @@
 {
-  "compilerOptions": {
-    "target": "esnext",
-    "module": "commonjs",
-    "outDir": "build",
-    "moduleResolution": "node",
-    "strict": false,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true
-  },
-  "$schema": "https://json.schemastore.org/tsconfig",
-  "display": "Recommended",
-  "include": ["src"],
-  "exclude": ["node_modules", "**/*.spec.ts", "build"],
-  "target": "esnext",
-  "module": "commonjs",
-  "path": {
-    "@models/*": ["src/models"],
-    "@middlewares/*": ["src/middlewares"],
-    "@public/*": ["src/public"],
-    "@routes/*": ["src/routes"],
-    "@schemas/*": ["src/schemas"],
-    "@services/*": ["src/services"]
-  }
+    "compilerOptions": {
+        "target": "esnext",
+        "module": "commonjs",
+        "outDir": "build",
+        "moduleResolution": "node",
+        "strict": false,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true,
+        "baseUrl": ".",
+        "paths": {
+            "@models/*": ["src/models/*"],
+            "@middlewares/*": ["src/middlewares/*"],
+            "@public/*": ["src/public/*"],
+            "@routes/*": ["src/routes/*"],
+            "@schemas/*": ["src/schemas/*"],
+            "@services/*": ["src/services/*"]
+        }
+    },
+    "$schema": "https://json.schemastore.org/tsconfig",
+    "include": ["src"],
+    "exclude": ["node_modules", "**/*.spec.ts", "build"]
 }

@@ -1,36 +1,57 @@
-import express from 'express';
-import sql from 'mssql';
-import dotenv from 'dotenv';
-import path from 'path';
+import express, {
+  NextFunction,
+  Request as ExpressRequest,
+  Response as ExpressResponse,
+} from 'express';
 
-dotenv.config({ path: path.resolve(`.env`) });
+import cors from 'cors';
+import { sequelizeInstance } from './db/index';
+import { initModels } from './models/init-models';
+import { router as adminRouter } from './routes/admin';
+import errorHandlerMiddleware from './middlewares/error-handler.middleware';
+import { serviceGoogleApi } from './services/serviceGoogleApi';
+
+const corsOptions = {
+  allowedHeaders: ['authorization', 'Content-Type'], // you can change the headers
+  exposedHeaders: ['authorization'], // you can change the headers
+  origin:
+    process.env.NODE_ENV === 'production'
+      ? [
+        'http://api.smartshop.nhungchangtrainhaycam.site',
+        'https://api.smartshop.nhungchangtrainhaycam.site'
+      ]
+      : '*',
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  preflightContinue: false,
+};
 
 const app = express();
+
+export type AuthUser = {
+  username: string;
+  userId: number;
+  roles: [] | string[] | string;
+};
+
+export type Request = ExpressRequest & {
+  user?: AuthUser;
+};
+export type Response = ExpressResponse;
+
 const port = process.env.PORT || 3000;
 
-// Database connection
-const dbConfig = {
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  server: process.env.DB_HOST,
-  port: parseInt(process.env.DB_PORT || '1433'),
-  database: process.env.DB_NAME,
-  options: {
-    encrypt: false, // Use this if you're on Windows Azure
-  }
-};
-console.log({dbConfig})
-sql.connect(dbConfig).then(pool => {
-  if (pool.connected) console.log('Database connected successfully!');
+app.use(cors(corsOptions));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+initModels(sequelizeInstance);
 
-  // Use your routes here
-  // app.use('/api', routes);
+app.use(serviceGoogleApi);
+app.use('/admin', adminRouter);
 
-  app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
-  });
-}).catch(err => {
-  console.error('Database connection failed: ', err);
+app.use(errorHandlerMiddleware);
+
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
 });
 
 export default app;
