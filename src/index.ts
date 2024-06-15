@@ -12,15 +12,9 @@ import errorHandlerMiddleware from './middlewares/error-handler.middleware';
 import { serviceGoogleApi } from './services/serviceGoogleApi';
 
 const corsOptions = {
-  allowedHeaders: ['authorization', 'Content-Type'], // you can change the headers
-  exposedHeaders: ['authorization'], // you can change the headers
-  origin:
-    process.env.NODE_ENV === 'production'
-      ? [
-        'http://api.smartshop.nhungchangtrainhaycam.site',
-        'https://api.smartshop.nhungchangtrainhaycam.site'
-      ]
-      : '*',
+  allowedHeaders: ['authorization', 'Content-Type'],
+  exposedHeaders: ['authorization'],
+  origin: 'http://localhost', // or 'http://localhost:<port>' if you're running the app on a specific port
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   preflightContinue: false,
 };
