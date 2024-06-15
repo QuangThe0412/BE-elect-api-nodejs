@@ -26,9 +26,6 @@ jobs:
         cache: 'npm'
     - run: yarn install --frozen-lockfile
 
-    - name: Build the application
-      run: yarn build:production
-
     - name: Check if PM2 is installed
       run: |
         if ! command -v pm2 &> /dev/null
@@ -45,5 +42,5 @@ jobs:
         if pm2 describe api-smart-shop > /dev/null; then
           pm2 restart api-smart-shop
         else
-          pm2 start yarn --interpreter bash --name "api-smart-shop" -- start
+          pm2 start yarn --interpreter bash --name "api-smart-shop" -- build:production
         fi
