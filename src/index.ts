@@ -15,6 +15,7 @@ const corsOptions = {
   allowedHeaders: ['authorization', 'Content-Type'],
   exposedHeaders: ['authorization'],
   origin: [
+    '*',
     'http://localhost:3001',
     'https://diennuoctamnhi.nhungchangtrainhaycam.site',
   ], // or 'http://localhost:<port>' if you're running the app on a specific port
