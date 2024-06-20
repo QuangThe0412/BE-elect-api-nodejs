@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import { ChiTietHD, HoaDon } from '../../models/init-models';
 import { GetCurrentUser, IsPendingStatus, STATUS_ENUM } from '../../utils/index';
+import { Money } from 'mssql';
 
 const routerOrder = express.Router();
 
@@ -120,38 +121,68 @@ routerOrder.post(
     '/',
     async (req: Request, res: Response) => {
         try {
+            const letUser = await GetCurrentUser(req);
             const newOrder = req.body as _order;
             const { IDKhachHang, CongNo, TrangThai, data } = newOrder;
             const orderDetails = data;
             console.log({ orderDetails });
 
-            if (!IDKhachHang || TrangThai < 0  || !orderDetails || orderDetails.length === 0) {
+            if (!IDKhachHang || TrangThai < 0 || !orderDetails || orderDetails.length === 0) {
                 return res.status(400).send({
                     code: 'MISSING_FIELDS',
                     mess: 'Thiếu dữ liệu bắt buộc',
                 });
             }
+            
+            const status = STATUS_ENUM[TrangThai];
+            if (!status) {
+                return res.status(400).send({
+                    code: 'INVALID_STATUS',
+                    mess: 'Trạng thái không hợp lệ',
+                });
+            }
 
-            // let newData = new HoaDon();
-            // newData.IDKhachHang = IDKhachHang;
-            // newData.CongNo = CongNo;
-            // newData.TrangThai = STATUS_ENUM.FINISH;
-            // newData.createDate = new Date();
-            // newData.createBy = await GetCurrentUser(req);
+            const order = new HoaDon();
+            order.IDKhachHang = IDKhachHang;
+            order.CongNo = CongNo;
+            order.TrangThai = TrangThai;
+            order.createDate = new Date();
+            order.createBy = letUser;
 
-            // const createdOrder = await HoaDon.create(newOrder);
-            // res.status(200).send({
-            //     data: createdOrder,
-            //     code: 'CREATE_ORDER_SUCCESS',
-            //     mess: 'Tạo đơn hàng thành công',
-            // });
+            const createdOrder = await HoaDon.create(order);
+
+            const arrayOrderDetailsCreate: ChiTietHD[] = orderDetails.map((item: _orderDetails) => {
+                let itemArray: ChiTietHD = new ChiTietHD();
+                itemArray.IDHoaDon = createdOrder.IDHoaDon;
+                itemArray.IDMon = item.IDMon;
+                itemArray.SoLuong = item.SoLuong;
+                itemArray.DonGia = item.DonGia;
+                itemArray.ChietKhau = item.ChietKhau;
+
+                const MoneyBeforeDiscount = item.SoLuong * item.DonGia;
+                const MoneyDiscount = MoneyBeforeDiscount * (item.ChietKhau / 100);
+                const MoneyAfterDiscount = MoneyBeforeDiscount - MoneyDiscount;
+
+                itemArray.TienChuaCK = MoneyBeforeDiscount;
+                itemArray.TienCK = MoneyDiscount;
+                itemArray.TienSauCK = MoneyAfterDiscount;
+                itemArray.createDate = new Date();
+                itemArray.createBy = letUser;
+
+                return itemArray;
+            });
+
+            await ChiTietHD.bulkCreate(arrayOrderDetailsCreate);
+
+            res.status(201).send({
+                data: createdOrder,
+                code: 'CREATE_ORDER_AND_DETAILS_ORDER_SUCCESS',
+                mess: 'Tạo đơn và chi tiết hóa đơn hàng thành công',
+            });
         } catch (err) {
             console.error(err);
             res.status(500).send(err);
         }
     });
-
-//update
-
 
 export default routerOrder;
