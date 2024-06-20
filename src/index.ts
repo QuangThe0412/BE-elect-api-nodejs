@@ -1,5 +1,4 @@
 import express, {
-  NextFunction,
   Request as ExpressRequest,
   Response as ExpressResponse,
 } from 'express';
@@ -14,11 +13,10 @@ import { serviceGoogleApi } from './services/serviceGoogleApi';
 const corsOptions = {
   allowedHeaders: ['authorization', 'Content-Type'],
   exposedHeaders: ['authorization'],
-  origin: [
-    '*',
-    'http://localhost:3001',
-    'https://diennuoctamnhi.nhungchangtrainhaycam.site',
-  ], // or 'http://localhost:<port>' if you're running the app on a specific port
+  origin:
+    process.env.npm_lifecycle_event === 'dev'
+      ? '*'
+      : ['http://diennuoctamnhi.nhungchangtrainhaycam.site', 'https://diennuoctamnhi.nhungchangtrainhaycam.site'],
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   preflightContinue: false,
 };

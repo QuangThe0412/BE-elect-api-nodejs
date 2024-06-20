@@ -101,4 +101,39 @@ routerOrder.get(
         }
     });
 
+    //create 
+routerOrder.post(
+    '/',
+    async (req: Request, res: Response) => {
+        try {
+            const newOrder = req.body as HoaDon;
+            if (!newOrder.IDKhachHang) {
+                return res.status(400).send({
+                    code: 'MISSING_FIELDS',
+                    mess: 'Thiếu trường bắt buộc',
+                });
+            }
+
+            ///------------ check cong nơ
+
+
+            // newOrder.NgayTao = new Date();
+            // newOrder.NgayCapNhat = new Date();
+            // newOrder.NguoiCapNhat = await GetCurrentUser(req);
+
+            const createdOrder = await HoaDon.create(newOrder);
+            res.status(200).send({
+                data: createdOrder,
+                code: 'CREATE_ORDER_SUCCESS',
+                mess: 'Tạo đơn hàng thành công',
+            });
+        } catch (err) {
+            console.error(err);
+            res.status(500).send(err);
+        }
+    });
+
+    //update
+
+
 export default routerOrder;
