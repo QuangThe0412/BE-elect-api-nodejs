@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { ChiTietHD, HoaDon } from '../../models/init-models';
+import { ChiTietHD, HoaDon, Mon } from '../../models/init-models';
 import { GetCurrentUser, IsPendingStatus, STATUS_ENUM } from '../../utils/index';
 import { Money } from 'mssql';
 
@@ -18,6 +18,11 @@ interface _order {
     TrangThai?: number;
     data: _orderDetails[];
 }
+
+type ProductWithNumberSubtract = {
+    IDMon: number;
+    SoLuong: number;
+};
 
 //get all
 routerOrder.get(
@@ -133,7 +138,7 @@ routerOrder.post(
                     mess: 'Thiếu dữ liệu bắt buộc',
                 });
             }
-            
+
             const status = STATUS_ENUM[TrangThai];
             if (!status) {
                 return res.status(400).send({
@@ -173,6 +178,32 @@ routerOrder.post(
             });
 
             await ChiTietHD.bulkCreate(arrayOrderDetailsCreate);
+
+            const arrayIdProductWithSubtract: ProductWithNumberSubtract[] =
+                orderDetails.map((item: _orderDetails) => {
+                    return {
+                        IDMon: item.IDMon,
+                        SoLuong: item.SoLuong,
+                    };
+                })
+
+            //update số lượng sản phẩm
+            if (TrangThai == STATUS_ENUM.FINISH) {
+                arrayIdProductWithSubtract.forEach(async (item: ProductWithNumberSubtract) => {
+                    const product = await Mon.findByPk(item.IDMon);
+                    if (product) {
+                        product.SoLuongTonKho = Math.max(0, item.SoLuong - product.SoLuongTonKho);
+                        product.modifyDate = new Date();
+                        product.modifyBy = letUser;
+
+                        await Mon.update(product, {
+                            where: {
+                                IDMon: item.IDMon,
+                            },
+                        });
+                    }
+                });
+            }
 
             res.status(201).send({
                 data: createdOrder,
