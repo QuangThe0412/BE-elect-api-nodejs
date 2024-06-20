@@ -10,6 +10,8 @@ import { router as adminRouter } from './routes/admin';
 import errorHandlerMiddleware from './middlewares/error-handler.middleware';
 import { serviceGoogleApi } from './services/serviceGoogleApi';
 
+console.log('NODE_ENV :', process.env.npm_lifecycle_event);
+
 const corsOptions = {
   allowedHeaders: ['authorization', 'Content-Type'],
   exposedHeaders: ['authorization'],

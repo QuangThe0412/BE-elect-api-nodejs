@@ -4,6 +4,20 @@ import { GetCurrentUser, IsPendingStatus, STATUS_ENUM } from '../../utils/index'
 
 const routerOrder = express.Router();
 
+type _orderDetails = {
+    IDMon: number;
+    SoLuong?: number;
+    DonGia?: number;
+    ChietKhau?: number;
+}
+
+interface _order {
+    IDKhachHang?: number;
+    CongNo?: number;
+    TrangThai?: number;
+    data: _orderDetails[];
+}
+
 //get all
 routerOrder.get(
     '/',
@@ -101,39 +115,43 @@ routerOrder.get(
         }
     });
 
-    //create 
+//create 
 routerOrder.post(
     '/',
     async (req: Request, res: Response) => {
         try {
-            const newOrder = req.body as HoaDon;
-            if (!newOrder.IDKhachHang) {
+            const newOrder = req.body as _order;
+            const { IDKhachHang, CongNo, TrangThai, data } = newOrder;
+            const orderDetails = data;
+            console.log({ orderDetails });
+
+            if (!IDKhachHang || TrangThai < 0  || !orderDetails || orderDetails.length === 0) {
                 return res.status(400).send({
                     code: 'MISSING_FIELDS',
-                    mess: 'Thiếu trường bắt buộc',
+                    mess: 'Thiếu dữ liệu bắt buộc',
                 });
             }
 
-            ///------------ check cong nơ
+            // let newData = new HoaDon();
+            // newData.IDKhachHang = IDKhachHang;
+            // newData.CongNo = CongNo;
+            // newData.TrangThai = STATUS_ENUM.FINISH;
+            // newData.createDate = new Date();
+            // newData.createBy = await GetCurrentUser(req);
 
-
-            // newOrder.NgayTao = new Date();
-            // newOrder.NgayCapNhat = new Date();
-            // newOrder.NguoiCapNhat = await GetCurrentUser(req);
-
-            const createdOrder = await HoaDon.create(newOrder);
-            res.status(200).send({
-                data: createdOrder,
-                code: 'CREATE_ORDER_SUCCESS',
-                mess: 'Tạo đơn hàng thành công',
-            });
+            // const createdOrder = await HoaDon.create(newOrder);
+            // res.status(200).send({
+            //     data: createdOrder,
+            //     code: 'CREATE_ORDER_SUCCESS',
+            //     mess: 'Tạo đơn hàng thành công',
+            // });
         } catch (err) {
             console.error(err);
             res.status(500).send(err);
         }
     });
 
-    //update
+//update
 
 
 export default routerOrder;
