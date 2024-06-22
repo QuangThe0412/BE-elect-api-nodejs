@@ -4,6 +4,7 @@ export interface MonAttributes {
   IDMon?: number;
   IDLoaiMon?: number;
   TenMon?: string;
+  MaTat?: string;
   Image?: string;
   DVTMon?: string;
   DonGiaBanSi?: number;
@@ -26,6 +27,7 @@ export class Mon
   IDLoaiMon?: number;
   TenMon?: string;
   Image?: string;
+  MaTat?: string;
   DVTMon?: string;
   DonGiaBanSi?: number;
   DonGiaBanLe?: number;
@@ -56,6 +58,10 @@ export class Mon
         TenMon: {
           type: DataTypes.STRING,
           allowNull: false,
+        },
+        MaTat: {
+          type: DataTypes.STRING,
+          allowNull: true,
         },
         Image: {
           type: DataTypes.STRING,
