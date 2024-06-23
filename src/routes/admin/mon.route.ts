@@ -127,7 +127,7 @@ routerMon.put(
             });
 
             let mon = req.body as Mon;
-            mon = MergeWithOldData(oldMonData, mon);
+            // mon = MergeWithOldData(oldMonData, mon);
             const file = req.file as Express.Multer.File;
             if (file) {
                 //remove old file
