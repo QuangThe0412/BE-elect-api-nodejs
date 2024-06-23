@@ -77,10 +77,10 @@ async function getThongKe(dateFrom: Date, dateTo: Date) {
     }
 
     let hoaDon = await HoaDon.findAll({
-        where: { 
+        where: {
             createDate: { [Op.between]: [dateFrom, dateTo] },
-            TrangThai: { STATUS_ENUM: [STATUS_ENUM.FINISH]}
-         },
+            TrangThai: STATUS_ENUM.FINISH
+        },
         attributes: ['IDHoaDon', 'IDKhachHang', 'createDate', 'TrangThai']
     });
 
