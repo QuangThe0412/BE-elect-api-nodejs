@@ -2,7 +2,7 @@ import express from 'express';
 import { LoaiMon, Mon } from '../../models/init-models';
 import { GetCurrentUser, MergeWithOldData } from '../../utils';
 import multer from 'multer';
-import { uploadFile,tryDeleteFile } from '../../services/serviceGoogleApi';
+import { uploadFile, tryDeleteFile } from '../../services/serviceGoogleApi';
 
 const routerMon = express.Router();
 const upload = multer({ storage: multer.memoryStorage() });
@@ -55,6 +55,7 @@ routerMon.post(
     async (req, res) => {
         try {
             const mon = req.body as Mon;
+            const { MaTat } = mon;
             mon.IDMon = null;
 
             // update file
@@ -62,6 +63,27 @@ routerMon.post(
             if (file) {
                 await uploadFile(file).then((result) => {
                     mon.Image = result.id;
+                });
+            }
+
+            if (!MaTat) {
+                return res.status(400).send({
+                    code: 'MATAT_REQUIRED',
+                    mess: 'Mã tắt không được để trống',
+                });
+            }
+
+            //check if MaTat is existed
+            const existedMonByMaTat = await Mon.findOne({
+                where: {
+                    MaTat,
+                },
+            });
+
+            if (existedMonByMaTat) {
+                return res.status(400).send({
+                    code: 'MATAT_EXISTED',
+                    mess: 'Mã tắt đã tồn tại',
                 });
             }
 
@@ -117,6 +139,23 @@ routerMon.put(
                 await uploadFile(file).then((result) => {
                     mon.Image = result.id;
                 });
+            }
+
+            const { MaTat } = mon;
+            if (MaTat && MaTat !== oldMonData.MaTat) {
+                //check if MaTat is existed
+                const existedMonByMaTat = await Mon.findOne({
+                    where: {
+                        MaTat,
+                    },
+                });
+
+                if (existedMonByMaTat) {
+                    return res.status(400).send({
+                        code: 'MATAT_EXISTED',
+                        mess: 'Mã tắt đã tồn tại',
+                    });
+                }
             }
 
             mon.modifyDate = new Date();

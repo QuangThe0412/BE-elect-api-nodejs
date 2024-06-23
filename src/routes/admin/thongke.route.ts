@@ -1,3 +1,4 @@
+import { STATUS_ENUM } from './../../utils/index';
 import express, { Request, Response } from 'express';
 import { HoaDon, ChiTietHD, KhachHang, Mon } from '../../models/init-models';
 import { Op } from 'sequelize';
@@ -76,7 +77,10 @@ async function getThongKe(dateFrom: Date, dateTo: Date) {
     }
 
     let hoaDon = await HoaDon.findAll({
-        where: { createDate: { [Op.between]: [dateFrom, dateTo] } },
+        where: {
+            createDate: { [Op.between]: [dateFrom, dateTo] },
+            TrangThai: STATUS_ENUM.FINISH
+        },
         attributes: ['IDHoaDon', 'IDKhachHang', 'createDate', 'TrangThai']
     });
 
@@ -86,7 +90,10 @@ async function getThongKe(dateFrom: Date, dateTo: Date) {
     });
 
     let chiTietHD = await ChiTietHD.findAll({
-        where: { IDHoaDon: { [Op.in]: hoaDon.map(hd => hd.IDHoaDon) } }
+        where: {
+            IDHoaDon: { [Op.in]: hoaDon.map(hd => hd.IDHoaDon) },
+            Deleted: false
+        }
     });
 
     let mon = await Mon.findAll({
