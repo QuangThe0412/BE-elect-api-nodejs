@@ -10,7 +10,7 @@ routerChiTietHD.put(
     async (req: Request, res: Response) => {
         try {
             const chiTietHD = req.body as ChiTietHD;
-            const { IDMon, SoLuong, ChietKhau, IDHoaDon } = chiTietHD;
+            const { IDMon, SoLuong, ChietKhau, IDHoaDon, DonGia } = chiTietHD;
             const id = req.params.id;
             if (!id) {
                 return res.status(400).send({
@@ -78,7 +78,6 @@ routerChiTietHD.put(
                 }
             }
 
-            const DonGia = product.DonGiaBanLe;
             const TienChuaCK = DonGia * SoLuong;
             const TienCK = ChietKhau * TienChuaCK / 100;
             const TienSauCK = TienChuaCK - TienCK;
@@ -116,7 +115,7 @@ routerChiTietHD.post(
     async (req: Request, res: Response) => {
         try {
             const chiTietHD = req.body as ChiTietHD;
-            const { IDMon, SoLuong, ChietKhau, IDHoaDon } = chiTietHD;
+            const { IDMon, SoLuong, ChietKhau, IDHoaDon, DonGia } = chiTietHD;
             if (!IDMon || !SoLuong || SoLuong < 0 || !IDHoaDon || ChietKhau < 0 || ChietKhau > 100) {
                 return res.status(400).send({
                     code: 'CHITIETHD_INVALID',
@@ -163,9 +162,6 @@ routerChiTietHD.post(
                 });
             }
 
-            const { DonGiaBanLe } = product;
-
-            const DonGia = DonGiaBanLe;
             const TienChuaCK = DonGia * SoLuong;
             const TienCK = ChietKhau * TienChuaCK / 100;
             const TienSauCK = TienChuaCK - TienCK;
@@ -175,7 +171,7 @@ routerChiTietHD.post(
                 SoLuong,
                 ChietKhau,
                 IDHoaDon,
-                DonGia: DonGiaBanLe,
+                DonGia: DonGia,
                 TienCK: TienCK,
                 TienSauCK: TienSauCK,
                 TienChuaCK: TienChuaCK,
