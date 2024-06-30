@@ -48,7 +48,7 @@ routerAuth.post(
                 guest: true,
                 ngaySinh,
                 createDate: new Date(),
-                createBy : await GetCurrentUser(req),
+                createBy: await GetCurrentUser(req),
                 modifyDate: null,
                 Deleted: false,
             });
@@ -59,7 +59,7 @@ routerAuth.post(
                     userId: nguoiDung.id,
                     roles: GetRoles(nguoiDung),
                 },
-            });
+            }, config.ACCESS_TOKEN_SECRET as string);
             return res.status(201).send({
                 data: tokens,
                 code: 'REGISTER_SUCCESS',
@@ -80,7 +80,7 @@ routerAuth.post('/login', async (req: Request, res: Response) => {
             },
         });
 
-        if(nguoidDung.Deleted){
+        if (nguoidDung.Deleted) {
             return res.status(400).json({
                 code: 'account_deleted',
                 mess: 'Tài khoản đã bị khóa vui lòng liện hệ admin để biết thêm chi tiết',
@@ -93,7 +93,6 @@ routerAuth.post('/login', async (req: Request, res: Response) => {
                 mess: 'Mật khẩu hoặc tài khoản không đúng',
             });
         }
-
 
         const authPayload: AuthUser = {
             username: nguoidDung.username,

@@ -7,6 +7,7 @@ import cors from 'cors';
 import { sequelizeInstance } from './db/index';
 import { initModels } from './models/init-models';
 import { router as adminRouter } from './routes/admin';
+import { router as clientRouter } from './routes/client';
 import errorHandlerMiddleware from './middlewares/error-handler.middleware';
 import { serviceGoogleApi } from './services/serviceGoogleApi';
 
@@ -45,6 +46,7 @@ initModels(sequelizeInstance);
 
 app.use(serviceGoogleApi);
 app.use('/admin', adminRouter);
+app.use('/client', clientRouter);
 
 app.use(errorHandlerMiddleware);
 
