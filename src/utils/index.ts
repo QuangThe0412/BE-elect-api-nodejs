@@ -100,6 +100,19 @@ export const GetCurrentUser = async (req: Request) => {
     }
 }
 
+export const GetCurrentUserData = async (req: Request) => {
+    try {
+        let authorization = req.headers.authorization as string;
+        let secret = config.ACCESS_TOKEN_SECRET as string;
+        const decoded = jwt.verify(authorization, secret) as JwtPayload
+
+        return decoded?.user;
+    } catch (err) {
+        console.error(err);
+        return null;
+    }
+}
+
 export enum STATUS_ENUM {
     PENDING = 0,
     FINISH = 1,

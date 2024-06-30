@@ -37,7 +37,7 @@ export class KhachHang extends Model<KhachHangAttributes> implements KhachHangAt
                 },
                 TenKhachHang: {
                     type: DataTypes.STRING,
-                    allowNull: false,
+                    allowNull: true,
                 },
                 DienThoai: {
                     type: DataTypes.STRING,

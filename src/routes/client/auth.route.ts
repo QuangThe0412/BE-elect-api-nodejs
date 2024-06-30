@@ -3,11 +3,11 @@ import { Op } from 'sequelize';
 import schemaValidation from '../../middlewares/schema-validation.middleware';
 import { Request } from '../../index';
 import userSchema from '../../schemas/user.schema';
-import { ComparePassword, HashPassword } from '../../utils';
+import { ComparePassword, GetCurrentUserData, HashPassword } from '../../utils';
 import authService from '../../services/auth.service';
 import config from '../../config/config';
 import { AuthUser } from '../../index';
-import { KhachHang, NguoiDung } from '../../models/init-models';
+import { KhachHang } from '../../models/init-models';
 
 const routerAuth = express.Router();
 
@@ -39,6 +39,7 @@ routerAuth.post(
             const khachHang = await KhachHang.create({
                 IDKhachHang: null,
                 username,
+                TenKhachHang: username,
                 password: pwdToStore,
                 DienThoai: phone,
                 createDate: new Date(),
@@ -114,7 +115,8 @@ routerAuth.get(
     '/me',
     async (req: Request, res: Response, next: NextFunction) => {
         try {
-            let user = GetCurrentUserData(req);
+            let user = await GetCurrentUserData(req) as AuthUser;
+
             if (!user) {
                 return res.status(401).json({
                     code: 'unauthorized',
@@ -124,12 +126,28 @@ routerAuth.get(
 
             const khachHang = await KhachHang.findOne({
                 where: {
-                    IDKhachHang: user.id,
+                    IDKhachHang: user.userId,
+                    Deleted: false,
                 },
             });
 
+            if (!khachHang) {
+                return res.status(400).json({
+                    code: 'user_not_found',
+                    mess: 'Người dùng không tồn tại hoặc đã bị xóa',
+                });
+            }
+
+            const result = {
+                IDKhachHang: khachHang.IDKhachHang,
+                IDLoaiKH: khachHang.IDLoaiKH,
+                TenKhachHang: khachHang.TenKhachHang,
+                username: khachHang.username,
+                DienThoai: khachHang.DienThoai,
+            };
+
             return res.status(200).send({
-                data: user,
+                data: result,
                 code: 'GET_ME_SUCCESS',
                 mess: 'Lấy thông tin người dùng thành công',
             });
@@ -139,3 +157,4 @@ routerAuth.get(
     }
 );
 
+export default routerAuth;
