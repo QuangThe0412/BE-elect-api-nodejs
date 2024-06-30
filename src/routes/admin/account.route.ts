@@ -1,6 +1,6 @@
 import express, { Response } from 'express';
 import { Request } from '../../index';
-import { ComparePassword, HashPassword, GetRoles, GetCurrentUser, IsAdmin } from '../../utils';
+import { ComparePassword, HashPassword, GetCurrentUser, IsAdmin } from '../../utils';
 import { NguoiDung } from '../../models/init-models';
 
 const routerAccount = express.Router();
@@ -8,7 +8,7 @@ const routerAccount = express.Router();
 routerAccount.get('/me', async (req: Request, res: Response) => {
     try {
         const { idUser } = req.query;
-        console.log('idUser', idUser);
+        
         if (!idUser) {
             return res.status(400).json({
                 code: 'missing_user_id',
