@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { LoaiMon, Mon, NhomMon } from '../../models/init-models';
+import { LoaiMon, Mon } from '../../models/init-models';
 
 const routerCategories = express.Router();
 

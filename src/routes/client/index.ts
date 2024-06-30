@@ -1,7 +1,7 @@
 import express from "express";
 import routerAuth from "./auth.route";
-import routerProducts from "@routes/client/products.route";
-import routerCategories from "@routes/client/categories.route";
+import routerProducts from "./products.route"
+import routerCategories from "./categories.route";
 
 const paths = {
     auth: '/auth',
