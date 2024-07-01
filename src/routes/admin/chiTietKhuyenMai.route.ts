@@ -36,7 +36,7 @@ routerChiTietKM.post(
                 });
             }
 
-            chiTietKM.createBy = await GetCurrentUser(req);
+            chiTietKM.createBy = await GetCurrentUser(req,null);
             chiTietKM.createDate = new Date();
 
             await ChiTietKM.create(chiTietKM);
@@ -81,7 +81,7 @@ routerChiTietKM.put(
                 });
             }
 
-            chiTietKM.modifyBy = await GetCurrentUser(req);
+            chiTietKM.modifyBy = await GetCurrentUser(req,null);
             chiTietKM.modifyDate = new Date();
 
             await ChiTietKM.update(chiTietKM, {
@@ -114,7 +114,7 @@ routerChiTietKM.delete(
                 });
             }
 
-            chiTietKM.modifyBy = await GetCurrentUser(req);
+            chiTietKM.modifyBy = await GetCurrentUser(req,null);
             chiTietKM.modifyDate = new Date();
             chiTietKM.Deleted = true;
 

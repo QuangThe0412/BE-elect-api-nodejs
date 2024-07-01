@@ -69,7 +69,7 @@ routerKhachHang.post('/', async (req: Request, res: Response) => {
         khachHang.IDLoaiKH = IDLoaiKH;
         khachHang.password = await HashPassword(username, password);
         khachHang.createDate = new Date();
-        khachHang.createBy = await GetCurrentUser(req);
+        khachHang.createBy = await GetCurrentUser(req,null);
 
         const result = await KhachHang.create(khachHang);
         result.dataValues.password = null;
@@ -171,7 +171,7 @@ routerKhachHang.put('/:id', async (req: Request, res: Response) => {
         khachHang.IDLoaiKH = IDLoaiKH;
         khachHang.TenKhachHang = TenKhachHang;
         khachHang.modifyDate = new Date();
-        khachHang.modifyBy = await GetCurrentUser(req);
+        khachHang.modifyBy = await GetCurrentUser(req,null);
 
         await KhachHang.update(khachHang, { where: { IDKhachHang: id } });
         khachHang.password = null;
@@ -216,7 +216,7 @@ routerKhachHang.delete('/:id', async (req: Request, res: Response) => {
 
         khachHang.Deleted = !khachHang.Deleted;
         khachHang.modifyDate = new Date();
-        khachHang.modifyBy = await GetCurrentUser(req);
+        khachHang.modifyBy = await GetCurrentUser(req,null);
 
         const response = await KhachHang.update(khachHang, { where: { IDKhachHang: id } });
         res.status(200).send({

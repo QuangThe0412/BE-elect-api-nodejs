@@ -68,7 +68,7 @@ routerNguoiDung.post('/',
 
             user.password = await HashPassword(username, password);
             user.createDate = new Date();
-            user.createBy = await GetCurrentUser(req);
+            user.createBy = await GetCurrentUser(req,null);
 
             const newUser = await NguoiDung.create(user);
             newUser.password = undefined;
@@ -151,7 +151,7 @@ routerNguoiDung.put('/:id', async (req: Request, res: Response) => {
         }
         newNguoiDung.username = nguoiDung.username;
         newNguoiDung.modifyDate = new Date();
-        newNguoiDung.modifyBy = await GetCurrentUser(req);
+        newNguoiDung.modifyBy = await GetCurrentUser(req,null);
         const result = await NguoiDung.update(newNguoiDung, {
             where: {
                 id: id,
@@ -197,7 +197,7 @@ routerNguoiDung.delete('/:id', async (req: Request, res: Response) => {
 
         nguoiDung.Deleted = !nguoiDung.Deleted;
         nguoiDung.modifyDate = new Date();
-        nguoiDung.modifyBy = await GetCurrentUser(req);
+        nguoiDung.modifyBy = await GetCurrentUser(req,null);
 
         await NguoiDung.update(nguoiDung, {
             where: {

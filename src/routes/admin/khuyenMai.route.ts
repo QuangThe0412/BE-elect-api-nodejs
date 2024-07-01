@@ -70,7 +70,7 @@ routerKhuyenMai.post(
             }
 
             khuyenMai.IdLoaiKH = IdLoaiKH;
-            khuyenMai.createBy = await GetCurrentUser(req);
+            khuyenMai.createBy = await GetCurrentUser(req,null);
             khuyenMai.createDate = new Date();
 
             const result = await Khuyenmai.create(khuyenMai);
@@ -134,7 +134,7 @@ routerKhuyenMai.put(
             khuyenMaiUpdate.DenNgay = DenNgay;
             khuyenMaiUpdate.TenKhuyenMai = TenKhuyenMai;
             khuyenMaiUpdate.IdLoaiKH = IdLoaiKH;
-            khuyenMaiUpdate.modifyBy = await GetCurrentUser(req);
+            khuyenMaiUpdate.modifyBy = await GetCurrentUser(req,null);
             khuyenMaiUpdate.modifyDate = new Date();
 
             await Khuyenmai.update(khuyenMaiUpdate, {
@@ -168,7 +168,7 @@ routerKhuyenMai.delete(
             }
 
             khuyenMai.modifyDate = new Date();
-            khuyenMai.modifyBy = await GetCurrentUser(req);
+            khuyenMai.modifyBy = await GetCurrentUser(req,null);
             khuyenMai.Deleted = !khuyenMai.Deleted;
 
             await Khuyenmai.update(khuyenMai, {

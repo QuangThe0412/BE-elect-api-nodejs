@@ -99,7 +99,7 @@ routerMon.post(
                 mess: 'Không tìm thấy loại món',
             });
             mon.createDate = new Date();
-            mon.createBy = await GetCurrentUser(req);
+            mon.createBy = await GetCurrentUser(req,null);
             mon.modifyDate = null;
             const result = await Mon.create(mon);
             res.status(201).send({
@@ -159,7 +159,7 @@ routerMon.put(
             }
 
             mon.modifyDate = new Date();
-            mon.modifyBy = await GetCurrentUser(req);
+            mon.modifyBy = await GetCurrentUser(req,null);
             await Mon.update(mon, {
                 where: {
                     IDMon: id,
@@ -192,7 +192,7 @@ routerMon.delete(
 
             mon.Deleted = !mon.Deleted;
             mon.modifyDate = new Date();
-            mon.modifyBy = await GetCurrentUser(req);
+            mon.modifyBy = await GetCurrentUser(req,null);
             await Mon.update(mon, {
                 where: {
                     IDMon: id,

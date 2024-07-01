@@ -79,7 +79,7 @@ routerCongNoKH.post('/', async (req: Request, res: Response) => {
             });
         }
 
-        congNoKH.createBy = await GetCurrentUser(req);
+        congNoKH.createBy = await GetCurrentUser(req,null);
         congNoKH.createDate = new Date();
         const newCongNoKH = await CongNoKH.create(congNoKH);
 
@@ -121,7 +121,7 @@ routerCongNoKH.put('/:id', async (req: Request, res: Response) => {
             });
         }
 
-        congNoKH.modifyBy = await GetCurrentUser(req);
+        congNoKH.modifyBy = await GetCurrentUser(req,null);
         congNoKH.modifyDate = new Date();
         const updatedCongNoKH = await CongNoKH.update(congNoKH, {
             where: {

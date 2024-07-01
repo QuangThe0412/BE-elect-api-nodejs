@@ -69,7 +69,7 @@ routerOrder.put(
             order.TrangThai = status;
 
             order.modifyDate = new Date();
-            order.modifyBy = await GetCurrentUser(req);
+            order.modifyBy = await GetCurrentUser(req,null);
 
             HoaDon.update(order, {
                 where: {
@@ -126,7 +126,7 @@ routerOrder.post(
     '/',
     async (req: Request, res: Response) => {
         try {
-            const letUser = await GetCurrentUser(req);
+            const letUser = await GetCurrentUser(req,null);
             const newOrder = req.body as _order;
             const { IDKhachHang, CongNo, TrangThai, data } = newOrder;
             const orderDetails = data;

@@ -87,10 +87,10 @@ export const IsAdmin = async (req: Request, res: Response) => {
     return result;
 };
 
-export const GetCurrentUser = async (req: Request) => {
+export const GetCurrentUser = async (req: Request, serect: string) => {
     try {
         let authorization = req.headers.authorization as string;
-        let secret = config.ACCESS_TOKEN_SECRET as string;
+        let secret = serect ?? config.ADMIN_ACCESS_SECRET as string;
         const decoded = jwt.verify(authorization, secret) as JwtPayload
 
         return decoded?.user?.username;
@@ -100,10 +100,10 @@ export const GetCurrentUser = async (req: Request) => {
     }
 }
 
-export const GetCurrentUserData = async (req: Request) => {
+export const GetCurrentUserData = async (req: Request, serect: string) => {
     try {
         let authorization = req.headers.authorization as string;
-        let secret = config.ACCESS_TOKEN_SECRET as string;
+        let secret = serect ?? config.ADMIN_ACCESS_SECRET as string;
         const decoded = jwt.verify(authorization, secret) as JwtPayload
 
         return decoded?.user;

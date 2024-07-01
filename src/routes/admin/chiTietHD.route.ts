@@ -89,7 +89,7 @@ routerChiTietHD.put(
             chiTietHDUpdate.IDMon = IDMon;
             chiTietHDUpdate.SoLuong = SoLuong;
             chiTietHDUpdate.ChietKhau = ChietKhau;
-            chiTietHDUpdate.modifyBy = await GetCurrentUser(req);
+            chiTietHDUpdate.modifyBy = await GetCurrentUser(req,null);
             chiTietHDUpdate.modifyDate = new Date();
 
             const result = await ChiTietHD.update(chiTietHDUpdate, {
@@ -175,7 +175,7 @@ routerChiTietHD.post(
                 TienCK: TienCK,
                 TienSauCK: TienSauCK,
                 TienChuaCK: TienChuaCK,
-                createBy: await GetCurrentUser(req),
+                createBy: await GetCurrentUser(req,null),
                 createDate: new Date(),
             });
 
@@ -226,7 +226,7 @@ routerChiTietHD.delete(
             }
 
             chiTietHD.Deleted = true;
-            chiTietHD.modifyBy = await GetCurrentUser(req);
+            chiTietHD.modifyBy = await GetCurrentUser(req,null);
             chiTietHD.modifyDate = new Date();
 
             await ChiTietHD.update(chiTietHD, {

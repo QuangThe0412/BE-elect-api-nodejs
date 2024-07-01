@@ -110,4 +110,27 @@ routerAuth.post(
     }
 );
 
+routerAuth.post(
+    '/refresh-token',
+    async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            let payload = { ...req.body };
+            let { refreshToken } = payload;
+
+            const response = authService.refreshToken(
+                refreshToken,
+                config.ACCESS_TOKEN_SECRET as string
+            );
+
+            return res.status(200).send({
+                data: response,
+                code: 'REFRESH_TOKEN_SUCCESS',
+                mess: 'Làm mới token thành công',
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+);
+
 export default routerAuth;
