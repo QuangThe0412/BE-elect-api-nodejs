@@ -30,7 +30,7 @@ routerAuth.post(
     async (req: Request, res: Response, next: NextFunction) => {
         try {
             let payload = { ...req.body };
-            let { username, password, phone } = payload;
+            let { name, username, password, phone } = payload;
 
             let duplicatedUser = await KhachHang.findOne({
                 where: {
@@ -52,7 +52,7 @@ routerAuth.post(
             const khachHang = await KhachHang.create({
                 IDKhachHang: null,
                 username,
-                TenKhachHang: username,
+                TenKhachHang: name,
                 password: pwdToStore,
                 DienThoai: phone,
                 createDate: new Date(),

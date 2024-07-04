@@ -3,6 +3,7 @@ const yup = require('yup');
 const userSchema = {
     register: yup.object({
         body: yup.object({
+            name: yup.string(),
             username: yup.string().required(),
             password: yup
                 .string()
