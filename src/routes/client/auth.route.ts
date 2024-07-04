@@ -10,6 +10,20 @@ import { KhachHang } from '../../models/init-models';
 
 const routerAuth = express.Router();
 
+type AuthRes = {
+    accessToken: string;
+    refreshToken: string;
+    account: AccountRes;
+}
+
+type AccountRes = {
+    id: number;
+    idtype: number;
+    name: string;
+    username: string;
+    phone: string;
+}
+
 routerAuth.post(
     '/register',
     schemaValidation(userSchema.register),
@@ -54,8 +68,21 @@ routerAuth.post(
                     userId: khachHang.IDKhachHang,
                 }
             }, config.ACCESS_TOKEN_SECRET as string);
+
+            const result: AuthRes = {
+                accessToken: tokens.accessToken,
+                refreshToken: tokens.refreshToken,
+                account: {
+                    id: khachHang.IDKhachHang,
+                    idtype: khachHang.IDLoaiKH,
+                    name: khachHang.TenKhachHang,
+                    username: khachHang.username,
+                    phone: khachHang.DienThoai,
+                } as AccountRes
+            }
+
             return res.status(201).send({
-                data: tokens,
+                data: result,
                 code: 'REGISTER_SUCCESS',
                 mess: 'Đăng ký tài khoản thành công',
             });
@@ -79,17 +106,10 @@ routerAuth.post(
                 },
             });
 
-            if (!user) {
+            if (!user || !ComparePassword(username, password, user.password)) {
                 return res.status(400).json({
                     code: 'user_not_found',
-                    mess: 'Tài khoản không tồn tại',
-                });
-            }
-
-            if (!ComparePassword(username, password, user.password)) {
-                return res.status(400).json({
-                    code: 'wrong_password',
-                    mess: 'Sai mật khẩu',
+                    mess: 'Tài khoản hoặc mật khẩu không đúng',
                 });
             }
 
@@ -99,8 +119,21 @@ routerAuth.post(
                     userId: user.IDKhachHang,
                 }
             }, config.ACCESS_TOKEN_SECRET as string);
+
+            const result: AuthRes = {
+                accessToken: tokens.accessToken,
+                refreshToken: tokens.refreshToken,
+                account: {
+                    id: user.IDKhachHang,
+                    idtype: user.IDLoaiKH,
+                    name: user.TenKhachHang,
+                    username: user.username,
+                    phone: user.DienThoai,
+                } as AccountRes
+            }
+
             return res.status(200).send({
-                data: tokens,
+                data: result,
                 code: 'LOGIN_SUCCESS',
                 mess: 'Đăng nhập thành công',
             });
@@ -117,13 +150,13 @@ routerAuth.post(
             let payload = { ...req.body };
             let { refreshToken } = payload;
 
-            const response = authService.refreshToken(
+            const tokens = authService.refreshToken(
                 refreshToken,
                 config.ACCESS_TOKEN_SECRET as string
             );
 
             return res.status(200).send({
-                data: response,
+                data: tokens,
                 code: 'REFRESH_TOKEN_SUCCESS',
                 mess: 'Làm mới token thành công',
             });
