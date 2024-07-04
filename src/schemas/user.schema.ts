@@ -4,7 +4,7 @@ const userSchema = {
     register: yup.object({
         body: yup.object({
             name: yup.string(),
-            username: yup.string().required(),
+            username: yup.string().required().matches(/^[A-Za-z0-9]+$/),
             password: yup
                 .string()
                 .required()

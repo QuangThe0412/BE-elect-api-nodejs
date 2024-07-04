@@ -39,7 +39,7 @@ routerAccount.get(
                 IDKhachHang: khachHang.IDKhachHang,
                 IDLoaiKH: khachHang.IDLoaiKH,
                 TenKhachHang: khachHang.TenKhachHang,
-                username: khachHang.username,
+                UserName: khachHang.username,
                 DienThoai: khachHang.DienThoai,
             };
 
