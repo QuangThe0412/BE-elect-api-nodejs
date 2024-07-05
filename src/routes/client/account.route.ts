@@ -12,7 +12,6 @@ routerAccount.get(
     '/profile',
     async (req: Request, res: Response, next: NextFunction) => {
         try {
-            console.log('GET /profile');
             let user = await GetCurrentUserData(req, config.ACCESS_TOKEN_SECRET) as AuthUser;
 
             if (!user) {
