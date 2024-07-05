@@ -121,7 +121,7 @@ routerAuth.post('/refreshToken', async (req: Request, res: Response) => {
         const { refreshToken } = req.body;
         const response = authService.refreshToken(
             refreshToken,
-            config.ADMIN_ACCESS_SECRET as string
+            config.ADMIN_REFRESH_TOKEN_SECRET as string
         );
 
         res.status(200).send({

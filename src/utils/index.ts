@@ -100,11 +100,10 @@ export const GetCurrentUser = async (req: Request, serect: string) => {
     }
 }
 
-export const GetCurrentUserData = async (req: Request, serect: string) => {
+export const GetCurrentUserData = async (req: Request, serect: string = config.ADMIN_ACCESS_SECRET) => {
     try {
         let authorization = req.headers.authorization as string;
-        let secret = serect ?? config.ADMIN_ACCESS_SECRET as string;
-        const decoded = jwt.verify(authorization, secret) as JwtPayload
+        const decoded = jwt.verify(authorization, serect) as JwtPayload
 
         return decoded?.user;
     } catch (err) {

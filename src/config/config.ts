@@ -16,6 +16,7 @@ const config = {
     TOKEN_EXPIRE_IN: process.env.TOKEN_EXPIRE_IN,
     REFRESH_TOKEN_EXPIRE_IN: process.env.REFRESH_TOKEN_EXPIRE_IN,
     REFRESH_TOKEN_SECRET: process.env.REFRESH_TOKEN_SECRET,
+    ADMIN_REFRESH_TOKEN_SECRET: process.env.ADMIN_REFRESH_TOKEN_SECRET,
 };
 
 export default config;

@@ -13,15 +13,7 @@ const routerAuth = express.Router();
 type AuthRes = {
     accessToken: string;
     refreshToken: string;
-    account: AccountRes;
-}
-
-type AccountRes = {
-    id: number;
-    idtype: number;
-    name: string;
-    username: string;
-    phone: string;
+    account: any;
 }
 
 routerAuth.post(
@@ -73,12 +65,12 @@ routerAuth.post(
                 accessToken: tokens.accessToken,
                 refreshToken: tokens.refreshToken,
                 account: {
-                    id: khachHang.IDKhachHang,
-                    idtype: khachHang.IDLoaiKH,
-                    name: khachHang.TenKhachHang,
-                    username: khachHang.username,
-                    phone: khachHang.DienThoai,
-                } as AccountRes
+                    IDKhachHang: khachHang.IDKhachHang,
+                    IDLoaiKH: khachHang.IDLoaiKH,
+                    TenKhachHang: khachHang.TenKhachHang,
+                    UserName: khachHang.username,
+                    DienThoai: khachHang.DienThoai,
+                }
             }
 
             return res.status(201).send({
@@ -124,16 +116,16 @@ routerAuth.post(
                 accessToken: tokens.accessToken,
                 refreshToken: tokens.refreshToken,
                 account: {
-                    id: user.IDKhachHang,
-                    idtype: user.IDLoaiKH,
-                    name: user.TenKhachHang,
-                    username: user.username,
-                    phone: user.DienThoai,
-                } as AccountRes
+                    IDKhachHang: user.IDKhachHang,
+                    IDLoaiKH: user.IDLoaiKH,
+                    TenKhachHang: user.TenKhachHang,
+                    UserName: user.username,
+                    DienThoai: user.DienThoai,
+                }
             }
 
             return res.status(200).send({
-                data: result,
+                data: tokens,
                 code: 'LOGIN_SUCCESS',
                 mess: 'Đăng nhập thành công',
             });
@@ -152,7 +144,7 @@ routerAuth.post(
 
             const tokens = authService.refreshToken(
                 refreshToken,
-                config.ACCESS_TOKEN_SECRET as string
+                config.REFRESH_TOKEN_SECRET as string
             );
 
             return res.status(200).send({
