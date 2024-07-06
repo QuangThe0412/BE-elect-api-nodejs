@@ -102,7 +102,7 @@ routerAccount.put(
             };
 
             return res.status(200).send({
-                data: { ...result },
+                data: result,
                 code: 'UPDATE_ME_SUCCESS',
                 mess: 'Cập nhật thông tin người dùng thành công',
             });
