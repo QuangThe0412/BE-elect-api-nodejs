@@ -81,9 +81,9 @@ routerAccount.put(
                 });
             }
 
-            const { TenKhachHang, DienThoai } = req.body;
-            khachHang.TenKhachHang = TenKhachHang;
-            khachHang.DienThoai = DienThoai;
+            const { name, phone } = req.body;
+            khachHang.TenKhachHang = name;
+            khachHang.DienThoai = phone;
             khachHang.modifyDate = new Date();
             khachHang.modifyBy = user.username;
 
@@ -94,7 +94,7 @@ routerAccount.put(
             });
 
             return res.status(200).send({
-                data: {},
+                data: { ...khachHang },
                 code: 'UPDATE_ME_SUCCESS',
                 mess: 'Cập nhật thông tin người dùng thành công',
             });

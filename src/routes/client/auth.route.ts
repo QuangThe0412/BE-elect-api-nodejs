@@ -67,11 +67,12 @@ routerAuth.post(
                 account: {
                     IDKhachHang: khachHang.IDKhachHang,
                     IDLoaiKH: khachHang.IDLoaiKH,
-                    TenKhachHang: khachHang.TenKhachHang,
-                    UserName: khachHang.username,
-                    DienThoai: khachHang.DienThoai,
+                    TenKhachHang: name,
+                    UserName: username,
+                    DienThoai: phone,
                 }
             }
+            console.log({result});
 
             return res.status(201).send({
                 data: result,
@@ -125,7 +126,7 @@ routerAuth.post(
             }
 
             return res.status(200).send({
-                data: tokens,
+                data: result,
                 code: 'LOGIN_SUCCESS',
                 mess: 'Đăng nhập thành công',
             });
