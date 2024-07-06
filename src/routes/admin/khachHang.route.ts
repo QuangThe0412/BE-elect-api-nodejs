@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import { KhachHang } from '../../models/init-models';
 import { GetCurrentUser, HashPassword, IsAdmin, MergeWithOldData } from '../../utils';
 import { Op } from 'sequelize';
+import config from '../../config/config';
 
 const routerKhachHang = express.Router();
 
@@ -67,7 +68,7 @@ routerKhachHang.post('/', async (req: Request, res: Response) => {
         }
 
         khachHang.IDLoaiKH = IDLoaiKH;
-        khachHang.password = await HashPassword(username, password);
+        khachHang.password = await HashPassword(username, password,config.ADMIN_ACCESS_SECRET);
         khachHang.createDate = new Date();
         khachHang.createBy = await GetCurrentUser(req,null);
 
@@ -165,7 +166,7 @@ routerKhachHang.put('/:id', async (req: Request, res: Response) => {
 
         //check if change password
         if(password){
-            khachHang.password = await HashPassword(khachHang.username, password);
+            khachHang.password = await HashPassword(khachHang.username, password,config.ADMIN_ACCESS_SECRET);
         }
 
         khachHang.IDLoaiKH = IDLoaiKH;

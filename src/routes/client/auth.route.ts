@@ -39,7 +39,7 @@ routerAuth.post(
                 });
             }
 
-            let pwdToStore = await HashPassword(username, password);
+            let pwdToStore = await HashPassword(username, password,config.ACCESS_TOKEN_SECRET);
 
             const khachHang = await KhachHang.create({
                 IDKhachHang: null,
@@ -72,7 +72,7 @@ routerAuth.post(
                     DienThoai: phone,
                 }
             }
-            console.log({result});
+            console.log({ result });
 
             return res.status(201).send({
                 data: result,
@@ -99,7 +99,14 @@ routerAuth.post(
                 },
             });
 
-            if (!user || !ComparePassword(username, password, user.password)) {
+            if (!user) {
+                return res.status(400).json({
+                    code: 'user_not_found',
+                    mess: 'Tài khoản hoặc mật khẩu không đúng',
+                });
+            }
+
+            if (!(await ComparePassword(username, password, user.password,config.ACCESS_TOKEN_SECRET))) {
                 return res.status(400).json({
                     code: 'user_not_found',
                     mess: 'Tài khoản hoặc mật khẩu không đúng',

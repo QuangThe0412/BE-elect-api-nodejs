@@ -17,11 +17,11 @@ export const MergeWithOldData = (oldData: any, newData: any) => {
     return newData;
 }
 
-export const HashPassword = async (userName: string, password: string) => {
+export const HashPassword = async (userName: string, password: string,serect: string = config.ACCESS_TOKEN_SECRET) => {
     const saltRounds = 10;
 
     try {
-        const hash = await bcrypt.hash(password + userName + config.ADMIN_ACCESS_SECRET, saltRounds);
+        const hash = await bcrypt.hash(password + userName + serect, saltRounds);
         return hash;
     } catch (err) {
         console.error(err);
@@ -29,9 +29,11 @@ export const HashPassword = async (userName: string, password: string) => {
     }
 };
 
-export const ComparePassword = async (userName: string, password: string, hash: string) => {
+export const ComparePassword = async (
+    userName: string, password: string, hash: string,
+    serect: string = config.ACCESS_TOKEN_SECRET) => {
     try {
-        const match = await bcrypt.compare(password + userName + config.ADMIN_ACCESS_SECRET, hash);
+        const match = await bcrypt.compare(password + userName + serect, hash);
         return match;
     } catch (err) {
         console.error(err);

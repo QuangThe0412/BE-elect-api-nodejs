@@ -4,7 +4,7 @@ import { GetCurrentUserData } from '../../utils';
 import { AuthUser } from '../../index';
 import { KhachHang } from '../../models/init-models';
 import config from '../../config/config';
-import { ComparePassword, HashPassword, GetCurrentUser, IsAdmin } from '../../utils';
+import { ComparePassword, HashPassword } from '../../utils';
 
 const routerAccount = express.Router();
 
@@ -93,8 +93,16 @@ routerAccount.put(
                 },
             });
 
+            const result = {
+                IDKhachHang: khachHang.IDKhachHang,
+                IDLoaiKH: khachHang.IDLoaiKH,
+                TenKhachHang: khachHang.TenKhachHang,
+                UserName: khachHang.username,
+                DienThoai: khachHang.DienThoai,
+            };
+
             return res.status(200).send({
-                data: { ...khachHang },
+                data: { ...result },
                 code: 'UPDATE_ME_SUCCESS',
                 mess: 'Cập nhật thông tin người dùng thành công',
             });
@@ -133,14 +141,14 @@ routerAccount.put(
 
             const { oldPassword, newPassword } = req.body;
 
-            if (!(await ComparePassword(user.username, oldPassword, khachHang.password))) {
-                return res.status(400).json({
+            if (!(await ComparePassword(user.username, oldPassword, khachHang.password, config.ACCESS_TOKEN_SECRET))) {
+                return res.status(404).json({
                     code: 'incorrect_old_password',
                     mess: 'Mật khẩu hiện tại không đúng',
                 });
             }
 
-            const newPwd = await HashPassword(user.username, newPassword);
+            const newPwd = await HashPassword(user.username, newPassword, config.ACCESS_TOKEN_SECRET);
             khachHang.password = newPwd;
             khachHang.modifyDate = new Date();
             khachHang.modifyBy = user.username;
