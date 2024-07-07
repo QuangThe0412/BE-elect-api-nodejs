@@ -10,6 +10,8 @@ routerProducts.get(
         try {
             const result = await Mon.findAll({
                 order: [['IDMon', 'DESC']],
+                where: { Deleted: false },
+                limit: 10,
             });
             res.status(200).send({
                 data: result,
@@ -31,6 +33,7 @@ routerProducts.get(
             const result = await Mon.findOne({
                 where: {
                     IDMon: id,
+                    Deleted : false
                 },
             })
             res.status(200).send({

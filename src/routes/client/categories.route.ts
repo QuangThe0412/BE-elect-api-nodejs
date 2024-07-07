@@ -10,6 +10,7 @@ routerCategories.get(
         try {
             let result: LoaiMon[] = await LoaiMon.findAll({
                 order: [['IDLoaiMon', 'DESC']],
+                where: { Deleted: false },
             });
             res.status(200).send({
                 data: result,
@@ -31,6 +32,7 @@ routerCategories.get(
             const result = await LoaiMon.findOne({
                 where: {
                     IDLoaiMon: id,
+                    Deleted : false
                 },
             });
             res.status(200).send({
@@ -53,6 +55,7 @@ routerCategories.get(
             const loaiMon = await LoaiMon.findOne({
                 where: {
                     IDLoaiMon: categoryId,
+                    Deleted: false,
                 },
             });
 
