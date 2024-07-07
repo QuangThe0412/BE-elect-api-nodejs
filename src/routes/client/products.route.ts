@@ -8,13 +8,27 @@ routerProducts.get(
     '/',
     async (req, res) => {
         try {
-            const result = await Mon.findAll({
+            const currentPage = parseInt(req.query.page as string) || 1;
+            const itemsPerPage = parseInt(req.query.limit as string) || 10;
+            const offset = (currentPage - 1) * itemsPerPage;
+
+            const { count: totalItems, rows: result } = await Mon.findAndCountAll({
                 order: [['IDMon', 'DESC']],
                 where: { Deleted: false },
-                limit: 10,
+                limit: itemsPerPage,
+                offset: offset,
             });
+
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+
             res.status(200).send({
-                data: result,
+                data: {
+                    result,
+                    totalPages,
+                    currentPage,
+                    itemsPerPage,
+                    totalItems,
+                },
                 code: 'GET_ALL_MON_SUCCESS',
                 mess: 'Nhận danh sách món thành công',
             });
@@ -33,7 +47,7 @@ routerProducts.get(
             const result = await Mon.findOne({
                 where: {
                     IDMon: id,
-                    Deleted : false
+                    Deleted: false
                 },
             })
             res.status(200).send({
