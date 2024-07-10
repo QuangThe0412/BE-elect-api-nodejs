@@ -9,7 +9,7 @@ routerCategories.get(
     async (req: Request, res: Response) => {
         try {
             let result: LoaiMon[] = await LoaiMon.findAll({
-                order: [['IDLoaiMon', 'DESC']],
+                order: [['TenLoai', 'ASC']],
                 where: { Deleted: false },
             });
             res.status(200).send({

@@ -10,11 +10,31 @@ routerProducts.get(
         try {
             const currentPage = parseInt(req.query.page as string) || 1;
             const itemsPerPage = parseInt(req.query.limit as string) || 10;
+            const idLoaiMon = parseInt(req.query.category as string) || 0;
+            const tenMon = req.query.name as string || '';
+            console.log({tenMon});
             const offset = (currentPage - 1) * itemsPerPage;
-
+            
             const { count: totalItems, rows: result } = await Mon.findAndCountAll({
                 order: [['IDMon', 'DESC']],
-                where: { Deleted: false },
+                where: {
+                    IDLoaiMon: idLoaiMon ? idLoaiMon : !null,
+                    TenMon: tenMon ? tenMon : !null,
+                    Deleted: false
+                 },
+                attributes: [
+                    'IDMon',
+                    'IDLoaiMon',
+                    'TenMon',
+                    'Image',
+                    'DVTMon',
+                    'DonGiaBanSi',
+                    'DonGiaBanLe',
+                    'DonGiaVon',
+                    'SoLuongTonKho',
+                    'ThoiGianBH',
+                    'GhiChu'
+                ],
                 limit: itemsPerPage,
                 offset: offset,
             });
