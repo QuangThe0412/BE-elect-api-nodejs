@@ -1,5 +1,6 @@
 import express from 'express';
 import { Mon } from '../../models/init-models';
+import { Op, Sequelize } from 'sequelize';
 
 const routerProducts = express.Router();
 
@@ -11,17 +12,33 @@ routerProducts.get(
             const currentPage = parseInt(req.query.page as string) || 1;
             const itemsPerPage = parseInt(req.query.limit as string) || 10;
             const idLoaiMon = parseInt(req.query.category as string) || 0;
-            const tenMon = req.query.name as string || '';
-            console.log({tenMon});
+            const query = req.query.query as string || '';
+            console.log({ query });
             const offset = (currentPage - 1) * itemsPerPage;
-            
+            const searchTerms = query.toLowerCase().split(' '); // Split the query into individual words
+
+            const searchConditions = searchTerms.map(term => ({
+                [Op.or]: [
+                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('TenMon')), {
+                        [Op.like]: `%${term}%`
+                    }),
+                    Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('TenKhongDau')), {
+                        [Op.like]: `%${term}%`
+                    })
+                ]
+            }));
+
+            const finalQuery = {
+                [Op.and]: searchConditions 
+            };
+
             const { count: totalItems, rows: result } = await Mon.findAndCountAll({
                 order: [['IDMon', 'DESC']],
                 where: {
                     IDLoaiMon: idLoaiMon ? idLoaiMon : !null,
-                    TenMon: tenMon ? tenMon : !null,
-                    Deleted: false
-                 },
+                    Deleted: false,
+                    [Op.and]: finalQuery
+                },
                 attributes: [
                     'IDMon',
                     'IDLoaiMon',

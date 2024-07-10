@@ -8,10 +8,11 @@ routerCategories.get(
     '/',
     async (req: Request, res: Response) => {
         try {
-            let result: LoaiMon[] = await LoaiMon.findAll({
+            const result: LoaiMon[] = await LoaiMon.findAll({
                 order: [['TenLoai', 'ASC']],
                 where: { Deleted: false },
             });
+            
             res.status(200).send({
                 data: result,
                 code: 'GET_ALL_LOAIMON_SUCCESS',
@@ -32,7 +33,7 @@ routerCategories.get(
             const result = await LoaiMon.findOne({
                 where: {
                     IDLoaiMon: id,
-                    Deleted : false
+                    Deleted: false
                 },
             });
             res.status(200).send({
