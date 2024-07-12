@@ -172,6 +172,20 @@ routerCart.post(
                 });
             }
 
+            const checkHoaDon = await HoaDon.findOne({
+                where: {
+                    IDKhachHang: user.userId,
+                    TrangThai: STATUS_ENUM.PENDING,
+                }
+            });
+
+            if (checkHoaDon) {
+                return res.status(400).json({
+                    code: 'bad_request',
+                    mess: 'Vui lòng đợi hóa đơn hiện tại được xử lý xong',
+                })
+            }
+
             const newCart = await HoaDon.create({
                 IDKhachHang: user.userId,
                 CongNo: 0,
