@@ -1,9 +1,12 @@
+import { DiscountResType } from './../schemas/discount.schema';
 import bcrypt from 'bcrypt';
 import config from '../config/config';
 import { NguoiDung } from '@models/NguoiDung';
 import { Request, Response } from 'express';
 import * as jwt from 'jsonwebtoken';
 import { JwtPayload } from '@services/auth.service';
+import { Op } from 'sequelize';
+import { ChiTietKM, KhachHang, Khuyenmai } from '../models/init-models';
 
 export const MergeWithOldData = (oldData: any, newData: any) => {
     for (let key in newData) {
@@ -17,7 +20,7 @@ export const MergeWithOldData = (oldData: any, newData: any) => {
     return newData;
 }
 
-export const HashPassword = async (userName: string, password: string,serect: string = config.ACCESS_TOKEN_SECRET) => {
+export const HashPassword = async (userName: string, password: string, serect: string = config.ACCESS_TOKEN_SECRET) => {
     const saltRounds = 10;
 
     try {
@@ -123,3 +126,66 @@ export enum STATUS_ENUM {
 export const IsPendingStatus = (status: number) => {
     return status === STATUS_ENUM.PENDING;
 };
+
+export const GetDiscount = async (idUser: number, idMons: number[]) => {
+    const result: DiscountResType[] = idMons.map(idMon => {
+        return {
+            IdMon: idMon,
+            PhanTramKM: 0
+        };
+    });
+
+    const nguoiDung = await KhachHang.findOne({
+        where: {
+            IDKhachHang: idUser,
+            Deleted: false
+        },
+        attributes: ['IDLoaiKH', 'IDKhachHang']
+
+    });
+
+
+    if (!nguoiDung) {
+        return result;
+    }
+
+    const khuyenMais = await Khuyenmai.findAll(
+        {
+            where: {
+                IdLoaiKH: nguoiDung.IDLoaiKH,
+                DenNgay: {
+                    [Op.gte]: new Date()
+                },
+                Deleted: false
+            }
+        }
+    );
+
+    if (!khuyenMais || khuyenMais.length === 0) {
+        return result;
+    }
+
+    const chiTietKM = await ChiTietKM.findAll({
+        where: {
+            IDKhuyenMai: khuyenMais.map(km => km.IDKhuyenMai),
+            IDMon: {
+                [Op.in]: idMons
+            },
+            Deleted: false
+        },
+        attributes: ['PhanTramKM', 'IDMon']
+    });
+
+    console.log({ chiTietKM });
+
+    if (!chiTietKM || chiTietKM.length === 0) {
+        return result;
+    }
+
+    return chiTietKM.map(ct => {
+        const discount = result.find(r => r.IdMon === ct.IDMon);
+        if (discount) {
+            discount.PhanTramKM = ct.PhanTramKM;
+        }
+    })
+}
