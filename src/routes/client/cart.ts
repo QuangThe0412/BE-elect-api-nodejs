@@ -151,7 +151,7 @@ routerCart.get(
 
 //create cart
 routerCart.post(
-    '/',
+    '/:id',
     async (req: Request, res: Response) => {
         try {
             let user = await GetCurrentUserData(req, config.ACCESS_TOKEN_SECRET) as AuthUser;
@@ -164,6 +164,7 @@ routerCart.post(
             }
 
             const body = req.body as CartDetails[];
+            console.log({ body });
 
             if (!body) {
                 return res.status(400).json({
@@ -172,59 +173,79 @@ routerCart.post(
                 });
             }
 
-            const checkHoaDon = await HoaDon.findOne({
-                where: {
-                    IDKhachHang: user.userId,
-                    TrangThai: STATUS_ENUM.PENDING,
-                }
-            });
-
-            if (checkHoaDon) {
-                return res.status(400).json({
-                    code: 'bad_request',
-                    mess: 'Vui lòng đợi hóa đơn hiện tại được xử lý xong',
-                })
+            const { id } = req.params;
+            const idHoadon = Number(id);
+            let result;
+            if (idHoadon > 0) {
+                result = await addItemToHoaDon(user.userId, idHoadon, body);
+            } else {
+                result = await createNewHoaDon(user.userId, body);
             }
 
-            const newCart = await HoaDon.create({
-                IDKhachHang: user.userId,
-                CongNo: 0,
-                TrangThai: STATUS_ENUM.PENDING,
-            });
-
-            const idMonsAndSoLuong = body.map((item) => {
-                return {
-                    IDMon: item.IDMon,
-                    SoLuong: item.SoLuong,
-                }
-            });
-
-            const mons = await Mon.findAll({
-                where: {
-                    IDMon: idMonsAndSoLuong.map((item) => item.IDMon),
-                }
-            });
-
-
-            const newCartDetails = body.map((item) => {
-                return {
-                    IDHoaDon: newCart.IDHoaDon,
-                    IDMon: item.IDMon,
-                    SoLuong: item.SoLuong,
-                    DonGia: item.DonGia,
-                    ChietKhau: item.ChietKhau,
-                    TienChuaCK: item.TienChuaCK,
-                    TienCK: item.TienCK,
-                    TienSauCK: item.TienSauCK,
-                }
-            });
-
-            await ChiTietHD.bulkCreate(newCartDetails);
-
             res.status(201).send({
-                data: newCart,
+                data: result,
                 code: 'CREATE_HOADON_SUCCESS',
                 mess: 'Tạo hóa đơn thành công',
+            });
+        } catch (err) {
+            console.error(err);
+            res.status(500).send(err);
+        }
+    });
+
+//update status processing cart
+routerCart.put(
+    '/processing/:id',
+    async (req: Request, res: Response) => {
+        try {
+            let user = await GetCurrentUserData(req, config.ACCESS_TOKEN_SECRET) as AuthUser;
+
+            if (!user) {
+                return res.status(401).json({
+                    code: 'unauthorized',
+                    mess: 'Chưa đăng nhập',
+                });
+            }
+
+            const { id } = req.params;
+            const idHoaDon = Number(id);
+
+            if (!idHoaDon) {
+                return res.status(400).json({
+                    code: 'bad_request',
+                    mess: 'Thiếu thông tin hóa đơn',
+                });
+            }
+
+            const hoaDon = await HoaDon.findOne({
+                where: {
+                    IDHoaDon: idHoaDon,
+                    IDKhachHang: user.userId,
+                },
+                attributes: ['IDHoaDon', 'IDKhachHang', 'CongNo', 'TrangThai'],
+            });
+
+            if (!hoaDon || hoaDon.TrangThai !== STATUS_ENUM.PENDING) {
+                return res.status(400).json({
+                    code: 'bad_request',
+                    mess: 'Hóa đơn không tồn tại hoặc đã được xử lý',
+                });
+            }
+
+            await HoaDon.update({
+                TrangThai: STATUS_ENUM.PROCESSING,
+                createDate: new Date(),
+                createBy: user.username,
+            }, {
+                where: {
+                    IDHoaDon: idHoaDon,
+                    IDKhachHang: user.userId,
+                }
+            });
+
+            res.status(200).send({
+                code: 'UPDATE_HOADON_SUCCESS',
+                mess: 'Cập nhật trạng thái hóa đơn đang xử lý thành công',
             });
         } catch (err) {
             console.error(err);
@@ -315,6 +336,8 @@ routerCart.put(
                 TienChuaCK,
                 TienCK,
                 TienSauCK,
+                createDate: new Date(),
+                createBy: user.username,
             }, {
                 where: {
                     IDChiTietHD: idChiTietHD,
@@ -385,15 +408,17 @@ routerCart.delete(
                 });
             }
 
-            // await ChiTietHD.update({
-            //     Deleted: true,
-            // }, {
-            //     where: {
-            //         IDChiTietHD: idChiTietHD,
-            //         IDMon: chiTietHD.IDMon,
-            //         Deleted: false,
-            //     }
-            // });
+            await ChiTietHD.update({
+                Deleted: true,
+                createDate: new Date(),
+                createBy: user.username,
+            }, {
+                where: {
+                    IDChiTietHD: idChiTietHD,
+                    IDMon: chiTietHD.IDMon,
+                    Deleted: false,
+                }
+            });
 
             res.status(200).send({
                 data: {},
@@ -405,5 +430,115 @@ routerCart.delete(
             res.status(500).send(err);
         }
     });
+
+const createNewHoaDon = async (userId: number, body: CartDetails[]) => {
+    const newCart = await HoaDon.create({
+        IDKhachHang: userId,
+        CongNo: 0,
+        TrangThai: STATUS_ENUM.PENDING,
+    });
+
+    const idMonsAndSoLuong = body.map((item) => {
+        return {
+            IDMon: item.IDMon,
+            SoLuong: item.SoLuong,
+        }
+    });
+
+    const mons = await Mon.findAll({
+        where: {
+            IDMon: idMonsAndSoLuong.map((item) => item.IDMon),
+        }
+    });
+
+    const chietKhauArr = await GetDiscount(userId, idMonsAndSoLuong.map((item) => item.IDMon)) as DiscountResType[];
+
+    const newCartDetails = body.map((item) => {
+        const mon = mons.find((mon) => mon.IDMon === item.IDMon);
+        const chietKhau = chietKhauArr.find((item) => item.IdMon === item.IdMon)?.PhanTramKM;
+        const TienChuaCK = mon?.DonGiaBanLe * item.SoLuong;
+        const TienCK = TienChuaCK * chietKhau / 100;
+        const TienSauCK = TienChuaCK - TienCK;
+        return {
+            IDHoaDon: newCart.IDHoaDon,
+            IDMon: item.IDMon,
+            SoLuong: item.SoLuong,
+            DonGia: mon?.DonGiaBanLe,
+            ChietKhau: chietKhau,
+            TienChuaCK,
+            TienCK,
+            TienSauCK
+        }
+    });
+    console.log({ newCartDetails });
+
+    // return await ChiTietHD.bulkCreate(newCartDetails);
+};
+
+const addItemToHoaDon = async (userId: number, idHoaDon: number, body: CartDetails[]) => {
+    ///=============work herer
+    const idMonsAndSoLuong = body.map((item) => {
+        return {
+            IDMon: item.IDMon,
+            SoLuong: item.SoLuong,
+        }
+    });
+
+    const chiTietHd = await ChiTietHD.findAll({
+        where: {
+            IDHoaDon: idHoaDon,
+            IDMon: idMonsAndSoLuong.map((item) => item.IDMon),
+        }
+    });
+
+    const exceptIdMons = chiTietHd.map((item) => item.IDMon);
+    //update soluong
+    if (chiTietHd.length > 0) {
+        chiTietHd.forEach(async (item) => {
+            const mon = idMonsAndSoLuong.find((mon) => mon.IDMon === item.IDMon);
+            await ChiTietHD.update({
+                SoLuong: item.SoLuong + mon.SoLuong,
+            }, {
+                where: {
+                    IDChiTietHD: item.IDChiTietHD,
+                }
+            });
+        });
+    }
+
+    const _idMonsAndSoLuong = idMonsAndSoLuong.filter((item) => !exceptIdMons.includes(item.IDMon));
+    const _body = body.filter((item) => !exceptIdMons.includes(item.IDMon));
+
+    const mons = await Mon.findAll({
+        where: {
+            IDMon: _idMonsAndSoLuong.map((item) => item.IDMon),
+        }
+    });
+
+    const chietKhauArr = await GetDiscount(userId, _idMonsAndSoLuong.map((item) => item.IDMon)) as DiscountResType[];
+
+    const newCartDetails = _body.map((item) => {
+        const mon = mons.find((mon) => mon.IDMon === item.IDMon);
+        const chietKhau = chietKhauArr.find((item) => item.IdMon === item.IdMon)?.PhanTramKM;
+        const TienChuaCK = mon?.DonGiaBanLe * item.SoLuong;
+        const TienCK = TienChuaCK * chietKhau / 100;
+        const TienSauCK = TienChuaCK - TienCK;
+
+        return {
+            IDHoaDon: idHoaDon,
+            IDMon: item.IDMon,
+            SoLuong: item.SoLuong,
+            DonGia: mon?.DonGiaBanLe,
+            ChietKhau: chietKhau,
+            TienChuaCK,
+            TienCK,
+            TienSauCK,
+        }
+    });
+    console.log({ newCartDetails });
+
+    // return await ChiTietHD.bulkCreate(newCartDetails);
+
+};
 
 export default routerCart;
