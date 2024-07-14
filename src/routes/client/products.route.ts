@@ -11,11 +11,11 @@ routerProducts.get(
         try {
             const currentPage = parseInt(req.query.page as string) || 1;
             const itemsPerPage = parseInt(req.query.limit as string) || 10;
-            const idLoaiMon = parseInt(req.query.category as string) || 0;
+            const idLoaiMon = parseInt(req.query.category as string) || null;
             const query = req.query.query as string || '';
             const offset = (currentPage - 1) * itemsPerPage;
             const searchTerms = query.toLowerCase().split(' '); // Split the query into individual words
-
+            console.log({idLoaiMon});
             const searchConditions = searchTerms.map(term => ({
                 [Op.or]: [
                     Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('TenMon')), {
@@ -28,13 +28,13 @@ routerProducts.get(
             }));
 
             const finalQuery = {
-                [Op.and]: searchConditions 
+                [Op.and]: searchConditions
             };
 
             const { count: totalItems, rows: result } = await Mon.findAndCountAll({
                 order: [['IDMon', 'DESC']],
                 where: {
-                    IDLoaiMon: idLoaiMon ? idLoaiMon : !null,
+                    IDLoaiMon: idLoaiMon ?? { [Op.ne]: null },
                     Deleted: false,
                     [Op.and]: finalQuery
                 },

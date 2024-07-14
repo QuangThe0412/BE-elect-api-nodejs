@@ -109,7 +109,7 @@ export const GetCurrentUserData = async (req: Request, serect: string = config.A
     try {
         let authorization = req.headers.authorization as string;
         const decoded = jwt.verify(authorization, serect) as JwtPayload
-
+        console.log({ decoded });
         return decoded?.user;
     } catch (err) {
         console.error(err);
