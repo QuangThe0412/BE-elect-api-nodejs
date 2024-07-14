@@ -27,6 +27,11 @@ type CartDetails = {
     Deleted?: boolean;
 }
 
+type IdMonAndSoLuongs = {
+    IDMon: number;
+    SoLuong: number;
+}
+
 const routerCart = express.Router();
 
 //get all
@@ -50,6 +55,14 @@ routerCart.get(
                 },
                 attributes: ['IDHoaDon', 'IDKhachHang', 'CongNo', 'TrangThai'],
             });
+
+            if (!cart) {
+                return res.status(200).send({
+                    data: {},
+                    code: 'GET_ALL_HOADON_SUCCESS',
+                    mess: 'Nhận danh sách hóa đơn thành công',
+                });
+            }
 
             const cartDetails: CartDetails[] = await ChiTietHD.findAll({
                 where: {
@@ -181,8 +194,9 @@ routerCart.post(
             } else {
                 result = await createNewHoaDon(user.userId, body);
             }
+            console.log({ result });
 
-            res.status(201).send({
+            return res.status(200).send({
                 data: result,
                 code: 'CREATE_HOADON_SUCCESS',
                 mess: 'Tạo hóa đơn thành công',
@@ -432,113 +446,160 @@ routerCart.delete(
     });
 
 const createNewHoaDon = async (userId: number, body: CartDetails[]) => {
-    const newCart = await HoaDon.create({
-        IDKhachHang: userId,
-        CongNo: 0,
-        TrangThai: STATUS_ENUM.PENDING,
-    });
+    try {
+        console.log('=======================createNewHoaDon=======');
+        const newCart = await HoaDon.create({
+            IDKhachHang: userId,
+            CongNo: 0,
+            TrangThai: STATUS_ENUM.PENDING,
+        });
 
-    const idMonsAndSoLuong = body.map((item) => {
-        return {
-            IDMon: item.IDMon,
-            SoLuong: item.SoLuong,
+        const idMonsAndSoLuong = body.map((item) => {
+            return {
+                IDMon: item.IDMon,
+                SoLuong: item.SoLuong,
+            }
+        });
+
+        const newCartDetails = await generateCartDetails(userId, newCart.IDHoaDon, idMonsAndSoLuong);
+
+        console.log({ newCartDetails });
+        if (newCartDetails.length > 0) {
+            // await ChiTietHD.bulkCreate(newCartDetails);
+            return newCartDetails;
         }
-    });
-
-    const mons = await Mon.findAll({
-        where: {
-            IDMon: idMonsAndSoLuong.map((item) => item.IDMon),
-        }
-    });
-
-    const chietKhauArr = await GetDiscount(userId, idMonsAndSoLuong.map((item) => item.IDMon)) as DiscountResType[];
-
-    const newCartDetails = body.map((item) => {
-        const mon = mons.find((mon) => mon.IDMon === item.IDMon);
-        const chietKhau = chietKhauArr.find((item) => item.IdMon === item.IdMon)?.PhanTramKM;
-        const TienChuaCK = mon?.DonGiaBanLe * item.SoLuong;
-        const TienCK = TienChuaCK * chietKhau / 100;
-        const TienSauCK = TienChuaCK - TienCK;
-        return {
-            IDHoaDon: newCart.IDHoaDon,
-            IDMon: item.IDMon,
-            SoLuong: item.SoLuong,
-            DonGia: mon?.DonGiaBanLe,
-            ChietKhau: chietKhau,
-            TienChuaCK,
-            TienCK,
-            TienSauCK
-        }
-    });
-    console.log({ newCartDetails });
-
-    // return await ChiTietHD.bulkCreate(newCartDetails);
+    } catch (err) {
+        console.error(err);
+    }
 };
 
 const addItemToHoaDon = async (userId: number, idHoaDon: number, body: CartDetails[]) => {
-    ///=============work herer
-    const idMonsAndSoLuong = body.map((item) => {
-        return {
-            IDMon: item.IDMon,
-            SoLuong: item.SoLuong,
-        }
-    });
+    try {
+        let result: CartDetails[] = [];
+        const idMonsAndSoLuong = body.map((item) => {
+            return {
+                IDMon: item?.IDMon,
+                SoLuong: item?.SoLuong,
+            }
+        });
 
-    const chiTietHd = await ChiTietHD.findAll({
-        where: {
-            IDHoaDon: idHoaDon,
-            IDMon: idMonsAndSoLuong.map((item) => item.IDMon),
-        }
-    });
+        const chiTietHd = await ChiTietHD.findAll({
+            where: {
+                IDHoaDon: idHoaDon,
+                IDMon: idMonsAndSoLuong.map((item) => item.IDMon),
+            },
+            attributes: ['IDChiTietHD', 'IDMon', 'SoLuong', 'Deleted'],
+        });
 
-    const exceptIdMons = chiTietHd.map((item) => item.IDMon);
-    //update soluong
-    if (chiTietHd.length > 0) {
-        chiTietHd.forEach(async (item) => {
-            const mon = idMonsAndSoLuong.find((mon) => mon.IDMon === item.IDMon);
-            await ChiTietHD.update({
-                SoLuong: item.SoLuong + mon.SoLuong,
-            }, {
+        //update soluong existed mon
+        if (chiTietHd.length > 0) {
+            for (const item of chiTietHd) {
+                if (item.Deleted) { // case : món đã tồn tại nhưng bị xóa giờ update lại đúng row đó
+                    const index = idMonsAndSoLuong.findIndex((mon) => mon.IDMon === item.IDMon);
+                    if (index !== -1) {
+                        idMonsAndSoLuong[index].SoLuong = 1;
+                        await ChiTietHD.update({ Deleted: false, SoLuong: idMonsAndSoLuong[index].SoLuong },
+                            { where: { IDChiTietHD: item.IDChiTietHD } });
+                    }
+                } else {
+                    const index = idMonsAndSoLuong.findIndex((mon) => mon.IDMon === item.IDMon);
+                    if (index !== -1) {
+                        idMonsAndSoLuong[index].SoLuong += item.SoLuong;
+                        await ChiTietHD.update({ SoLuong: idMonsAndSoLuong[index].SoLuong },
+                            { where: { IDChiTietHD: item.IDChiTietHD, Deleted: false } });
+                    }
+                }
+            }
+            result = await generateCartDetails(userId, idHoaDon, idMonsAndSoLuong);
+            return result;
+        }
+
+        const exceptIdMons = chiTietHd.map((item) => item.IDMon);
+        const _idMonsAndSoLuong = idMonsAndSoLuong.filter((item) => !exceptIdMons.includes(item.IDMon));
+        const newCartDetails = await generateCartDetails(userId, idHoaDon, _idMonsAndSoLuong);
+
+        if (newCartDetails.length > 0) {
+            const createdRecords = await ChiTietHD.bulkCreate(newCartDetails, { returning: true });
+            const records = createdRecords.map((item) => item.dataValues);
+            const mons = await Mon.findAll({
                 where: {
+                    IDMon: records.map((item) => item.IDMon),
+                    Deleted: false,
+                },
+                attributes: ['IDMon', 'TenMon', 'DonGiaBanLe', 'Image'],
+            });
+
+            records.map((item) => {
+                const mon = mons.find((mon) => mon.IDMon === item.IDMon);
+                result.push({
                     IDChiTietHD: item.IDChiTietHD,
+                    IDHoaDon: item.IDHoaDon,
+                    IDMon: item.IDMon,
+                    SoLuong: item.SoLuong,
+                    DonGia: mon?.DonGiaBanLe,
+                    ChietKhau: item.ChietKhau,
+                    TienChuaCK: item.TienChuaCK,
+                    TienCK: item.TienCK,
+                    TienSauCK: item.TienSauCK,
+                    Image: mon?.Image,
+                    TenMon: mon?.TenMon,
+                });
+            });
+            return result;
+        }
+    } catch (err) {
+        console.error(err);
+    }
+};
+
+const generateCartDetails = async (userId: number, idHoaDon: number, data: IdMonAndSoLuongs[]) => {
+    try {
+        if (data && data.length > 0) {
+            const mons = await Mon.findAll({
+                where: {
+                    IDMon: data.map((item) => item.IDMon),
+                    Deleted: false,
+                },
+                attributes: ['IDMon', 'TenMon', 'DonGiaBanLe', 'Image'],
+            });
+
+            const chitietHD = await ChiTietHD.findAll({
+                where: {
+                    IDHoaDon: idHoaDon,
+                    IDMon: data.map((item) => item.IDMon),
+                    Deleted: false,
+                },
+                attributes: ['IDMon', 'IDHoaDon', 'IDChiTietHD'],
+            });
+            const chietKhauArr = await GetDiscount(userId, data.map((item) => item.IDMon)) as DiscountResType[];
+
+            const result = data.map((item) => {
+                const mon = mons.find((mon) => mon.IDMon === item.IDMon);
+                const chietKhau = chietKhauArr.find((item) => item.IdMon === item.IdMon)?.PhanTramKM;
+                const TienChuaCK = mon?.DonGiaBanLe * item.SoLuong;
+                const TienCK = TienChuaCK * chietKhau / 100;
+                const TienSauCK = TienChuaCK - TienCK;
+
+                return {
+                    IDHoaDon: idHoaDon,
+                    IDMon: item.IDMon,
+                    SoLuong: item.SoLuong,
+                    DonGia: mon?.DonGiaBanLe,
+                    ChietKhau: chietKhau,
+                    TienChuaCK,
+                    TienCK,
+                    TienSauCK,
+                    Image: mon?.Image,
+                    TenMon: mon?.TenMon,
+                    IDChiTietHD: chitietHD.find((item) => item.IDMon === item.IDMon)?.IDChiTietHD,
                 }
             });
-        });
+
+            return result as CartDetails[];
+        }
+    } catch (err) {
+        console.error(err);
     }
-
-    const _idMonsAndSoLuong = idMonsAndSoLuong.filter((item) => !exceptIdMons.includes(item.IDMon));
-    const _body = body.filter((item) => !exceptIdMons.includes(item.IDMon));
-
-    const mons = await Mon.findAll({
-        where: {
-            IDMon: _idMonsAndSoLuong.map((item) => item.IDMon),
-        }
-    });
-
-    const chietKhauArr = await GetDiscount(userId, _idMonsAndSoLuong.map((item) => item.IDMon)) as DiscountResType[];
-
-    const newCartDetails = _body.map((item) => {
-        const mon = mons.find((mon) => mon.IDMon === item.IDMon);
-        const chietKhau = chietKhauArr.find((item) => item.IdMon === item.IdMon)?.PhanTramKM;
-        const TienChuaCK = mon?.DonGiaBanLe * item.SoLuong;
-        const TienCK = TienChuaCK * chietKhau / 100;
-        const TienSauCK = TienChuaCK - TienCK;
-
-        return {
-            IDHoaDon: idHoaDon,
-            IDMon: item.IDMon,
-            SoLuong: item.SoLuong,
-            DonGia: mon?.DonGiaBanLe,
-            ChietKhau: chietKhau,
-            TienChuaCK,
-            TienCK,
-            TienSauCK,
-        }
-    });
-    console.log({ newCartDetails });
-
-    // return await ChiTietHD.bulkCreate(newCartDetails);
-
 };
 
 export default routerCart;
