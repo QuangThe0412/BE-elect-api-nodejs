@@ -55,7 +55,7 @@ routerCart.get(
                 },
                 attributes: ['IDHoaDon', 'IDKhachHang', 'CongNo', 'TrangThai'],
             });
-
+            
             if (!cart) {
                 return res.status(200).send({
                     data: {},
@@ -71,7 +71,7 @@ routerCart.get(
                 },
                 attributes: ['IDChiTietHD', 'IDHoaDon', 'IDMon', 'SoLuong', 'DonGia', 'ChietKhau', 'TienChuaCK', 'TienCK', 'TienSauCK'],
             });
-
+            
             const monIds = cartDetails.map((item) => item.IDMon);
             const mons = await Mon.findAll({
                 where: {
@@ -177,7 +177,6 @@ routerCart.post(
             }
 
             const body = req.body as CartDetails[];
-            console.log({ body });
 
             if (!body) {
                 return res.status(400).json({
@@ -187,14 +186,13 @@ routerCart.post(
             }
 
             const { id } = req.params;
-            const idHoadon = Number(id);
+            const idHoadon = Number(id ?? 0);
             let result;
             if (idHoadon > 0) {
                 result = await addItemToHoaDon(user.userId, idHoadon, body);
             } else {
                 result = await createNewHoaDon(user.userId, body);
             }
-            console.log({ result });
 
             return res.status(200).send({
                 data: result,
@@ -286,7 +284,6 @@ routerCart.put(
             const body = req.body as CartDetails;
             const { SoLuong } = body;
 
-            console.log(body);
             if (!id || !body) {
                 return res.status(400).json({
                     code: 'bad_request',
@@ -447,7 +444,7 @@ routerCart.delete(
 
 const createNewHoaDon = async (userId: number, body: CartDetails[]) => {
     try {
-        console.log('=======================createNewHoaDon=======');
+        let result: CartDetails[] = [];
         const newCart = await HoaDon.create({
             IDKhachHang: userId,
             CongNo: 0,
@@ -463,10 +460,38 @@ const createNewHoaDon = async (userId: number, body: CartDetails[]) => {
 
         const newCartDetails = await generateCartDetails(userId, newCart.IDHoaDon, idMonsAndSoLuong);
 
-        console.log({ newCartDetails });
         if (newCartDetails.length > 0) {
-            // await ChiTietHD.bulkCreate(newCartDetails);
-            return newCartDetails;
+            if (newCartDetails.length > 0) {
+                const createdRecords = await ChiTietHD.bulkCreate(newCartDetails, { returning: true });
+                const records = createdRecords.map((item) => item.dataValues);
+                const mons = await Mon.findAll({
+                    where: {
+                        IDMon: records.map((item) => item.IDMon),
+                        Deleted: false,
+                    },
+                    attributes: ['IDMon', 'TenMon', 'DonGiaBanLe', 'Image'],
+                });
+
+                records.map((item) => {
+                    const mon = mons.find((mon) => mon.IDMon === item.IDMon);
+                    result.push(                        
+                        {
+                            IDChiTietHD: item.IDChiTietHD,
+                            IDHoaDon: item.IDHoaDon,
+                            IDMon: item.IDMon,
+                            SoLuong: item.SoLuong,
+                            DonGia: mon?.DonGiaBanLe,
+                            ChietKhau: item.ChietKhau,
+                            TienChuaCK: item.TienChuaCK,
+                            TienCK: item.TienCK,
+                            TienSauCK: item.TienSauCK,
+                            Image: mon?.Image,
+                            TenMon: mon?.TenMon,
+                        }
+                    );
+                });
+                return result;
+            }
         }
     } catch (err) {
         console.error(err);

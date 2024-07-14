@@ -13,7 +13,6 @@ routerProducts.get(
             const itemsPerPage = parseInt(req.query.limit as string) || 10;
             const idLoaiMon = parseInt(req.query.category as string) || 0;
             const query = req.query.query as string || '';
-            console.log({ query });
             const offset = (currentPage - 1) * itemsPerPage;
             const searchTerms = query.toLowerCase().split(' '); // Split the query into individual words
 
