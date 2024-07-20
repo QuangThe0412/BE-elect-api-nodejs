@@ -14,8 +14,9 @@ routerProducts.get(
             const idLoaiMon = parseInt(req.query.category as string) || null;
             const query = req.query.query as string || '';
             const offset = (currentPage - 1) * itemsPerPage;
+            const sortKey = req.query.sortKey as string || 'IDMon';
+            const reverse = req.query.reverse as string || 'ASC';
             const searchTerms = query.toLowerCase().split(' '); // Split the query into individual words
-            console.log({idLoaiMon});
             const searchConditions = searchTerms.map(term => ({
                 [Op.or]: [
                     Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('TenMon')), {
@@ -32,7 +33,7 @@ routerProducts.get(
             };
 
             const { count: totalItems, rows: result } = await Mon.findAndCountAll({
-                order: [['IDMon', 'DESC']],
+                order: [[sortKey, reverse]],
                 where: {
                     IDLoaiMon: idLoaiMon ?? { [Op.ne]: null },
                     Deleted: false,
@@ -75,21 +76,45 @@ routerProducts.get(
     });
 
 //get mon by id
+// routerProducts.get(
+//     '/:id',
+//     async (req, res) => {
+//         try {
+//             const id = req.params.id;
+//             const result = await Mon.findOne({
+//                 where: {
+//                     IDMon: id,
+//                     Deleted: false
+//                 },
+//             })
+//             res.status(200).send({
+//                 data: result,
+//                 code: 'GET_MON_SUCCESS',
+//                 mess: 'Nhận thông tin món thành công',
+//             });
+//         } catch (err) {
+//             console.error(err);
+//             res.status(500).send(err);
+//         }
+//     });
+
+//get top 10 newest mon
 routerProducts.get(
-    '/:id',
+    '/newest',
     async (req, res) => {
         try {
-            const id = req.params.id;
-            const result = await Mon.findOne({
+            const result = await Mon.findAll({
+                order: [['IDMon', 'DESC']],
                 where: {
-                    IDMon: id,
-                    Deleted: false
+                    Deleted: false,
+                    createDate: { [Op.gte]: new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000) }
                 },
+                limit: 8,
             })
             res.status(200).send({
                 data: result,
-                code: 'GET_MON_SUCCESS',
-                mess: 'Nhận thông tin món thành công',
+                code: 'GET_NEWEST_MON_SUCCESS',
+                mess: 'Nhận danh sách món mới nhất thành công',
             });
         } catch (err) {
             console.error(err);
