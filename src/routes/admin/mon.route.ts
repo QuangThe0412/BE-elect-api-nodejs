@@ -1,6 +1,6 @@
 import express from 'express';
 import { LoaiMon, Mon } from '../../models/init-models';
-import { GetCurrentUser, MergeWithOldData } from '../../utils';
+import { GetCurrentUser, MergeWithOldData, removeAccentAndSpecialChars } from '../../utils';
 import multer from 'multer';
 import { uploadFile, tryDeleteFile } from '../../services/serviceGoogleApi';
 
@@ -92,6 +92,7 @@ routerMon.post(
             mon.DonGiaVon = mon.DonGiaVon || 0;
             mon.SoLuongTonKho = mon.SoLuongTonKho || 0;
             mon.ThoiGianBH = mon.ThoiGianBH || 0;
+            mon.TenKhongDau = removeAccentAndSpecialChars(mon.TenMon);
 
             const loaiMon = await LoaiMon.findByPk(mon.IDLoaiMon);
             if (!loaiMon) return res.status(400).send({
@@ -99,7 +100,7 @@ routerMon.post(
                 mess: 'Không tìm thấy loại món',
             });
             mon.createDate = new Date();
-            mon.createBy = await GetCurrentUser(req,null);
+            mon.createBy = await GetCurrentUser(req, null);
             mon.modifyDate = null;
             const result = await Mon.create(mon);
             res.status(201).send({
@@ -141,7 +142,7 @@ routerMon.put(
                 });
             }
 
-            const { MaTat } = mon;
+            const { MaTat, TenMon } = mon;
             if (MaTat && MaTat !== oldMonData.MaTat) {
                 //check if MaTat is existed
                 const existedMonByMaTat = await Mon.findOne({
@@ -158,8 +159,12 @@ routerMon.put(
                 }
             }
 
+            if (TenMon && TenMon !== oldMonData.TenMon) {
+                mon.TenKhongDau = removeAccentAndSpecialChars(mon.TenMon);
+            }
+
             mon.modifyDate = new Date();
-            mon.modifyBy = await GetCurrentUser(req,null);
+            mon.modifyBy = await GetCurrentUser(req, null);
             await Mon.update(mon, {
                 where: {
                     IDMon: id,
@@ -192,7 +197,7 @@ routerMon.delete(
 
             mon.Deleted = !mon.Deleted;
             mon.modifyDate = new Date();
-            mon.modifyBy = await GetCurrentUser(req,null);
+            mon.modifyBy = await GetCurrentUser(req, null);
             await Mon.update(mon, {
                 where: {
                     IDMon: id,

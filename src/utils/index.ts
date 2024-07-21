@@ -177,8 +177,6 @@ export const GetDiscount = async (idUser: number, idMons: number[]) => {
         attributes: ['PhanTramKM', 'IDMon']
     });
 
-    console.log({ chiTietKM });
-
     if (!chiTietKM || chiTietKM.length === 0) {
         return result;
     }
@@ -190,3 +188,7 @@ export const GetDiscount = async (idUser: number, idMons: number[]) => {
         }
     })
 }
+
+export const removeAccentAndSpecialChars = (str:string | undefined) => {
+    return str?.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9]/g, '');
+  }
