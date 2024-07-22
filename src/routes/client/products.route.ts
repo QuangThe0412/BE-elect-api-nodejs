@@ -236,6 +236,7 @@ routerProducts.get(
 
             const totalPages = Math.ceil(totalItems / itemsPerPage);
 
+            console.log({ totalPages, currentPage });
             res.status(200).send({
                 data: {
                     result,
