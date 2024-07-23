@@ -147,7 +147,6 @@ routerAuth.post(
     '/refresh-token',
     async (req: Request, res: Response, next: NextFunction) => {
         try {
-            console.log('=============/refresh-token================');
             let payload = { ...req.body };
             let { refreshToken } = payload;
 
