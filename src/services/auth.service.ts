@@ -32,7 +32,6 @@ const authService = {
             const decoded = jwt.verify(accessToken, secret) as JwtPayload;
             return decoded.user;
         } catch (err) {
-            console.error(err);
             throw err;
         }
     },

@@ -119,9 +119,8 @@ routerProducts.get(
                 order: [['IDMon', 'DESC']],
                 where: {
                     Deleted: false,
-                    createDate: { [Op.gte]: new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000) }
                 },
-                limit: 8,
+                limit: 10,
             })
             res.status(200).send({
                 data: result,
@@ -236,7 +235,6 @@ routerProducts.get(
 
             const totalPages = Math.ceil(totalItems / itemsPerPage);
 
-            console.log({ totalPages, currentPage });
             res.status(200).send({
                 data: {
                     result,

@@ -14,7 +14,7 @@ function authMiddleware(req: Request, res: Response, next: NextFunction) {
             config.ACCESS_TOKEN_SECRET as string
         );
     } catch (error: any) {
-        if (error.name === 'TokenExpiredError') {
+        if (error.name === 'TokenExpiredError' || error.name === 'JsonWebTokenError') {
             return res.status(401).send();
         }
         return res.status(500).send();

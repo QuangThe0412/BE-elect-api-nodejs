@@ -72,7 +72,6 @@ routerAuth.post(
                     DienThoai: phone,
                 }
             }
-            console.log({ result });
 
             return res.status(201).send({
                 data: result,
