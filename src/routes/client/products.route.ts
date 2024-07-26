@@ -15,7 +15,7 @@ routerProducts.get(
             const query = req.query.query as string || '';
             const offset = (currentPage - 1) * itemsPerPage;
             const sortKey = req.query.sortKey as string || 'IDMon';
-            const reverse = req.query.reverse as string || 'ASC';
+            const sortType = req.query.sortType as string || 'ASC';
             const searchTerms = query.toLowerCase().split(' '); // Split the query into individual words
             const searchConditions = searchTerms.map(term => ({
                 [Op.or]: [
@@ -33,7 +33,7 @@ routerProducts.get(
             };
 
             const { count: totalItems, rows: result } = await Mon.findAndCountAll({
-                order: [[sortKey, reverse]],
+                order: [[sortKey, sortType]],
                 where: {
                     Deleted: false,
                     [Op.and]: finalQuery
@@ -182,7 +182,7 @@ routerProducts.get(
             const query = req.query.query as string || '';
             const offset = (currentPage - 1) * itemsPerPage;
             const sortKey = req.query.sortKey as string || 'IDMon';
-            const reverse = req.query.reverse as string || 'ASC';
+            const sortType = req.query.sortType as string || 'ASC';
             const searchTerms = query.toLowerCase().split(' '); // Split the query into individual words
             const searchConditions = searchTerms.map(term => ({
                 [Op.or]: [
@@ -210,7 +210,7 @@ routerProducts.get(
                 .map(m => m.IDLoaiMon);
 
             const { count: totalItems, rows: result } = await Mon.findAndCountAll({
-                order: [[sortKey, reverse]],
+                order: [[sortKey, sortType]],
                 where: {
                     IDLoaiMon: loaiMonIds,
                     [Op.and]: finalQuery,
