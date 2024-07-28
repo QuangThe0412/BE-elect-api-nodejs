@@ -13,7 +13,7 @@ const validate =
             return next();
         } catch (err: any) {
             return res
-                .status(500)
+                .status(422)
                 .json({ type: err.name, mess: err.message });
         }
     };

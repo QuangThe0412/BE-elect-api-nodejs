@@ -32,7 +32,6 @@ const authService = {
             const decoded = jwt.verify(accessToken, secret) as JwtPayload;
             return decoded.user;
         } catch (err) {
-            console.error(err);
             throw err;
         }
     },
@@ -40,9 +39,14 @@ const authService = {
     refreshToken(refreshToken: string, secret: string) {
         try {
             const decoded = jwt.verify(refreshToken, secret) as JwtPayload;
+
+            const serectGenerate = secret === config.REFRESH_TOKEN_SECRET 
+                                                ? config.ACCESS_TOKEN_SECRET 
+                                                : config.ADMIN_ACCESS_SECRET;
+                                                
             const tokens = authService.generateTokens(
                 decoded,
-                secret
+                serectGenerate
             );
 
             const accessToken = tokens.accessToken;

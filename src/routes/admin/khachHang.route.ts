@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import { KhachHang } from '../../models/init-models';
 import { GetCurrentUser, HashPassword, IsAdmin, MergeWithOldData } from '../../utils';
 import { Op } from 'sequelize';
+import config from '../../config/config';
 
 const routerKhachHang = express.Router();
 
@@ -67,9 +68,9 @@ routerKhachHang.post('/', async (req: Request, res: Response) => {
         }
 
         khachHang.IDLoaiKH = IDLoaiKH;
-        khachHang.password = await HashPassword(username, password);
+        khachHang.password = await HashPassword(username, password,config.ADMIN_ACCESS_SECRET);
         khachHang.createDate = new Date();
-        khachHang.createBy = await GetCurrentUser(req);
+        khachHang.createBy = await GetCurrentUser(req,null);
 
         const result = await KhachHang.create(khachHang);
         result.dataValues.password = null;
@@ -165,13 +166,13 @@ routerKhachHang.put('/:id', async (req: Request, res: Response) => {
 
         //check if change password
         if(password){
-            khachHang.password = await HashPassword(khachHang.username, password);
+            khachHang.password = await HashPassword(khachHang.username, password,config.ADMIN_ACCESS_SECRET);
         }
 
         khachHang.IDLoaiKH = IDLoaiKH;
         khachHang.TenKhachHang = TenKhachHang;
         khachHang.modifyDate = new Date();
-        khachHang.modifyBy = await GetCurrentUser(req);
+        khachHang.modifyBy = await GetCurrentUser(req,null);
 
         await KhachHang.update(khachHang, { where: { IDKhachHang: id } });
         khachHang.password = null;
@@ -216,7 +217,7 @@ routerKhachHang.delete('/:id', async (req: Request, res: Response) => {
 
         khachHang.Deleted = !khachHang.Deleted;
         khachHang.modifyDate = new Date();
-        khachHang.modifyBy = await GetCurrentUser(req);
+        khachHang.modifyBy = await GetCurrentUser(req,null);
 
         const response = await KhachHang.update(khachHang, { where: { IDKhachHang: id } });
         res.status(200).send({
