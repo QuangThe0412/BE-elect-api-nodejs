@@ -1,6 +1,6 @@
 import express from 'express';
 import { LoaiMon, Mon } from '../../models/init-models';
-import { GetCurrentUser, MergeWithOldData, removeAccentAndSpecialChars } from '../../utils';
+import { GetCurrentUser, MergeWithOldData, slugifyHandle } from '../../utils';
 import multer from 'multer';
 import { uploadFile, tryDeleteFile } from '../../services/serviceGoogleApi';
 
@@ -92,7 +92,7 @@ routerMon.post(
             mon.DonGiaVon = mon.DonGiaVon || 0;
             mon.SoLuongTonKho = mon.SoLuongTonKho || 0;
             mon.ThoiGianBH = mon.ThoiGianBH || 0;
-            mon.TenKhongDau = removeAccentAndSpecialChars(mon.TenMon);
+            mon.TenKhongDau = slugifyHandle(mon.TenMon);
 
             const loaiMon = await LoaiMon.findByPk(mon.IDLoaiMon);
             if (!loaiMon) return res.status(400).send({
@@ -160,7 +160,7 @@ routerMon.put(
             }
 
             if (TenMon && TenMon !== oldMonData.TenMon) {
-                mon.TenKhongDau = removeAccentAndSpecialChars(mon.TenMon);
+                mon.TenKhongDau = slugifyHandle(mon.TenMon);
             }
 
             mon.modifyDate = new Date();

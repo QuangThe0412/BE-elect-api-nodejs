@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import { LoaiMon } from '../../models/init-models';
-import { removeAccentAndSpecialChars } from '../../utils/index';
+import { slugifyHandle } from '../../utils/index';
 
 const routerCategories = express.Router();
 
@@ -27,19 +27,18 @@ routerCategories.get(
     });
 //get details
 routerCategories.get(
-    '/:nameCategory',
+    '/:idCategory',
     async (req: Request, res: Response) => {
         try {
-            const nameCategory = req.params.nameCategory;
-            const loaiMon = await LoaiMon.findAll({
+            const idCategory = req.params.idCategory;
+            const result = await LoaiMon.findOne({
                 where: {
+                    IDLoaiMon: idCategory,
                     Deleted: false
                 },
                 attributes: ['IDLoaiMon', 'TenLoai']
             })
 
-            const result: LoaiMon = loaiMon.find(m => removeAccentAndSpecialChars(m.TenLoai) === nameCategory);
-            
             res.status(200).send({
                 data: result,
                 code: 'GET_LOAIMON_SUCCESS',

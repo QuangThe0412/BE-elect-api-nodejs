@@ -7,6 +7,7 @@ import * as jwt from 'jsonwebtoken';
 import { JwtPayload } from '@services/auth.service';
 import { Op } from 'sequelize';
 import { ChiTietKM, KhachHang, Khuyenmai } from '../models/init-models';
+import slugify from 'slugify';
 
 export const MergeWithOldData = (oldData: any, newData: any) => {
     for (let key in newData) {
@@ -188,6 +189,14 @@ export const GetDiscount = async (idUser: number, idMons: number[]) => {
     })
 }
 
-export const removeAccentAndSpecialChars = (str:string | undefined) => {
-    return str?.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9]/g, '');
-  }
+export const slugifyHandle = (str: string) => {
+    if (!str) return '';
+    return slugify(str, {
+        replacement: '-',  // replace spaces with replacement character, defaults to `-`
+        remove: undefined, // remove characters that match regex, defaults to `undefined`
+        lower: true,      // convert to lower case, defaults to `false`
+        strict: false,     // strip special characters except replacement, defaults to `false`
+        locale: 'vi',      // language code of the locale to use
+        trim: true         // trim leading and trailing replacement chars, defaults to `true`
+    })
+}

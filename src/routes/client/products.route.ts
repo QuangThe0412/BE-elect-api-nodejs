@@ -1,7 +1,6 @@
 import express from 'express';
-import { LoaiMon, Mon } from '../../models/init-models';
+import {  Mon } from '../../models/init-models';
 import { Op, Sequelize } from 'sequelize';
-import { removeAccentAndSpecialChars } from '../../utils/index';
 
 const routerProducts = express.Router();
 
@@ -173,10 +172,10 @@ routerProducts.get(
 
 //get mon by category
 routerProducts.get(
-    '/category/:nameCategory',
+    '/category/:idCategory',
     async (req, res) => {
         try {
-            const nameCategory = req.params.nameCategory;
+            const idCategory = req.params.idCategory;
             const currentPage = parseInt(req.query.page as string) || 1;
             const itemsPerPage = parseInt(req.query.limit as string) || 10;
             const query = req.query.query as string || '';
@@ -199,20 +198,10 @@ routerProducts.get(
                 [Op.and]: searchConditions
             };
 
-            const loaiMon = await LoaiMon.findAll({
-                where: {
-                    Deleted: false
-                },
-                attributes: ['IDLoaiMon', 'TenLoai']
-            })
-
-            const loaiMonIds = loaiMon.filter(m => removeAccentAndSpecialChars(m.TenLoai) === nameCategory)
-                .map(m => m.IDLoaiMon);
-
             const { count: totalItems, rows: result } = await Mon.findAndCountAll({
                 order: [[sortKey, sortType]],
                 where: {
-                    IDLoaiMon: loaiMonIds,
+                    IDLoaiMon: idCategory,
                     [Op.and]: finalQuery,
                     Deleted: false
                 },
