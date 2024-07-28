@@ -3,7 +3,8 @@ const yup = require('yup');
 const userSchema = {
     register: yup.object({
         body: yup.object({
-            username: yup.string().required(),
+            name: yup.string(),
+            username: yup.string().required().matches(/^[A-Za-z0-9]+$/),
             password: yup
                 .string()
                 .required()

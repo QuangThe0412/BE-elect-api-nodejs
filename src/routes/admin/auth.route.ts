@@ -34,7 +34,7 @@ routerAuth.post(
                 });
             }
 
-            let pwdToStore = await HashPassword(username, password);
+            let pwdToStore = await HashPassword(username, password,config.ADMIN_ACCESS_SECRET);
             // console.log('Password to store :===>', pwdToStore);
             const nguoiDung = await NguoiDung.create({
                 id: null,
@@ -48,7 +48,7 @@ routerAuth.post(
                 guest: true,
                 ngaySinh,
                 createDate: new Date(),
-                createBy : await GetCurrentUser(req),
+                createBy: await GetCurrentUser(req, null),
                 modifyDate: null,
                 Deleted: false,
             });
@@ -59,7 +59,7 @@ routerAuth.post(
                     userId: nguoiDung.id,
                     roles: GetRoles(nguoiDung),
                 },
-            });
+            }, config.ACCESS_TOKEN_SECRET as string);
             return res.status(201).send({
                 data: tokens,
                 code: 'REGISTER_SUCCESS',
@@ -80,20 +80,26 @@ routerAuth.post('/login', async (req: Request, res: Response) => {
             },
         });
 
-        if(nguoidDung.Deleted){
+        if (nguoidDung.Deleted) {
             return res.status(400).json({
                 code: 'account_deleted',
                 mess: 'Tài khoản đã bị khóa vui lòng liện hệ admin để biết thêm chi tiết',
             });
         }
 
-        if (!nguoidDung || !(await ComparePassword(username, password, nguoidDung.password))) {
+        if (!nguoidDung) {
             return res.status(400).json({
                 code: 'incorrect_password_or_user_name',
                 mess: 'Mật khẩu hoặc tài khoản không đúng',
             });
         }
 
+        if (!(await ComparePassword(username, password, nguoidDung.password,config.ADMIN_ACCESS_SECRET))) {
+            return res.status(400).json({
+                code: 'incorrect_password_or_user_name',
+                mess: 'Mật khẩu hoặc tài khoản không đúng',
+            });
+        }
 
         const authPayload: AuthUser = {
             username: nguoidDung.username,
@@ -122,7 +128,7 @@ routerAuth.post('/refreshToken', async (req: Request, res: Response) => {
         const { refreshToken } = req.body;
         const response = authService.refreshToken(
             refreshToken,
-            config.ADMIN_ACCESS_SECRET as string
+            config.ADMIN_REFRESH_TOKEN_SECRET as string
         );
 
         res.status(200).send({

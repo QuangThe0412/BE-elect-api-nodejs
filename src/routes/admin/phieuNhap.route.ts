@@ -62,7 +62,7 @@ routerPhieuNhap.post('/', async (req: Request, res: Response) => {
         phieuNhap.IDPhieuNhap = null;
 
         phieuNhap.createDate = new Date();
-        phieuNhap.createBy = await GetCurrentUser(req);
+        phieuNhap.createBy = await GetCurrentUser(req,null);
         const result = await PhieuNhap.create(phieuNhap);
 
         res.status(201).send({
@@ -92,7 +92,7 @@ routerPhieuNhap.put(
             }
 
             phieuNhap.modifyDate = new Date();
-            phieuNhap.modifyBy = await GetCurrentUser(req);
+            phieuNhap.modifyBy = await GetCurrentUser(req,null);
 
             const result = await PhieuNhap.update(phieuNhap, {
                 where: {
@@ -131,7 +131,7 @@ routerPhieuNhap.delete('/:id', async (req: Request, res: Response) => {
 
         await PhieuNhap.update({
             Deleted: true,
-            modifyBy: await GetCurrentUser(req),
+            modifyBy: await GetCurrentUser(req,null),
             modifyDate: new Date(),
         }, {
             where: {
@@ -153,7 +153,7 @@ routerPhieuNhap.delete('/:id', async (req: Request, res: Response) => {
             });
             await ChiTietPhieuNhap.update({
                 Deleted: true,
-                modifyBy: await GetCurrentUser(req),
+                modifyBy: await GetCurrentUser(req,null),
                 modifyDate: new Date(),
             }, {
                 where: {

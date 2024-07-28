@@ -1,14 +1,15 @@
 import express, { Response } from 'express';
 import { Request } from '../../index';
-import { ComparePassword, HashPassword, GetRoles, GetCurrentUser, IsAdmin } from '../../utils';
+import { ComparePassword, HashPassword, GetCurrentUser, IsAdmin } from '../../utils';
 import { NguoiDung } from '../../models/init-models';
+import config from '../../config/config';
 
 const routerAccount = express.Router();
 
 routerAccount.get('/me', async (req: Request, res: Response) => {
     try {
         const { idUser } = req.query;
-        console.log('idUser', idUser);
+
         if (!idUser) {
             return res.status(400).json({
                 code: 'missing_user_id',
@@ -98,7 +99,7 @@ routerAccount.put('/updateProfile', async (req: Request, res: Response) => {
         user.phone = phone;
         user.ngaySinh = ngaySinh;
         user.modifyDate = new Date();
-        user.modifyBy = await GetCurrentUser(req);
+        user.modifyBy = await GetCurrentUser(req,null);
 
         await NguoiDung.update(user, { where: { id: user.id } });
 
@@ -135,17 +136,17 @@ routerAccount.put('/changePassword', async (req: Request, res: Response) => {
             });
         }
 
-        if (!(await ComparePassword(user.username, oldPassword, user.password))) {
+        if (!(await ComparePassword(user.username, oldPassword, user.password,config.ADMIN_ACCESS_SECRET))) {
             return res.status(400).json({
                 code: 'incorrect_old_password',
                 mess: 'Mật khẩu hiện tại không đúng',
             });
         }
 
-        const newPwd = await HashPassword(user.username, newPassword);
+        const newPwd = await HashPassword(user.username, newPassword,config.ADMIN_ACCESS_SECRET);
         user.password = newPwd;
         user.modifyDate = new Date();
-        user.modifyBy = await GetCurrentUser(req);
+        user.modifyBy = await GetCurrentUser(req,null);
 
         await NguoiDung.update(user, { where: { id: user.id } });
 

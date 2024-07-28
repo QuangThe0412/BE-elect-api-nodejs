@@ -87,6 +87,49 @@ export function initModels(sequelize: Sequelize) {
     CongNoKH.initModel(sequelize);
     ChiTietCongNoKH.initModel(sequelize);
 
+    // Add relations Mon
+    NhomMon.hasMany(LoaiMon, { as: 'LoaiMon', foreignKey: 'IDNhomMon' });
+    LoaiMon.belongsTo(NhomMon, { as: 'R_LoaiMon', foreignKey: 'IDNhomMon' });
+    LoaiMon.hasMany(Mon, { as: 'Mon', foreignKey: 'IDLoaiMon' });
+    Mon.belongsTo(LoaiMon, { as: 'R_LoaiMon_Mon', foreignKey: 'IDLoaiMon' });
+    //hoa don
+    HoaDon.hasMany(ChiTietHD, { as: 'ChiTietHD', foreignKey: 'IDHoaDon' });
+    ChiTietHD.belongsTo(HoaDon, { as: 'R_HoaDon', foreignKey: 'IDHoaDon ' });
+    ChiTietHD.hasMany(Mon, { as: 'Mon', foreignKey: 'IDMon' });
+    Mon.belongsTo(ChiTietHD, { as: 'R_HoaDon_Mon', foreignKey: 'IDMon' });
+    //khach hang
+    KhachHang.hasMany(HoaDon, { as: 'HoaDon', foreignKey: 'IDKhachHang' });
+    HoaDon.belongsTo(KhachHang, { as: 'R_KhachHang_HoaDon', foreignKey: 'IDKhachHang' });
+    // //baogia
+    // BaoGia.hasMany(BaoGiaChiTiet, { as: 'BaoGiaChiTiet', foreignKey: 'IDBaoGia' });
+    // BaoGiaChiTiet.belongsTo(BaoGia, { as: 'IDBaoGia_BaoGia', foreignKey: 'IDBaoGia' });
+    // BaoGia.belongsTo(KhachHang, { as: 'IDKhachHang_KhachHang', foreignKey: 'IDKhachHang' });
+    // Mon.hasMany(BaoGiaChiTiet, { as: 'BaoGiaChiTiet', foreignKey: 'IDMon' });
+    // BaoGiaChiTiet.belongsTo(Mon, { as: 'IDMon_Mon', foreignKey: 'IDMon' });
+    //phieu nhap
+    PhieuNhap.hasMany(ChiTietPhieuNhap, { as: 'ChiTietPhieuNhap', foreignKey: 'IDPhieuNhap' });
+    ChiTietPhieuNhap.belongsTo(PhieuNhap, { as: 'R_PhieuNhap', foreignKey: 'IDPhieuNhap' });
+    ChiTietPhieuNhap.hasMany(Mon, { as: 'Mon', foreignKey: 'IDMon' });
+    Mon.belongsTo(ChiTietPhieuNhap, { as: 'R_PhieuNhap_Mon', foreignKey: 'IDMon' });
+    //phieu xuat
+    PhieuXuat.hasMany(ChiTietPhieuXuat, { as: 'ChiTietPhieuXuat', foreignKey: 'IDPhieuXuat' });
+    ChiTietPhieuXuat.belongsTo(PhieuXuat, { as: 'R_PhieuXuat', foreignKey: 'IDPhieuXuat' });
+    ChiTietPhieuXuat.hasMany(Mon, { as: 'Mon', foreignKey: 'IDMon' });
+    Mon.belongsTo(ChiTietPhieuXuat, { as: 'R_PhieuXuat_Mon', foreignKey: 'IDMon' });
+    //khach hang
+    LoaiKhachHang.hasMany(KhachHang, { as: 'KhachHang', foreignKey: 'IDLoaiKH' });
+    KhachHang.belongsTo(LoaiKhachHang, { as: 'R_KhachHang', foreignKey: 'IDLoaiKH' });
+    //khuyen mai
+    Khuyenmai.hasMany(ChiTietKM, { as: 'ChiTietKM', foreignKey: 'IDKhuyenMai' });
+    ChiTietKM.belongsTo(Khuyenmai, { as: 'R_KhuyenMai', foreignKey: 'IDKhuyenMai' });
+    ChiTietKM.hasMany(Mon, { as: 'Mon', foreignKey: 'IDMon' });
+    Mon.belongsTo(ChiTietKM, { as: 'R_KhuyenMai_Mon', foreignKey: 'IDMon' });
+    //cong no khach hang
+    CongNoKH.hasMany(ChiTietCongNoKH, { as: 'ChiTietCongNoKH', foreignKey: 'IDCongNoKH' });
+    ChiTietCongNoKH.belongsTo(CongNoKH, { as: 'R_CongNo', foreignKey: 'IDCongNoKH' });
+    ChiTietCongNoKH.hasMany(HoaDon, { as: 'HoaDon', foreignKey: 'IDHoaDon' });
+    HoaDon.belongsTo(ChiTietCongNoKH, { as: 'R_CongNo_HoaDon', foreignKey: 'IDHoaDon' });
+
     return {
         Mon,
         NhomMon,

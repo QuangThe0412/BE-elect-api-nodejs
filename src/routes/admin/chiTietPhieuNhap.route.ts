@@ -106,7 +106,7 @@ routerChiTietPhieuNhap.put('/:id', async (req: Request, res: Response) => {
         chiTietPhieuNhap.ThanhTien = thanhTien;
 
         chiTietPhieuNhap.modifyDate = new Date();
-        chiTietPhieuNhap.modifyBy = await GetCurrentUser(req);
+        chiTietPhieuNhap.modifyBy = await GetCurrentUser(req,null);
 
         const result = await ChiTietPhieuNhap.update(chiTietPhieuNhap, {
             where: {
@@ -118,7 +118,7 @@ routerChiTietPhieuNhap.put('/:id', async (req: Request, res: Response) => {
         const soLuongCu = chiTietPhieuNhap.SoLuongNhap;
         mon.SoLuongTonKho = mon.SoLuongTonKho - soLuongCu + SoLuongNhap;
         mon.modifyDate = new Date();
-        mon.modifyBy = await GetCurrentUser(req);
+        mon.modifyBy = await GetCurrentUser(req,null);
         await Mon.update(mon, {
             where: {
                 IDMon: IDMon,
@@ -189,13 +189,13 @@ routerChiTietPhieuNhap.post('/', async (req: Request, res: Response) => {
             ChietKhau,
             ThanhTien: thanhTien,
             createDate: new Date(),
-            createBy: await GetCurrentUser(req),
+            createBy: await GetCurrentUser(req,null),
         });
 
         //update Món trong bảng món
         mon.SoLuongTonKho = mon.SoLuongTonKho + SoLuongNhap;
         mon.modifyDate = new Date();
-        mon.modifyBy = await GetCurrentUser(req);
+        mon.modifyBy = await GetCurrentUser(req,null);
         await Mon.update(mon, {
             where: {
                 IDMon: IDMon,
@@ -228,7 +228,7 @@ routerChiTietPhieuNhap.delete('/:id', async (req: Request, res: Response) => {
         const result = await ChiTietPhieuNhap.update({
             Deleted: true,
             modifyDate: new Date(),
-            modifyBy: await GetCurrentUser(req),
+            modifyBy: await GetCurrentUser(req,null),
         }, {
             where: {
                 IDChiTietPhieuNhap: id,
@@ -240,7 +240,7 @@ routerChiTietPhieuNhap.delete('/:id', async (req: Request, res: Response) => {
         const soLuong = mon.SoLuongTonKho - chiTietPhieuNhap.SoLuongNhap
         mon.SoLuongTonKho = soLuong < 0 ? 0 : soLuong;
         mon.modifyDate = new Date();
-        mon.modifyBy = await GetCurrentUser(req);
+        mon.modifyBy = await GetCurrentUser(req,null);
         await Mon.update(mon, {
             where: {
                 IDMon: chiTietPhieuNhap.IDMon,

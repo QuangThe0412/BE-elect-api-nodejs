@@ -59,7 +59,7 @@ routerChiTietCongNoKH.post('/', async (req: Request, res: Response) => {
             })
         }
 
-        chiTietCongNoKH.createBy = await GetCurrentUser(req);
+        chiTietCongNoKH.createBy = await GetCurrentUser(req,null);
         chiTietCongNoKH.createDate = new Date();
 
         const result = await ChiTietCongNoKH.create(chiTietCongNoKH);
@@ -135,7 +135,7 @@ routerChiTietCongNoKH.put(
             }
 
             chiTietCongNoKH.SoTienTra = SoTienTra;
-            chiTietCongNoKH.modifyBy = await GetCurrentUser(req);
+            chiTietCongNoKH.modifyBy = await GetCurrentUser(req,null);
             chiTietCongNoKH.modifyDate = new Date();
             
             await ChiTietCongNoKH.update(chiTietCongNoKH, {
@@ -181,7 +181,7 @@ routerChiTietCongNoKH.delete('/:id', async (req: Request, res: Response) => {
 
         const result = await ChiTietCongNoKH.update({
             Deleted: true,
-            modifyBy: await GetCurrentUser(req),
+            modifyBy: await GetCurrentUser(req,null),
             modifyDate: new Date(),
         }, {
             where: {

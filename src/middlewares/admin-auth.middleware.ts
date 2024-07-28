@@ -6,6 +6,11 @@ import { roleAccess } from '../routes/admin';
 
 function adminAuthMiddleware(req: Request, res: Response, next: NextFunction) {
     try {
+        const { headers } = req;
+        if(headers.authorization === undefined) {
+            return res.status(401).send();
+        }
+        
         req.user = authService.validateAccessToken(
             req.headers.authorization,
             config.ADMIN_ACCESS_SECRET
