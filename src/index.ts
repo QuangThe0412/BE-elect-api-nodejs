@@ -19,7 +19,12 @@ const corsOptions = {
   origin:
     process.env.npm_lifecycle_event === 'dev'
       ? '*'
-      : ['http://diennuoctamnhi.nhungchangtrainhaycam.site', 'https://diennuoctamnhi.nhungchangtrainhaycam.site'],
+      : [
+        'http://cms-diennuoctamnhi.nhungchangtrainhaycam.site',
+        'https://cms-diennuoctamnhi.nhungchangtrainhaycam.site',
+        'http://diennuoctamnhi.nhungchangtrainhaycam.site',
+        'https://diennuoctamnhi.nhungchangtrainhaycam.site'
+      ],
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   preflightContinue: false,
 };
