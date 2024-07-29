@@ -20,10 +20,7 @@ const corsOptions = {
     process.env.npm_lifecycle_event === 'dev'
       ? '*'
       : [
-        'http://cms-diennuoctamnhi.nhungchangtrainhaycam.site',
-        'https://cms-diennuoctamnhi.nhungchangtrainhaycam.site',
-        'http://diennuoctamnhi.nhungchangtrainhaycam.site',
-        'https://diennuoctamnhi.nhungchangtrainhaycam.site'
+        /^http:\/\/localhost:\d+$/
       ],
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   preflightContinue: false,
