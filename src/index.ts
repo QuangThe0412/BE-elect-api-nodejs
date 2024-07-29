@@ -20,8 +20,7 @@ const corsOptions = {
     process.env.npm_lifecycle_event === 'dev'
       ? '*'
       : [
-        'http://localhost:3001',
-        'http://localhost:4005'
+        /^http:\/\/127\.0\.0\.1:\d+$/
       ],
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   preflightContinue: false,
