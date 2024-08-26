@@ -59,7 +59,7 @@ pipeline {
                         cd /home/smart-shop
                         unzip -o build.zip
                         cd build
-                        pm2 start ecosystem.config.js --env production -i 1
+                        pm2 start ecosystem.config.js --env production
                         EOF
                     '''
                 }
