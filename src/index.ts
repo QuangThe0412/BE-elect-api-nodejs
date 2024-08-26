@@ -57,7 +57,7 @@ app.use(errorHandlerMiddleware);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
-  console.log(`---------------------------------`);
+  console.log(`ENV: ${process.env.npm_lifecycle_event}`);
 });
 
 export default app;
