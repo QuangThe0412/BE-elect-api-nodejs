@@ -35,7 +35,7 @@ pipeline {
             }
         }
 
-        stage('Copy Files') {
+        stage('Copy Files and run pm2') {
             steps {
                 script {
                     sshagent(['ssh-smart-shop']) {
