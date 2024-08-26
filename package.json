@@ -7,7 +7,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node -r dotenv/config build/index.js dotenv_config_path=.env.production",
-    "build:production": "tsc && node -r dotenv/config build/index.js dotenv_config_path=.env.production",
+    "build:production": "tsc",
     "dev": "nodemon -r dotenv/config src/index.ts dotenv_config_path=.env.dev",
     "build:dev": "tsc && node -r dotenv/config build/index.js dotenv_config_path=.env.dev"
   },
