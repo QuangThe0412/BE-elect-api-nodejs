@@ -44,8 +44,8 @@ pipeline {
             steps {
                 script {
                     sshagent(['ssh-smart-shop']) {
-                        sh 'scp -P 666 -r build/* quangthe@127.0.0.1:/home/smart-shop'
-                        sh 'ssh -p 666 quangthe@127.0.0.1 "cd /home/smart-shop && ls -la"'
+                        sh 'scp -o StrictHostKeyChecking=no -P 666 -r build/* quangthe@127.0.0.1:/home/smart-shop'
+                        sh 'ssh -o StrictHostKeyChecking=no -p 666 quangthe@127.0.0.1 "cd /home/smart-shop && ls -la"'
                     }
                 }
             }
