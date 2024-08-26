@@ -25,6 +25,8 @@ pipeline {
         stage('Zip') {
             steps {
                 script {
+                    sh 'cp /var/jenkins_home/workspace/elec-api/ecosystem.config.js build/'
+
                     sh 'zip -r build.zip build'
                 }
             }
