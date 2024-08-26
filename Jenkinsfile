@@ -27,7 +27,7 @@ pipeline {
                 script {
                     def portOpen = sh(script: "netstat -an | grep 666 | grep LISTEN", returnStatus: true) == 0
                     if (!portOpen) {
-                        sh 'cloudflared access ssh --hostname ssh-api-smart-shop-server.nhungchangtrainhaycam.site --url 127.0.0.1:666'
+                        sh 'timeout 6s cloudflared access ssh --hostname ssh-api-smart-shop-server.nhungchangtrainhaycam.site --url 127.0.0.1:666 || echo "Cloudflared command timed out"'
                     } else {
                         echo 'Port 666 is already open, skipping Cloudflared tunnel setup.'
                     }
