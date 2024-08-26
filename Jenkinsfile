@@ -62,12 +62,12 @@ pipeline {
         }
     }
     post {
-        always {
-            cleanWs()
-            script {
-                sh 'rm -rf build build.zip'
-            }
-        }
+        // always {
+        //     cleanWs()
+        //     script {
+        //         sh 'rm -rf build build.zip'
+        //     }
+        // }
         failure {
             echo 'Failed to deploy'
         }
