@@ -2,7 +2,7 @@ module.exports = {
     apps: [
         {
             name: 'smart-shop-api',
-            script: 'build/index.js', // Tệp chính để chạy ứng dụng
+            script: 'index.js', // Tệp chính để chạy ứng dụng
             instances: 'max', // Số lượng instances (max sẽ sử dụng tất cả các CPU có sẵn)
             exec_mode: 'fork', // Chế độ chạy (cluster hoặc fork)
             watch: true, // Theo dõi các thay đổi trong tệp để tự động khởi động lại
