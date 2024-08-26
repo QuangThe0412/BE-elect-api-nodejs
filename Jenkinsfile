@@ -22,6 +22,14 @@ pipeline {
             }
         }
 
+        stage('Zip') {
+            steps {
+                script {
+                    sh 'zip -r build.zip build'
+                }
+            }
+        }
+
         stage('Check Cloudflared and Run Tunnel') {
             steps {
                 script {
@@ -44,8 +52,8 @@ pipeline {
             steps {
                 script {
                     sshagent(['ssh-smart-shop']) {
-                        sh 'scp -o StrictHostKeyChecking=no -P 666 -i ~/.ssh/id_rsa -r build/* quangthe@127.0.0.1:/home/smart-shop'
-                        sh 'ssh -o StrictHostKeyChecking=no -p 666 -i ~/.ssh/id_rsa quangthe@127.0.0.1 "cd /home/smart-shop && ls -la"'
+                        sh 'scp -o StrictHostKeyChecking=no -P 666 -i ~/.ssh/id_rsa -r build.zip quangthe@127.0.0.1:/home/smart-shop'
+                        sh 'ssh -o StrictHostKeyChecking=no -p 666 -i ~/.ssh/id_rsa quangthe@127.0.0.1 "cd /home/smart-shop && unzip -o build.zip && pm2 start ecosystem.config.js --env production"'
                     }
                 }
             }
