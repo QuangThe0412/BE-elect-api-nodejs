@@ -26,6 +26,7 @@ pipeline {
             steps {
                 script {
                     sh 'cp /var/jenkins_home/workspace/elec-api/ecosystem.config.js build/'
+                    sh 'cp /var/jenkins_home/workspace/elec-api/package.json build/'
 
                     sh 'zip -r build.zip build'
                 }
@@ -59,6 +60,7 @@ pipeline {
                         "cd /home/smart-shop && \
                         unzip -o build.zip && \
                         cd build && \
+                        yarn install && \
                         pm2 start ecosystem.config.js --env production"
                     '''
                 }
