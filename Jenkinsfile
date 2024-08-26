@@ -55,7 +55,7 @@ pipeline {
                 script {
                     sh 'scp -o StrictHostKeyChecking=no -P 666 -i ~/.ssh/id_rsa -r /var/jenkins_home/workspace/elec-api/build.zip quangthe@127.0.0.1:/home/smart-shop'
                     sh '''
-                        ssh -o StrictHostKeyChecking=no -p 666 -i ~/.ssh/id_rsa quangthe@127.0.0.1 << EOF
+                        ssh -o StrictHostKeyChecking=no -p 666 -i ~/.ssh/id_rsa quangthe@127.0.0.1 << 'EOF'
                         cd /home/smart-shop
                         unzip -o build.zip
                         cd build
