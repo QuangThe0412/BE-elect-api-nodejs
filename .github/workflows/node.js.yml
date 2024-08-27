@@ -19,6 +19,9 @@ jobs:
     - name: Yarn install...
       run: yarn install
 
+    - name: Yarn build...
+      run: yarn build:production
+
     - name: Check if PM2 is installed
       run: |
         if ! command -v pm2 &> /dev/null
@@ -32,5 +35,5 @@ jobs:
     - name: Start or Restart PM2 Application
       run: |        
         pm2 delete "api-smart-shop" || true
-        pm2 start yarn --interpreter bash --name "api-smart-shop" -- build:production
+        pm2 start yarn --interpreter bash --name "api-smart-shop" -- start
         pm2 list  # Hiển thị danh sách các ứng dụng hiện đang được quản lý bởi PM2 (để kiểm tra/debug)
