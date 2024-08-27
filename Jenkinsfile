@@ -61,7 +61,7 @@ pipeline {
                         unzip -o build.zip && \
                         cd build && \
                         yarn install && \
-                        pm2 start ecosystem.config.js --env production"
+                        pm2 start ecosystem.config.js"
                     '''
                 }
             }

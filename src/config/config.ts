@@ -19,4 +19,6 @@ const config = {
     ADMIN_REFRESH_TOKEN_SECRET: process.env.ADMIN_REFRESH_TOKEN_SECRET,
 };
 
+console.log({ config });
+
 export default config;
