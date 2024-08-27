@@ -5,11 +5,17 @@ pipeline {
         NODE_VERSION = '20.x'
     }
 
-    tools {
-        nodejs "${NODE_VERSION}"
-    }
-
     stages {
+        stage('Checkversion') {
+            steps {
+                script {
+                    sh 'node -v'
+                    sh 'npm -v'
+                    sh 'yarn -v'
+                }
+            }
+        }
+
         stage('Install Dependencies') {
             steps {
                 script {
