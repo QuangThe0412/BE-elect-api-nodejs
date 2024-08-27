@@ -1,7 +1,6 @@
 import { Sequelize } from 'sequelize';
 import dotenv from 'dotenv';
 import path from 'path';
-import { Connection } from 'tedious';
 
 dotenv.config({ path: path.resolve(`.env`) });
 

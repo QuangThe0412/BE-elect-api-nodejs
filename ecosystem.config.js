@@ -1,3 +1,5 @@
+require('dotenv').config({ path: '.env.production' });
+
 module.exports = {
     apps: [
         {
@@ -7,17 +9,7 @@ module.exports = {
             exec_mode: 'fork', // Chế độ chạy (cluster hoặc fork)
             watch: true, // Theo dõi các thay đổi trong tệp để tự động khởi động lại
             env: {
-                NODE_ENV: 'development',
-                PORT: 3002,
-            },
-            env_production: {
                 NODE_ENV: 'production',
-                PORT: 3002,
-                DB_HOST: '192.168.9.174',
-                DB_PORT: '1433',
-                DB_USER: 'sa',
-                DB_PASSWORD: 'quangthe0412',
-                DB_NAME: 'SmartShop_production',
             },
             log_date_format: 'YYYY-MM-DD HH:mm Z', // Định dạng ngày giờ cho nhật ký
             error_file: './logs/err.log', // Tệp lưu lỗi

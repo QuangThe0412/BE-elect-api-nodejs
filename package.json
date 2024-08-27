@@ -7,12 +7,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node -r dotenv/config build/index.js dotenv_config_path=.env.production",
-    "build:production": "tsc",
     "dev": "nodemon -r dotenv/config src/index.ts dotenv_config_path=.env.dev",
-    "build:dev": "tsc && node -r dotenv/config build/index.js dotenv_config_path=.env.dev",
-    "start:pm2": "pm2 start ecosystem.config.js --env production",
-    "stop:pm2": "pm2 stop ecosystem.config.js",
-    "restart:pm2": "pm2 restart ecosystem.config.js"
+    "build:production": "tsc",
+    "build:dev": "tsc && node -r dotenv/config build/index.js dotenv_config_path=.env.dev"
   },
   "keywords": [],
   "author": "Mr.Bee",
