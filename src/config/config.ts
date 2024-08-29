@@ -1,7 +1,8 @@
 import dotenv from 'dotenv';
 import path from 'path';
 
-const envFile = process.env.NODE_ENV === 'production' ? '.env.production' : '.env.dev';
+const envFile = process.env.NODE_ENV === 'production' ? '.env' : '.env.dev';
+console.log(`Loading environment variables from ${envFile}`);
 dotenv.config({ path: path.resolve(envFile) });
 
 const config = {
@@ -18,5 +19,7 @@ const config = {
     REFRESH_TOKEN_SECRET: process.env.REFRESH_TOKEN_SECRET,
     ADMIN_REFRESH_TOKEN_SECRET: process.env.ADMIN_REFRESH_TOKEN_SECRET,
 };
+
+console.log('config.DB_NAME => ', config.DB_NAME);
 
 export default config;
