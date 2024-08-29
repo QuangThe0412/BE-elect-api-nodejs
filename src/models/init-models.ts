@@ -18,11 +18,13 @@ import { ChiTietPhieuNhap, ChiTietPhieuNhapAttributes } from './ChiTietPhieuNhap
 import { PhieuXuat, PhieuXuatAttributes } from './PhieuXuat';
 import { ChiTietPhieuXuat, ChiTietPhieuXuatAttributes } from './ChiTietPhieuXuat';
 import { NguoiDung, NguoiDungAttributes } from './NguoiDung';
-import { LoaiKhachHang,LoaiKhachHangAttributes } from './LoaiKhachHang';
-import { Khuyenmai,KhuyenmaiAttributes } from './Khuyenmai';
-import { ChiTietKM,ChiTietKMAttributes } from './ChiTietKM';
-import { CongNoKH,CongNoKHAttributes } from './CongNoKH';
-import { ChiTietCongNoKH,ChiTietCongNoKHAttributes } from './ChiTietCongNoKH';
+import { LoaiKhachHang, LoaiKhachHangAttributes } from './LoaiKhachHang';
+import { Khuyenmai, KhuyenmaiAttributes } from './Khuyenmai';
+import { ChiTietKM, ChiTietKMAttributes } from './ChiTietKM';
+import { CongNoKH, CongNoKHAttributes } from './CongNoKH';
+import { ChiTietCongNoKH, ChiTietCongNoKHAttributes } from './ChiTietCongNoKH';
+import { ThongTin, ThongTinAttributes } from './ThongTin';
+import { ThongTinMon, ThongTinMonAttributes } from './ThongTinMon';
 
 export {
     Mon as Mon,
@@ -63,6 +65,10 @@ export {
     CongNoKHAttributes as CongNoKHAttributes,
     ChiTietCongNoKH as ChiTietCongNoKH,
     ChiTietCongNoKHAttributes as ChiTietCongNoKHAttributes,
+    ThongTin as ThongTin,
+    ThongTinAttributes as ThongTinAttributes,
+    ThongTinMon as ThongTinMon,
+    ThongTinMonAttributes as ThongTinMonAttributes,
 
 };
 
@@ -86,6 +92,8 @@ export function initModels(sequelize: Sequelize) {
     ChiTietKM.initModel(sequelize);
     CongNoKH.initModel(sequelize);
     ChiTietCongNoKH.initModel(sequelize);
+    ThongTin.initModel(sequelize);
+    ThongTinMon.initModel(sequelize);
 
     // Add relations Mon
     NhomMon.hasMany(LoaiMon, { as: 'LoaiMon', foreignKey: 'IDNhomMon' });
@@ -150,5 +158,7 @@ export function initModels(sequelize: Sequelize) {
         ChiTietKM,
         CongNoKH,
         ChiTietCongNoKH,
+        ThongTin,
+        ThongTinMon
     };
 }

@@ -31,10 +31,10 @@ const paths = {
     loaiKhachHang: '/loaiKhachHang',
     khuyenMai: '/khuyenMai',
     chiTietKM: '/chiTietKhuyenMai',
-    hoaDon:'/hoaDon',
-    chiTietHD:'/chiTietHoaDon',
-    congNo : '/congNo',
-    chiTietCongNo : '/chiTietCongNo',
+    hoaDon: '/hoaDon',
+    chiTietHD: '/chiTietHoaDon',
+    congNo: '/congNo',
+    chiTietCongNo: '/chiTietCongNo',
     phieuNhap: '/phieuNhap',
     chiTietPhieuNhap: '/chiTietPhieuNhap',
     phieuXuat: '/phieuXuat',
@@ -122,22 +122,22 @@ const roleAccess = [
 
 const router = express.Router();
 
-router.use(paths.auth, routerAuth);
-router.use(paths.mon, adminAuthMiddleware, routerMon);
-router.use(paths.nguoiDung, adminAuthMiddleware, routerNguoiDung);
-router.use(paths.account, adminAuthMiddleware, routerAccount);
-router.use(paths.nhomMon, adminAuthMiddleware, routerNhomMon);
-router.use(paths.loaiMon, adminAuthMiddleware, routerLoaiMon);
-router.use(paths.khachHang, adminAuthMiddleware, routerKhachHang);
-router.use(paths.thongke, adminAuthMiddleware, routerThongKe);
-router.use(paths.loaiKhachHang, adminAuthMiddleware, routerLoaiKhachHang);
-router.use(paths.khuyenMai, adminAuthMiddleware, routerKhuyenMai);
-router.use(paths.chiTietKM, adminAuthMiddleware, routerChiTietKM);
-router.use(paths.hoaDon, adminAuthMiddleware, routerHoaDon);
-router.use(paths.chiTietHD, adminAuthMiddleware, routerChiTietHD);
-router.use(paths.congNo, adminAuthMiddleware, routerCongNo);
-router.use(paths.chiTietCongNo, adminAuthMiddleware, routerChiTietCongNo);
-router.use(paths.phieuNhap, adminAuthMiddleware, routerPhieuNhap);
-router.use(paths.chiTietPhieuNhap, adminAuthMiddleware, routerChiTietPhieuNhap);
+router.use('/admin' + paths.auth, routerAuth);
+router.use('/admin' + paths.mon, adminAuthMiddleware, routerMon);
+router.use('/admin' + paths.nguoiDung, adminAuthMiddleware, routerNguoiDung);
+router.use('/admin' + paths.account, adminAuthMiddleware, routerAccount);
+router.use('/admin' + paths.nhomMon, adminAuthMiddleware, routerNhomMon);
+router.use('/admin' + paths.loaiMon, adminAuthMiddleware, routerLoaiMon);
+router.use('/admin' + paths.khachHang, adminAuthMiddleware, routerKhachHang);
+router.use('/admin' + paths.thongke, adminAuthMiddleware, routerThongKe);
+router.use('/admin' + paths.loaiKhachHang, adminAuthMiddleware, routerLoaiKhachHang);
+router.use('/admin' + paths.khuyenMai, adminAuthMiddleware, routerKhuyenMai);
+router.use('/admin' + paths.chiTietKM, adminAuthMiddleware, routerChiTietKM);
+router.use('/admin' + paths.hoaDon, adminAuthMiddleware, routerHoaDon);
+router.use('/admin' + paths.chiTietHD, adminAuthMiddleware, routerChiTietHD);
+router.use('/admin' + paths.congNo, adminAuthMiddleware, routerCongNo);
+router.use('/admin' + paths.chiTietCongNo, adminAuthMiddleware, routerChiTietCongNo);
+router.use('/admin' + paths.phieuNhap, adminAuthMiddleware, routerPhieuNhap);
+router.use('/admin' + paths.chiTietPhieuNhap, adminAuthMiddleware, routerChiTietPhieuNhap);
 
 export { router, roleAccess, paths };

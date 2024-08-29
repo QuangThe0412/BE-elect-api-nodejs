@@ -5,21 +5,40 @@
         "outDir": "build",
         "moduleResolution": "node",
         "strict": false,
+        "resolveJsonModule": true,
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
         "allowSyntheticDefaultImports": true,
         "esModuleInterop": true,
         "baseUrl": ".",
         "paths": {
-            "@models/*": ["src/models/*"],
-            "@middlewares/*": ["src/middlewares/*"],
-            "@public/*": ["src/public/*"],
-            "@routes/*": ["src/routes/*"],
-            "@schemas/*": ["src/schemas/*"],
-            "@services/*": ["src/services/*"]
+            "@models/*": [
+                "src/models/*"
+            ],
+            "@middlewares/*": [
+                "src/middlewares/*"
+            ],
+            "@public/*": [
+                "src/public/*"
+            ],
+            "@routes/*": [
+                "src/routes/*"
+            ],
+            "@schemas/*": [
+                "src/schemas/*"
+            ],
+            "@services/*": [
+                "src/services/*"
+            ]
         }
     },
     "$schema": "https://json.schemastore.org/tsconfig",
-    "include": ["src"],
-    "exclude": ["node_modules", "**/*.spec.ts", "build"]
+    "include": [
+        "src"
+    ],
+    "exclude": [
+        "node_modules",
+        "**/*.spec.ts",
+        "build"
+    ]
 }

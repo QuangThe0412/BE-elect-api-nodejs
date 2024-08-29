@@ -10,14 +10,17 @@ import { router as adminRouter } from './routes/admin';
 import { router as clientRouter } from './routes/client';
 import errorHandlerMiddleware from './middlewares/error-handler.middleware';
 import { serviceGoogleApi } from './services/serviceGoogleApi';
+import swaggerUi from 'swagger-ui-express';
+import swaggerDocument from './config/swagger-output.json';
 
+const isDev = process.env.npm_lifecycle_event === 'dev';
 console.log('NODE_ENV :', process.env.npm_lifecycle_event);
 
 const corsOptions = {
   allowedHeaders: ['authorization', 'Content-Type'],
   exposedHeaders: ['authorization'],
   origin:
-    process.env.npm_lifecycle_event === 'dev'
+    isDev
       ? '*'
       : [
         'http://cms-diennuoctamnhi.nhungchangtrainhaycam.site',
@@ -50,14 +53,19 @@ app.use(express.urlencoded({ extended: false }));
 initModels(sequelizeInstance);
 
 app.use(serviceGoogleApi);
-app.use('/admin', adminRouter);
-app.use('/client', clientRouter);
+app.use(adminRouter);
+app.use(clientRouter);
+
+if (isDev) {
+  let pathSwagger = '/swagger';
+  app.use(pathSwagger, swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+  console.log(`Swagger is running on http://localhost:${port}${pathSwagger}`);
+}
 
 app.use(errorHandlerMiddleware);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
-  console.log(`ENV: ${process.env.npm_lifecycle_event}`);
 });
 
 export default app;

@@ -1,8 +1,9 @@
 import express from 'express';
-import { LoaiMon, Mon } from '../../models/init-models';
-import { GetCurrentUser, MergeWithOldData, slugifyHandle } from '../../utils';
+import { LoaiMon, Mon, ThongTinMon, ThongTin } from '../../models/init-models';
+import { GetCurrentUser, slugifyHandle } from '../../utils';
 import multer from 'multer';
 import { uploadFile, tryDeleteFile } from '../../services/serviceGoogleApi';
+import { MonRequestType } from 'src/types/MonRequestType';
 
 const routerMon = express.Router();
 const upload = multer({ storage: multer.memoryStorage() });
@@ -15,8 +16,25 @@ routerMon.get(
             const result = await Mon.findAll({
                 order: [['IDMon', 'DESC']],
             });
+
+            const idMon = result.map((item) => item.IDMon);
+            const thongTinMon = await ThongTinMon.findAll({
+                where: {
+                    Id: idMon,
+                    Deleted: false,
+                },
+            });
+
+            const _result = result.map((item) => {
+                const thongTin = thongTinMon.find((thongTin) => thongTin.Id === item.IDMon);
+                return {
+                    ...item.dataValues,
+                    thongTin: thongTin ? thongTin.dataValues : null,
+                };
+            });
+
             res.status(200).send({
-                data: result,
+                data: _result,
                 code: 'GET_ALL_MON_SUCCESS',
                 mess: 'Nhận danh sách món thành công',
             });
@@ -37,8 +55,21 @@ routerMon.get(
                     IDMon: id,
                 },
             })
+
+            const thongTinMon = await ThongTinMon.findOne({
+                where: {
+                    Id: id,
+                    Deleted: false,
+                },
+            });
+
+            const _result = {
+                ...result.dataValues,
+                thongTin: thongTinMon ? thongTinMon.dataValues : null,
+            };
+
             res.status(200).send({
-                data: result,
+                data: _result,
                 code: 'GET_MON_SUCCESS',
                 mess: 'Nhận thông tin món thành công',
             });
@@ -54,8 +85,8 @@ routerMon.post(
     upload.single('file'),
     async (req, res) => {
         try {
-            const mon = req.body as Mon;
-            const { MaTat } = mon;
+            const mon = req.body as MonRequestType;
+            const { MaTat, idThongTin } = mon;
             mon.IDMon = null;
 
             // update file
@@ -103,6 +134,15 @@ routerMon.post(
             mon.createBy = await GetCurrentUser(req, null);
             mon.modifyDate = null;
             const result = await Mon.create(mon);
+
+            //thong tin mon ---------------------///// work here
+            const thongTinMon = new ThongTinMon();
+            thongTinMon.IdThongTin = idThongTin;
+            thongTinMon.IdMon = result.IDMon;
+            thongTinMon.createDate = new Date();
+            thongTinMon.Deleted = false;
+            thongTinMon.createBy = await GetCurrentUser(req, null);
+
             res.status(201).send({
                 data: result,
                 code: 'CREATE_MON_SUCCESS',

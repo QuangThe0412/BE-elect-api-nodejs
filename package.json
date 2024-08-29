@@ -5,9 +5,10 @@
   "main": "src/index.ts",
   "type": "commonjs",
   "scripts": {
+    "swagger-autogen": "node src/config/swagger.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node -r dotenv/config build/index.js dotenv_config_path=.env",
-    "dev": "nodemon -r dotenv/config src/index.ts dotenv_config_path=.env.dev",
+    "dev": "yarn swagger-autogen && nodemon -r dotenv/config src/index.ts dotenv_config_path=.env.dev",
     "build:production": "tsc",
     "build:dev": "tsc && node -r dotenv/config build/index.js dotenv_config_path=.env.dev"
   },
@@ -23,6 +24,7 @@
   },
   "dependencies": {
     "@types/multer": "^1.4.11",
+    "@types/swagger-ui-express": "^4.1.6",
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
@@ -32,6 +34,8 @@
     "multer": "^1.4.5-lts.1",
     "sequelize": "^6.37.3",
     "slugify": "^1.6.6",
+    "swagger-autogen": "^2.23.7",
+    "swagger-ui-express": "^5.0.1",
     "tedious": "^18.1.0",
     "yup": "^1.4.0"
   }

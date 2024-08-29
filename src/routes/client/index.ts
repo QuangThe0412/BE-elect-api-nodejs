@@ -16,11 +16,11 @@ const paths = {
 
 const router = express.Router();
 
-router.use(paths.auth, routerAuth);
-router.use(paths.products, routerProducts);
-router.use(paths.categories, routerCategories);
-router.use(paths.account, authMiddleware, routerAccount);
-router.use(paths.cart, authMiddleware, routerCart);
+router.use('/client' + paths.auth, routerAuth);
+router.use('/client' + paths.products, routerProducts);
+router.use('/client' + paths.categories, routerCategories);
+router.use('/client' + paths.account, authMiddleware, routerAccount);
+router.use('/client' + paths.cart, authMiddleware, routerCart);
 
 export { router, paths };
 
