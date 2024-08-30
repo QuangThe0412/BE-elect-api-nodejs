@@ -56,11 +56,11 @@ app.use(serviceGoogleApi);
 app.use(adminRouter);
 app.use(clientRouter);
 
-if (isDev) {
-  let pathSwagger = '/swagger';
-  app.use(pathSwagger, swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-  console.log(`Swagger is running on http://localhost:${port}${pathSwagger}`);
-}
+// if (isDev) {
+//   let pathSwagger = '/swagger';
+//   app.use(pathSwagger, swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+//   console.log(`Swagger is running on http://localhost:${port}${pathSwagger}`);
+// }
 
 app.use(errorHandlerMiddleware);
 

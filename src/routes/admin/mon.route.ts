@@ -3,7 +3,7 @@ import { LoaiMon, Mon, ThongTinMon, ThongTin } from '../../models/init-models';
 import { GetCurrentUser, slugifyHandle } from '../../utils';
 import multer from 'multer';
 import { uploadFile, tryDeleteFile } from '../../services/serviceGoogleApi';
-import { MonRequestType } from 'src/types/MonRequestType';
+import { MonRequestType, MonResponseType } from 'src/types/MonType';
 
 const routerMon = express.Router();
 const upload = multer({ storage: multer.memoryStorage() });
@@ -13,25 +13,36 @@ routerMon.get(
     '/',
     async (req, res) => {
         try {
-            const result = await Mon.findAll({
+            const _mon = await Mon.findAll({
                 order: [['IDMon', 'DESC']],
             });
 
-            const idMon = result.map((item) => item.IDMon);
-            const thongTinMon = await ThongTinMon.findAll({
+            const _thongTinMon = await ThongTinMon.findAll({
                 where: {
-                    Id: idMon,
                     Deleted: false,
                 },
             });
 
-            const _result = result.map((item) => {
-                const thongTin = thongTinMon.find((thongTin) => thongTin.Id === item.IDMon);
-                return {
-                    ...item.dataValues,
-                    thongTin: thongTin ? thongTin.dataValues : null,
-                };
+            const _thongTin = await ThongTin.findAll({
+                where: {
+                    Deleted: false,
+                },
             });
+
+            const _result = _mon.map((item) => {
+                const thongTinMon = _thongTinMon.find((data) => data.IdMon === item.IDMon);
+                const thongTin = _thongTin.find((data) => data.Id === thongTinMon?.IdThongTin);
+                return {
+                    ...item,
+                    idThongTinMon: thongTinMon?.Id ?? 0,
+                    size: thongTin?.size ?? '',
+                    color: thongTin?.color ?? '',
+                    MaTat: item?.MaTat?.trim(),
+                    DonGiaBanLe: thongTinMon?.DonGiaBanLe ?? item.DonGiaBanLe,
+                    DonGiaBanSi: thongTinMon?.DonGiaBanSi ?? item.DonGiaBanSi,
+                    DonGiaVon: thongTinMon?.DonGiaVon ?? item.DonGiaVon,
+                };
+            })
 
             res.status(200).send({
                 data: _result,
@@ -50,23 +61,52 @@ routerMon.get(
     async (req, res) => {
         try {
             const id = req.params.id;
-            const result = await Mon.findOne({
+            const _mon = await Mon.findOne({
                 where: {
                     IDMon: id,
                 },
             })
 
-            const thongTinMon = await ThongTinMon.findOne({
+            if (!_mon) {
+                return res.status(404).send({
+                    code: 'MON_NOT_FOUND',
+                    mess: 'Không tìm thấy món',
+                });
+            }
+
+            const { IDMon } = _mon;
+
+            const _thongTinMon = await ThongTinMon.findOne({
                 where: {
-                    Id: id,
+                    IdMon: IDMon,
                     Deleted: false,
                 },
             });
 
+            let size;
+            let color;
+            if (_thongTinMon) {
+                const thongTin = await ThongTin.findOne({
+                    where: {
+                        Id: _thongTinMon.IdThongTin,
+                        Deleted: false,
+                    },
+                });
+
+                size = thongTin?.size;
+                color = thongTin?.color;
+            }
+
             const _result = {
-                ...result.dataValues,
-                thongTin: thongTinMon ? thongTinMon.dataValues : null,
-            };
+                ..._mon,
+                MaTat: _mon?.MaTat?.trim(),
+                idThongTinMon: _thongTinMon?.Id || 0,
+                size: size || '',
+                color: color || '',
+                DonGiaBanLe: _thongTinMon?.DonGiaBanLe || _mon.DonGiaBanLe,
+                DonGiaBanSi: _thongTinMon?.DonGiaBanSi || _mon.DonGiaBanSi,
+                DonGiaVon: _thongTinMon?.DonGiaVon || _mon.DonGiaVon,
+            } as MonResponseType;
 
             res.status(200).send({
                 data: _result,
@@ -86,9 +126,12 @@ routerMon.post(
     async (req, res) => {
         try {
             const mon = req.body as MonRequestType;
-            const { MaTat, idThongTin } = mon;
+            const { MaTat, idThongTin, DonGiaBanLe, DonGiaBanSi, DonGiaVon } = mon;
+            const _maTat = MaTat?.trim();
             mon.IDMon = null;
-
+            const _donGiaBanLe = DonGiaBanLe || 0;
+            const _donGiaBanSi = DonGiaBanSi || 0;
+            const _donGiaVon = DonGiaVon || 0;
             // update file
             const file = req.file as Express.Multer.File;
             if (file) {
@@ -97,7 +140,7 @@ routerMon.post(
                 });
             }
 
-            if (!MaTat) {
+            if (!_maTat) {
                 return res.status(400).send({
                     code: 'MATAT_REQUIRED',
                     mess: 'Mã tắt không được để trống',
@@ -107,7 +150,7 @@ routerMon.post(
             //check if MaTat is existed
             const existedMonByMaTat = await Mon.findOne({
                 where: {
-                    MaTat,
+                    MaTat: _maTat,
                 },
             });
 
@@ -118,11 +161,6 @@ routerMon.post(
                 });
             }
 
-            mon.DonGiaBanSi = mon.DonGiaBanSi || 0;
-            mon.DonGiaBanLe = mon.DonGiaBanLe || 0;
-            mon.DonGiaVon = mon.DonGiaVon || 0;
-            mon.SoLuongTonKho = mon.SoLuongTonKho || 0;
-            mon.ThoiGianBH = mon.ThoiGianBH || 0;
             mon.TenKhongDau = slugifyHandle(mon.TenMon);
 
             const loaiMon = await LoaiMon.findByPk(mon.IDLoaiMon);
@@ -130,21 +168,61 @@ routerMon.post(
                 code: 'LOAIMON_NOT_FOUND',
                 mess: 'Không tìm thấy loại món',
             });
+            let currentUser = await GetCurrentUser(req, null);
+            mon.SoLuongTonKho = mon.SoLuongTonKho || 0;
+            mon.ThoiGianBH = mon.ThoiGianBH || 0;
             mon.createDate = new Date();
-            mon.createBy = await GetCurrentUser(req, null);
+            mon.createBy = currentUser;
             mon.modifyDate = null;
-            const result = await Mon.create(mon);
+            mon.MaTat = _maTat;
 
-            //thong tin mon ---------------------///// work here
-            const thongTinMon = new ThongTinMon();
-            thongTinMon.IdThongTin = idThongTin;
-            thongTinMon.IdMon = result.IDMon;
-            thongTinMon.createDate = new Date();
-            thongTinMon.Deleted = false;
-            thongTinMon.createBy = await GetCurrentUser(req, null);
+            let thongTin: ThongTin | null = null;
+            if (idThongTin) {
+                thongTin = await ThongTin.findOne({
+                    where: {
+                        Id: idThongTin,
+                    },
+                });
+
+                if (!thongTin) {
+                    return res.status(404).send({
+                        code: 'THONGTIN_NOT_FOUND',
+                        mess: 'Không tìm thấy thông tin',
+                    });
+                }
+
+                mon.DonGiaBanSi = 0;
+                mon.DonGiaBanLe = 0;
+                mon.DonGiaVon = 0;
+            }
+
+            const monNew = await Mon.create(mon);
+
+            let thongTinMon: ThongTinMon | null = null;
+            if (thongTin) {
+                thongTinMon = await ThongTinMon.create({
+                    IdThongTin: thongTin.Id,
+                    IdMon: monNew?.dataValues?.IDMon,
+                    DonGiaBanLe: _donGiaBanLe,
+                    DonGiaBanSi: _donGiaBanSi,
+                    DonGiaVon: _donGiaVon,
+                    createBy: currentUser,
+                    createDate: new Date(),
+                });
+            }
+            console.log({ thongTin })
+            const _result = {
+                ...monNew.dataValues as Mon,
+                idThongTinMon: thongTinMon?.Id || 0,
+                DonGiaBanLe: _donGiaBanLe,
+                DonGiaBanSi: _donGiaBanSi,
+                DonGiaVon: _donGiaVon,
+                size: thongTin?.size || '',
+                color: thongTin?.color || '',
+            } as MonResponseType;
 
             res.status(201).send({
-                data: result,
+                data: _result,
                 code: 'CREATE_MON_SUCCESS',
                 mess: 'Tạo món thành công',
             });
@@ -155,7 +233,7 @@ routerMon.post(
     });
 
 //update mon
-routerMon.put(
+routerMon.put( ///---------------work here
     '/:id',
     upload.single('file'),
     async (req, res) => {
@@ -167,7 +245,7 @@ routerMon.put(
                 mess: 'Không tìm thấy món',
             });
 
-            let mon = req.body as Mon;
+            let mon = req.body as MonRequestType;
             // mon = MergeWithOldData(oldMonData, mon);
             const file = req.file as Express.Multer.File;
             if (file) {
@@ -182,12 +260,14 @@ routerMon.put(
                 });
             }
 
-            const { MaTat, TenMon } = mon;
-            if (MaTat && MaTat !== oldMonData.MaTat) {
+            const { IDMon, MaTat, TenMon, idThongTin } = mon;
+            const _matat = MaTat?.trim();
+            const currentuser = await GetCurrentUser(req, null);
+            if (_matat && _matat !== oldMonData.MaTat) {
                 //check if MaTat is existed
                 const existedMonByMaTat = await Mon.findOne({
                     where: {
-                        MaTat,
+                        MaTat: _matat,
                     },
                 });
 
@@ -204,14 +284,89 @@ routerMon.put(
             }
 
             mon.modifyDate = new Date();
-            mon.modifyBy = await GetCurrentUser(req, null);
+            mon.modifyBy = currentuser;
+            mon.MaTat = _matat;
+
+            let thongTinMon: ThongTinMon | null = null;
+            if (idThongTin) {
+
+                const existedThongTin = await ThongTin.findOne({
+                    where: {
+                        Id: idThongTin,
+                        Deleted: false,
+                    },
+                });
+
+                if (!existedThongTin) {
+                    return res.status(404).send({
+                        code: 'THONGTIN_NOT_FOUND',
+                        mess: 'Không tìm thấy thông tin',
+                    });
+                }
+
+                thongTinMon = await ThongTinMon.findOne({
+                    where: {
+                        IdThongTin: idThongTin,
+                        IdMon: IDMon,
+                        Deleted: false,
+                    },
+                });
+
+                if (!thongTinMon) {
+                    thongTinMon = await ThongTinMon.create({
+                        IdThongTin: idThongTin,
+                        IdMon: IDMon,
+                        DonGiaBanLe: mon.DonGiaBanLe || 0,
+                        DonGiaBanSi: mon.DonGiaBanSi || 0,
+                        DonGiaVon: mon.DonGiaVon || 0,
+                        createBy: currentuser,
+                        createDate: new Date(),
+                    });
+                } else {
+                    thongTinMon.DonGiaBanLe = mon.DonGiaBanLe || 0;
+                    thongTinMon.DonGiaBanSi = mon.DonGiaBanSi || 0;
+                    thongTinMon.DonGiaVon = mon.DonGiaVon || 0;
+                    thongTinMon.modifyBy = currentuser;
+                    thongTinMon.modifyDate = new Date();
+                    await ThongTinMon.update(thongTinMon, {
+                        where: {
+                            IdThongTin: idThongTin,
+                            IdMon: IDMon,
+                        },
+                    });
+                }
+
+                //update thong tin mon
+                mon.DonGiaBanSi = 0;
+                mon.DonGiaBanLe = 0;
+                mon.DonGiaVon = 0;
+            }
+
             await Mon.update(mon, {
                 where: {
                     IDMon: id,
                 },
             });
+
+            let thongTin = await ThongTin.findOne({
+                where: {
+                    Id: idThongTin,
+                    Deleted: false,
+                },
+            });
+
+            const _result = {
+                ...mon as Mon,
+                idThongTinMon: idThongTin,
+                DonGiaBanLe: mon.DonGiaBanLe,
+                DonGiaBanSi: mon.DonGiaBanSi,
+                DonGiaVon: mon.DonGiaVon,
+                size: thongTin?.size || '',
+                color: thongTin?.color || '',
+            } as MonResponseType;
+
             res.status(200).send({
-                data: mon,
+                data: _result,
                 code: 'UPDATE_MON_SUCCESS',
                 mess: 'Cập nhật món thành công',
             });
@@ -226,6 +381,7 @@ routerMon.delete(
     '/:id',
     async (req, res) => {
         try {
+            const currentUser = await GetCurrentUser(req, null);
             const id = req.params.id;
             const mon = await Mon.findByPk(id);
             if (mon == null) {
@@ -235,14 +391,33 @@ routerMon.delete(
                 });
             }
 
+            const { IDMon } = mon;
             mon.Deleted = !mon.Deleted;
             mon.modifyDate = new Date();
-            mon.modifyBy = await GetCurrentUser(req, null);
+            mon.modifyBy = currentUser;
             await Mon.update(mon, {
                 where: {
                     IDMon: id,
                 },
             })
+
+            const thongTinMon = await ThongTinMon.findOne({
+                where: {
+                    IdMon: IDMon,
+                },
+            });
+
+            if (thongTinMon) {
+                thongTinMon.Deleted = !thongTinMon.Deleted;
+                thongTinMon.modifyDate = new Date();
+                thongTinMon.modifyBy = currentUser;
+                await ThongTinMon.update(thongTinMon, {
+                    where: {
+                        IdMon: IDMon,
+                    },
+                });
+            }
+
             res.status(200).send({
                 data: mon,
                 code: 'TOGGLE_ACTIVE_MON_SUCCESS',

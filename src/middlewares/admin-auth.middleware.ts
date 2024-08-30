@@ -7,10 +7,10 @@ import { roleAccess } from '../routes/admin';
 function adminAuthMiddleware(req: Request, res: Response, next: NextFunction) {
     try {
         const { headers } = req;
-        if(headers.authorization === undefined) {
+        if (headers.authorization === undefined) {
             return res.status(401).send();
         }
-        
+
         req.user = authService.validateAccessToken(
             req.headers.authorization,
             config.ADMIN_ACCESS_SECRET
@@ -23,6 +23,7 @@ function adminAuthMiddleware(req: Request, res: Response, next: NextFunction) {
 
         next();
     } catch (error: any) {
+        console.log({ error });
         if (error.name === 'JsonWebTokenError' || error.name === 'TokenExpiredError') {
             error.status = 401; // Set the status code to 401
         }

@@ -123,21 +123,6 @@
                 "Image": {
                   "example": "any"
                 },
-                "DonGiaBanSi": {
-                  "example": "any"
-                },
-                "DonGiaBanLe": {
-                  "example": "any"
-                },
-                "DonGiaVon": {
-                  "example": "any"
-                },
-                "SoLuongTonKho": {
-                  "example": "any"
-                },
-                "ThoiGianBH": {
-                  "example": "any"
-                },
                 "TenKhongDau": {
                   "example": "any"
                 },
@@ -147,6 +132,12 @@
                 "IDLoaiMon": {
                   "example": "any"
                 },
+                "SoLuongTonKho": {
+                  "example": "any"
+                },
+                "ThoiGianBH": {
+                  "example": "any"
+                },
                 "createDate": {
                   "example": "any"
                 },
@@ -154,6 +145,15 @@
                   "example": "any"
                 },
                 "modifyDate": {
+                  "example": "any"
+                },
+                "DonGiaBanSi": {
+                  "example": "any"
+                },
+                "DonGiaBanLe": {
+                  "example": "any"
+                },
+                "DonGiaVon": {
                   "example": "any"
                 }
               }
@@ -166,6 +166,9 @@
           },
           "400": {
             "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
           },
           "500": {
             "description": "Internal Server Error"
@@ -187,6 +190,9 @@
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
           },
           "500": {
             "description": "Internal Server Error"
@@ -226,6 +232,15 @@
                   "example": "any"
                 },
                 "modifyBy": {
+                  "example": "any"
+                },
+                "DonGiaBanLe": {
+                  "example": "any"
+                },
+                "DonGiaBanSi": {
+                  "example": "any"
+                },
+                "DonGiaVon": {
                   "example": "any"
                 }
               }
