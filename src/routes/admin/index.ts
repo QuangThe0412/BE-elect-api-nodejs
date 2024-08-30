@@ -18,6 +18,7 @@ import routerCongNo from "./congNo.route";
 import routerChiTietCongNo from "./chiTietCongNo.route";
 import routerPhieuNhap from "./phieuNhap.route";
 import routerChiTietPhieuNhap from "./chiTietPhieuNhap.route";
+import routerThongTinMon from "./thongTinMon.route";
 
 const paths = {
     auth: '/auth',
@@ -39,6 +40,7 @@ const paths = {
     chiTietPhieuNhap: '/chiTietPhieuNhap',
     phieuXuat: '/phieuXuat',
     chiTietPhieuXuat: '/chiTietPhieuXuat',
+    thongTinMon: '/thongTinMon',
 };
 
 const roleAccess = [
@@ -139,5 +141,6 @@ router.use('/admin' + paths.congNo, adminAuthMiddleware, routerCongNo);
 router.use('/admin' + paths.chiTietCongNo, adminAuthMiddleware, routerChiTietCongNo);
 router.use('/admin' + paths.phieuNhap, adminAuthMiddleware, routerPhieuNhap);
 router.use('/admin' + paths.chiTietPhieuNhap, adminAuthMiddleware, routerChiTietPhieuNhap);
+router.use('/admin' + paths.thongTinMon, adminAuthMiddleware, routerThongTinMon);
 
 export { router, roleAccess, paths };

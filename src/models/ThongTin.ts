@@ -2,8 +2,8 @@ import { DataTypes, Model, Sequelize } from 'sequelize';
 
 export interface ThongTinAttributes {
     Id?: number;
-    size?: string;
-    color?: string;
+    Size?: string;
+    Color?: string;
     Deleted?: boolean;
 }
 
@@ -11,8 +11,8 @@ export class ThongTin
     extends Model<ThongTinAttributes, ThongTinAttributes>
     implements ThongTinAttributes {
     Id?: number;
-    size?: string;
-    color?: string;
+    Size?: string;
+    Color?: string;
     Deleted?: boolean;
 
     static initModel(sequelize: Sequelize) {
@@ -25,11 +25,11 @@ export class ThongTin
                     primaryKey: true,
                     field: 'Id',
                 },
-                size: {
+                Size: {
                     type: DataTypes.STRING(150),
                     allowNull: true,
                 },
-                color: {
+                Color: {
                     type: DataTypes.STRING(150),
                     allowNull: true,
                 },

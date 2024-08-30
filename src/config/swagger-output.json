@@ -147,6 +147,9 @@
                 "modifyDate": {
                   "example": "any"
                 },
+                "MaTat": {
+                  "example": "any"
+                },
                 "DonGiaBanSi": {
                   "example": "any"
                 },
@@ -232,6 +235,9 @@
                   "example": "any"
                 },
                 "modifyBy": {
+                  "example": "any"
+                },
+                "MaTat": {
                   "example": "any"
                 },
                 "DonGiaBanLe": {

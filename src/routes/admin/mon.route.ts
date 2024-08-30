@@ -1,6 +1,6 @@
 import express from 'express';
 import { LoaiMon, Mon, ThongTinMon, ThongTin } from '../../models/init-models';
-import { GetCurrentUser, slugifyHandle } from '../../utils';
+import { GetCurrentUser, getThongTinMon, slugifyHandle } from '../../utils';
 import multer from 'multer';
 import { uploadFile, tryDeleteFile } from '../../services/serviceGoogleApi';
 import { MonRequestType, MonResponseType } from 'src/types/MonType';
@@ -17,32 +17,7 @@ routerMon.get(
                 order: [['IDMon', 'DESC']],
             });
 
-            const _thongTinMon = await ThongTinMon.findAll({
-                where: {
-                    Deleted: false,
-                },
-            });
-
-            const _thongTin = await ThongTin.findAll({
-                where: {
-                    Deleted: false,
-                },
-            });
-
-            const _result = _mon.map((item) => {
-                const thongTinMon = _thongTinMon.find((data) => data.IdMon === item.IDMon);
-                const thongTin = _thongTin.find((data) => data.Id === thongTinMon?.IdThongTin);
-                return {
-                    ...item,
-                    idThongTinMon: thongTinMon?.Id ?? 0,
-                    size: thongTin?.size ?? '',
-                    color: thongTin?.color ?? '',
-                    MaTat: item?.MaTat?.trim(),
-                    DonGiaBanLe: thongTinMon?.DonGiaBanLe ?? item.DonGiaBanLe,
-                    DonGiaBanSi: thongTinMon?.DonGiaBanSi ?? item.DonGiaBanSi,
-                    DonGiaVon: thongTinMon?.DonGiaVon ?? item.DonGiaVon,
-                };
-            })
+            const _result = await getThongTinMon(_mon);
 
             res.status(200).send({
                 data: _result,
@@ -74,39 +49,7 @@ routerMon.get(
                 });
             }
 
-            const { IDMon } = _mon;
-
-            const _thongTinMon = await ThongTinMon.findOne({
-                where: {
-                    IdMon: IDMon,
-                    Deleted: false,
-                },
-            });
-
-            let size;
-            let color;
-            if (_thongTinMon) {
-                const thongTin = await ThongTin.findOne({
-                    where: {
-                        Id: _thongTinMon.IdThongTin,
-                        Deleted: false,
-                    },
-                });
-
-                size = thongTin?.size;
-                color = thongTin?.color;
-            }
-
-            const _result = {
-                ..._mon,
-                MaTat: _mon?.MaTat?.trim(),
-                idThongTinMon: _thongTinMon?.Id || 0,
-                size: size || '',
-                color: color || '',
-                DonGiaBanLe: _thongTinMon?.DonGiaBanLe || _mon.DonGiaBanLe,
-                DonGiaBanSi: _thongTinMon?.DonGiaBanSi || _mon.DonGiaBanSi,
-                DonGiaVon: _thongTinMon?.DonGiaVon || _mon.DonGiaVon,
-            } as MonResponseType;
+            const _result = await getThongTinMon([_mon]);
 
             res.status(200).send({
                 data: _result,
@@ -210,15 +153,15 @@ routerMon.post(
                     createDate: new Date(),
                 });
             }
-            console.log({ thongTin })
+
             const _result = {
                 ...monNew.dataValues as Mon,
                 idThongTinMon: thongTinMon?.Id || 0,
                 DonGiaBanLe: _donGiaBanLe,
                 DonGiaBanSi: _donGiaBanSi,
                 DonGiaVon: _donGiaVon,
-                size: thongTin?.size || '',
-                color: thongTin?.color || '',
+                size: thongTin?.Size || '',
+                color: thongTin?.Color || '',
             } as MonResponseType;
 
             res.status(201).send({
@@ -233,19 +176,20 @@ routerMon.post(
     });
 
 //update mon
-routerMon.put( ///---------------work here
+routerMon.put(
     '/:id',
     upload.single('file'),
     async (req, res) => {
         try {
             const id = req.params.id;
-            const oldMonData = await Mon.findByPk(id);
+            const idMon = parseInt(id);
+            const oldMonData = await Mon.findByPk(idMon);
             if (!oldMonData) return res.status(404).send({
                 code: 'MON_NOT_FOUND',
                 mess: 'Không tìm thấy món',
             });
 
-            let mon = req.body as MonRequestType;
+            let monRequest = req.body as MonRequestType;
             // mon = MergeWithOldData(oldMonData, mon);
             const file = req.file as Express.Multer.File;
             if (file) {
@@ -256,11 +200,14 @@ routerMon.put( ///---------------work here
 
                 //update file
                 await uploadFile(file).then((result) => {
-                    mon.Image = result.id;
+                    monRequest.Image = result.id;
                 });
             }
 
-            const { IDMon, MaTat, TenMon, idThongTin } = mon;
+            const { MaTat, TenMon, idThongTin, DonGiaBanLe, DonGiaBanSi, DonGiaVon } = monRequest;
+            const _donGiaBanLe = DonGiaBanLe || 0;
+            const _donGiaBanSi = DonGiaBanSi || 0;
+            const _donGiaVon = DonGiaVon || 0;
             const _matat = MaTat?.trim();
             const currentuser = await GetCurrentUser(req, null);
             if (_matat && _matat !== oldMonData.MaTat) {
@@ -280,16 +227,11 @@ routerMon.put( ///---------------work here
             }
 
             if (TenMon && TenMon !== oldMonData.TenMon) {
-                mon.TenKhongDau = slugifyHandle(mon.TenMon);
+                monRequest.TenKhongDau = slugifyHandle(monRequest.TenMon);
             }
-
-            mon.modifyDate = new Date();
-            mon.modifyBy = currentuser;
-            mon.MaTat = _matat;
 
             let thongTinMon: ThongTinMon | null = null;
             if (idThongTin) {
-
                 const existedThongTin = await ThongTin.findOne({
                     where: {
                         Id: idThongTin,
@@ -307,44 +249,55 @@ routerMon.put( ///---------------work here
                 thongTinMon = await ThongTinMon.findOne({
                     where: {
                         IdThongTin: idThongTin,
-                        IdMon: IDMon,
-                        Deleted: false,
+                        IdMon: idMon,
                     },
                 });
 
                 if (!thongTinMon) {
-                    thongTinMon = await ThongTinMon.create({
+                    await ThongTinMon.create({
                         IdThongTin: idThongTin,
-                        IdMon: IDMon,
-                        DonGiaBanLe: mon.DonGiaBanLe || 0,
-                        DonGiaBanSi: mon.DonGiaBanSi || 0,
-                        DonGiaVon: mon.DonGiaVon || 0,
+                        IdMon: idMon,
+                        DonGiaBanLe: _donGiaBanLe,
+                        DonGiaBanSi: _donGiaBanSi,
+                        DonGiaVon: _donGiaVon,
                         createBy: currentuser,
                         createDate: new Date(),
                     });
                 } else {
-                    thongTinMon.DonGiaBanLe = mon.DonGiaBanLe || 0;
-                    thongTinMon.DonGiaBanSi = mon.DonGiaBanSi || 0;
-                    thongTinMon.DonGiaVon = mon.DonGiaVon || 0;
+                    thongTinMon.DonGiaBanLe = _donGiaBanLe;
+                    thongTinMon.DonGiaBanSi = _donGiaBanSi;
+                    thongTinMon.DonGiaVon = _donGiaVon;
                     thongTinMon.modifyBy = currentuser;
+                    thongTinMon.Deleted = false;
                     thongTinMon.modifyDate = new Date();
                     await ThongTinMon.update(thongTinMon, {
                         where: {
                             IdThongTin: idThongTin,
-                            IdMon: IDMon,
+                            IdMon: idMon,
                         },
                     });
                 }
 
-                //update thong tin mon
-                mon.DonGiaBanSi = 0;
-                mon.DonGiaBanLe = 0;
-                mon.DonGiaVon = 0;
+                //update don gia
+                monRequest.DonGiaBanSi = 0;
+                monRequest.DonGiaBanLe = 0;
+                monRequest.DonGiaVon = 0;
             }
 
-            await Mon.update(mon, {
+            await Mon.update({
+                ...monRequest,
+                MaTat: _matat,
+                TenMon: monRequest.TenMon,
+                TenKhongDau: monRequest.TenKhongDau,
+                IDLoaiMon: monRequest.IDLoaiMon,
+                SoLuongTonKho: monRequest.SoLuongTonKho,
+                ThoiGianBH: monRequest.ThoiGianBH || 0,
+                Image: monRequest.Image,
+                modifyBy: currentuser,
+                modifyDate: new Date(),
+            }, {
                 where: {
-                    IDMon: id,
+                    IDMon: idMon,
                 },
             });
 
@@ -356,13 +309,13 @@ routerMon.put( ///---------------work here
             });
 
             const _result = {
-                ...mon as Mon,
+                ...monRequest as Mon,
                 idThongTinMon: idThongTin,
-                DonGiaBanLe: mon.DonGiaBanLe,
-                DonGiaBanSi: mon.DonGiaBanSi,
-                DonGiaVon: mon.DonGiaVon,
-                size: thongTin?.size || '',
-                color: thongTin?.color || '',
+                DonGiaBanLe: _donGiaBanLe,
+                DonGiaBanSi: _donGiaBanSi,
+                DonGiaVon: _donGiaVon,
+                size: thongTin?.Size || '',
+                color: thongTin?.Color || '',
             } as MonResponseType;
 
             res.status(200).send({

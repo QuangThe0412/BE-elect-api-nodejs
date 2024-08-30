@@ -1,6 +1,7 @@
 import express from 'express';
-import {  Mon } from '../../models/init-models';
+import { Mon } from '../../models/init-models';
 import { Op, Sequelize } from 'sequelize';
+import { getThongTinMon } from '../../utils/index';
 
 const routerProducts = express.Router();
 
@@ -56,9 +57,11 @@ routerProducts.get(
 
             const totalPages = Math.ceil(totalItems / itemsPerPage);
 
+            const _result = await getThongTinMon(result);
+
             res.status(200).send({
                 data: {
-                    result,
+                    _result,
                     totalPages,
                     currentPage,
                     itemsPerPage,
@@ -98,8 +101,11 @@ routerProducts.get(
                     'GhiChu'
                 ]
             })
+
+            const _result = await getThongTinMon([result]);
+
             res.status(200).send({
-                data: result,
+                data: _result,
                 code: 'GET_MON_SUCCESS',
                 mess: 'Nhận thông tin món thành công',
             });
@@ -121,8 +127,11 @@ routerProducts.get(
                 },
                 limit: 10,
             })
+
+            const _result = await getThongTinMon(result);
+
             res.status(200).send({
-                data: result,
+                data: _result,
                 code: 'GET_NEWEST_MON_SUCCESS',
                 mess: 'Nhận danh sách món mới nhất thành công',
             });
@@ -159,8 +168,10 @@ routerProducts.get(
                 limit: 12,
             })
 
+            const _result = await getThongTinMon(result);
+
             res.status(200).send({
-                data: result,
+                data: _result,
                 code: 'GET_RELATED_MON_SUCCESS',
                 mess: 'Nhận danh sách món liên quan thành công',
             });
@@ -224,9 +235,11 @@ routerProducts.get(
 
             const totalPages = Math.ceil(totalItems / itemsPerPage);
 
+            const _result = await getThongTinMon(result);
+
             res.status(200).send({
                 data: {
-                    result,
+                    _result,
                     totalPages,
                     currentPage,
                     itemsPerPage,
@@ -240,4 +253,5 @@ routerProducts.get(
             res.status(500).send(err);
         }
     });
+
 export default routerProducts;

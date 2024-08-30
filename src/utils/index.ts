@@ -6,7 +6,7 @@ import { Request, Response } from 'express';
 import * as jwt from 'jsonwebtoken';
 import { JwtPayload } from '@services/auth.service';
 import { Op } from 'sequelize';
-import { ChiTietKM, KhachHang, Khuyenmai } from '../models/init-models';
+import { ChiTietKM, KhachHang, Khuyenmai, Mon, ThongTin, ThongTinMon } from '../models/init-models';
 import slugify from 'slugify';
 
 export const MergeWithOldData = (oldData: any, newData: any) => {
@@ -199,4 +199,39 @@ export const slugifyHandle = (str: string) => {
         locale: 'vi',      // language code of the locale to use
         trim: true         // trim leading and trailing replacement chars, defaults to `true`
     })
+}
+
+export const getThongTinMon = async (arrayMon: Mon[]) => {
+    const idMons = arrayMon.map((item) => item.IDMon);
+
+    const _thongTinMon = await ThongTinMon.findAll({
+        where: {
+            IdMon: idMons,
+            Deleted: false
+        }
+    });
+    const _thongTin = await ThongTin.findAll();
+
+    const _result = arrayMon.map((item: any) => {
+        const thongTinMon: ThongTinMon[] = _thongTinMon.filter((x: ThongTinMon) => x.IdMon === item.IDMon);
+        return {
+            ...item,
+            ThongTinMon: thongTinMon.map((data) => {
+                const thongTin = _thongTin.find((x: ThongTin) => x.Id === data.IdThongTin);
+                const { Id, IdThongTin, IdMon, DonGiaBanSi, DonGiaBanLe, DonGiaVon } = data;
+                return {
+                    Id,
+                    IdThongTin,
+                    IdMon,
+                    DonGiaBanSi,
+                    DonGiaBanLe,
+                    DonGiaVon,
+                    size: thongTin?.Size || '',
+                    color: thongTin?.Color || '',
+                }
+            })
+        }
+    });
+
+    return _result;
 }
