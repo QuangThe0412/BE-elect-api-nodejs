@@ -20,10 +20,14 @@ const corsOptions = {
     process.env.npm_lifecycle_event === 'dev'
       ? '*'
       : [
-        'http://cms-diennuoctamnhi.nhungchangtrainhaycam.site',
-        'https://cms-diennuoctamnhi.nhungchangtrainhaycam.site',
-        'http://diennuoctamnhi.nhungchangtrainhaycam.site',
-        'https://diennuoctamnhi.nhungchangtrainhaycam.site'
+        'http://localhost:3001',
+        'https://localhost:3001',
+        'http://192.168.1.104:3001',
+        'https://192.168.1.104:3001',
+        'http://localhost:4005',
+        'https://localhost:4005',
+        'http://192.168.1.104:4005',
+        'https://192.168.1.104:4005'
       ],
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   preflightContinue: false,
