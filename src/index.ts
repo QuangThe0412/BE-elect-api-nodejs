@@ -53,11 +53,17 @@ app.use(serviceGoogleApi);
 app.use('/admin', adminRouter);
 app.use('/client', clientRouter);
 
+// Route để kiểm tra server
+app.get('/health', (req, res) => {
+  res.status(200).send('Server is running');
+});
+
 app.use(errorHandlerMiddleware);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
   console.log(`ENV: ${process.env.npm_lifecycle_event}`);
+  console.log(`URL Health Check: http://localhost:${port}/health`);
 });
 
 export default app;
