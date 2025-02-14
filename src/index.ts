@@ -22,12 +22,12 @@ const corsOptions = {
       : [
         'http://localhost:3001',
         'https://localhost:3001',
-        'http://192.168.1.104:3001',
-        'https://192.168.1.104:3001',
+        'https://cms-tamnhi.kingvn.site/',
+        'http://cms-tamnhi.kingvn.site/',
         'http://localhost:4005',
         'https://localhost:4005',
-        'http://192.168.1.104:4005',
-        'https://192.168.1.104:4005'
+        'https://tamnhi.kingvn.site/',
+        'http://tamnhi.kingvn.site/',
       ],
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   preflightContinue: false,
